@@ -1,0 +1,67 @@
+# Japan Inflation Nowcast
+
+独立・日次・透明・エージェント可読な **日本のインフレ・ナウキャスト（速報）**。
+
+> ## ⚠️ これは「公式 CPI」ではありません
+> 本プロダクトは独立した **ナウキャスト（速報）** であり、総務省 CPI そのものでも公式統計
+> でもありません。初期は **食料 + 住居の 2 コンポーネントのみ**で、CPI バスケットの一部
+> （およそ 47%）しかカバーしません。すべての合成値には `coverage_pct`（「CPI バスケットの
+> 約 X% をカバー」）を併記します。詳細は [`CLAUDE.md`](./CLAUDE.md) §0 と
+> [`methodology/methodology.md`](./methodology/methodology.md) を参照。
+
+## 何か
+
+総務省 CPI（月次・遅延）と日経/渡辺 CPINow（会員制・T+2・閉じた箱）に対し、
+**オープン方法論 + リアルタイム + x402 課金 + オンチェーン互換**で差別化する。
+
+3 レイヤー（§1）:
+1. 無償の人間向けダッシュボード（headline + coverage）。
+2. x402 課金 JSON API（コンポーネント分解 / 中分類別 / 特売切替 / 全履歴 / bulk）。
+3. 任意のオンチェーンフィード（Pyth / Chainlink 互換、testnet 先行）。
+
+## セットアップ
+
+```bash
+# 依存解決（uv）
+uv sync
+
+# 環境変数
+cp .env.example .env   # 編集する。.env はコミットしない。
+
+# テスト
+uv run pytest
+
+# API 起動（Phase 6 以降に本体実装）
+uv run uvicorn api.app:app --reload
+```
+
+ローカル検証は SQLite（`DATABASE_URL=sqlite:///./jin.db`）で可。本番は Postgres（§3）。
+
+## 構成
+
+| ディレクトリ | 役割 |
+|--------------|------|
+| `config/` | sources.yaml（既定空＝何も取得しない）/ baskets.yaml / normalize 辞書 |
+| `scrapers/` | プラグイン式アダプタ + 遵守機構（base.py） |
+| `storage/` | DB エンジン・SQLModel テーブル |
+| `etl/` | 生 → clean（正規化・dedup・特徴量・ライフサイクル） |
+| `index_engine/` | hedonic / laspeyres / flow / food / composite / aggregate |
+| `api/` | FastAPI + x402 ゲート |
+| `jobs/daily.py` | cron 単一エントリポイント |
+| `methodology/` | 公開方法論 |
+| `dashboard/`, `oracle/` | Phase 8（任意） |
+
+## スクレイピング規約（重要・ハード制約 §8）
+
+- `config/sources.yaml` が **空なら何も取得しない**安全既定。対象サイトは運用者が明示記入する。
+- 起動時に **robots.txt を尊重**。レート制限（1 req/数秒）+ 指数バックオフ + 同時実行 1。
+  User-Agent と問い合わせ先を明示。
+- **生データは内部保存のみ。再配布・再公開しない。** 公開するのは派生集計（指数・統計）だけ。
+- **各ソースの利用規約・著作権・関連法の遵守は運用者責任である。** コード側は法的判断をしない。
+
+## ビルド状況
+
+Phase 0（雛形）完了。構成・依存・データモデル・config スキーマ・TODO シグネチャ・pytest
+スケルトンを用意。実装ロジックは未着手（§9 のフェーズ計画に従って 1 フェーズずつ進める）。
+
+ライセンス: MIT。

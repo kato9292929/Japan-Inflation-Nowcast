@@ -1,0 +1,34 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+
+# Virtualenv / uv
+.venv/
+.python-version
+
+# 秘密情報は .env のみ。コミット禁止（§3）。
+.env
+.env.*
+!.env.example
+
+# ローカル DB / 生データ（再配布禁止 §8）
+*.db
+*.sqlite
+*.sqlite3
+data/
+raw/
+
+# テスト・ツール
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# OS / エディタ
+.DS_Store
+.idea/
+.vscode/

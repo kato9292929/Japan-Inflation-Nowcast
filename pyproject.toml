@@ -1,0 +1,66 @@
+[project]
+name = "japan-inflation-nowcast"
+version = "0.0.0"
+description = "Independent, daily, transparent, agent-readable inflation nowcast for Japan (food + housing). Not official CPI."
+readme = "README.md"
+requires-python = ">=3.12"
+license = { text = "MIT" }
+authors = [{ name = "Japan Inflation Nowcast" }]
+
+# 中核依存。指数計算・API・スクレイピング・設定。
+dependencies = [
+    "fastapi>=0.115",
+    "uvicorn[standard]>=0.32",
+    "sqlmodel>=0.0.22",
+    "sqlalchemy>=2.0",
+    "pydantic>=2.9",
+    "pydantic-settings>=2.6",
+    "pyyaml>=6.0",
+    "httpx>=0.27",
+    "selectolax>=0.3.21",
+    "pandas>=2.2",
+    "numpy>=2.0",
+    "statsmodels>=0.14",
+    "scikit-learn>=1.5",
+]
+
+[project.optional-dependencies]
+# 必要時のみ。JS 描画サイト用。
+browser = ["playwright>=1.48"]
+postgres = ["psycopg[binary]>=3.2"]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.3",
+    "pytest-asyncio>=0.24",
+    "ruff>=0.7",
+]
+
+[project.scripts]
+jin-daily = "jobs.daily:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = [
+    "scrapers",
+    "storage",
+    "etl",
+    "index_engine",
+    "api",
+    "jobs",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+asyncio_mode = "auto"
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "W", "UP", "B"]

@@ -1,0 +1,30 @@
+# config/sources.yaml — スクレイピング対象の定義（§8 ハード制約）
+#
+# 安全既定: このファイルが空（sources が無い）なら、スクレイパは何も取得しない。
+# 対象サイトは運用者が明示的に記入する。Claude はここに具体サイトを書かない。
+#
+# 各ソースの利用規約・robots.txt・著作権・関連法の遵守は運用者責任（§8）。
+# 生データは内部保存のみ。再配布・再公開しない。公開するのは派生集計だけ。
+#
+# 記入例（コメントアウト。実サイトは運用者が記入すること）:
+#
+# housing:
+#   - id: example_housing      # アダプタ名（scrapers/housing/<id>.py に対応）
+#     enabled: false
+#     base_url: "https://example.com"
+#     rate_limit_seconds: 5    # 1 req / N 秒（§8）
+#     max_concurrency: 1       # 同時実行 1（§8）
+#     respect_robots: true     # robots.txt 尊重（必須）
+#     start_paths: []          # 取得起点
+#
+# food:
+#   - id: example_food
+#     enabled: false
+#     base_url: "https://example.com"
+#     rate_limit_seconds: 5
+#     max_concurrency: 1
+#     respect_robots: true
+#     start_paths: []
+
+housing: []
+food: []

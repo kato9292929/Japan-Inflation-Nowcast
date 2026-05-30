@@ -1,0 +1,10 @@
+# config/normalize/address.yaml — 住所 正規化辞書（§4）
+#
+# 住所文字列の正規化ルール（全角/半角、丁目表記、別名など）。
+# ETL で address_norm 生成に使う。既定は空。運用者が記入する。
+#
+# 例:
+#   replacements:
+#     "丁目": "-"
+#     "−": "-"
+replacements: {}

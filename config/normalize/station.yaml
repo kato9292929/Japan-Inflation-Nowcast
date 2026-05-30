@@ -1,0 +1,9 @@
+# config/normalize/station.yaml — 駅名 正規化辞書（§4）
+#
+# 表記ゆれ -> 正規駅名 のマップ。ETL で station 正規化に使う。
+# 既定は空。運用者が記入する。
+#
+# 例:
+#   "東京駅": "Tokyo"
+#   "とうきょう": "Tokyo"
+aliases: {}

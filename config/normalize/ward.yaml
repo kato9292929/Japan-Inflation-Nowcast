@@ -1,0 +1,9 @@
+# config/normalize/ward.yaml — 区/市町村 正規化辞書（§4）
+#
+# 表記ゆれ -> 正規名 のマップ。ETL（etl/housing.py）で住所 -> ward 正規化に使う。
+# 既定は空。運用者が対象エリアの辞書を記入する。
+#
+# 例:
+#   "千代田区": "Chiyoda"
+#   "ちよだく": "Chiyoda"
+aliases: {}
