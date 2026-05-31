@@ -1,0 +1,79 @@
+<!--
+  食料アダプタ参照実装（scrapers/food/example.py）の HTML 契約に一致する
+  固定フィクスチャ。実在サイトの再現ではなくテスト専用の合成データ。
+  複数カテゴリ・特売あり/なし・単位違い（g / ml / 個 / kg / l）・item_id 欠落1件。
+-->
+<!DOCTYPE html>
+<html lang="ja">
+  <head><meta charset="utf-8"><title>food fixture</title></head>
+  <body>
+    <main>
+      <!-- 質量: kg -> g 換算（2kg, ¥1000 -> ¥50/100g） -->
+      <div class="item" data-item-id="F001">
+        <span class="category">穀類</span>
+        <span class="product-name">コシヒカリ</span>
+        <span class="brand">農協</span>
+        <span class="unit">kg</span>
+        <span class="unit-size">2</span>
+        <span class="price">1,000</span>
+        <span class="is-promo">false</span>
+        <span class="in-stock">true</span>
+      </div>
+
+      <!-- 容量: l -> ml 換算（1l, ¥200 -> ¥20/100ml） -->
+      <div class="item" data-item-id="F002">
+        <span class="category">乳卵類</span>
+        <span class="product-name">成分無調整牛乳</span>
+        <span class="brand">明治</span>
+        <span class="unit">l</span>
+        <span class="unit-size">1</span>
+        <span class="price">200</span>
+        <span class="is-promo">false</span>
+        <span class="in-stock">true</span>
+      </div>
+
+      <!-- 個数: ¥/個（10個, ¥250 -> ¥25/個） -->
+      <div class="item" data-item-id="F003">
+        <span class="category">乳卵類</span>
+        <span class="product-name">たまご</span>
+        <span class="brand">JAたまご</span>
+        <span class="unit">個</span>
+        <span class="unit-size">10</span>
+        <span class="price">250</span>
+        <span class="is-promo">false</span>
+        <span class="in-stock">true</span>
+      </div>
+
+      <!-- 特売あり: 質量 g（100g, ¥150 -> ¥150/100g） -->
+      <div class="item" data-item-id="F004">
+        <span class="category">菓子類</span>
+        <span class="product-name">ポテトチップス</span>
+        <span class="brand">カルビー</span>
+        <span class="unit">g</span>
+        <span class="unit-size">100</span>
+        <span class="price">150</span>
+        <span class="is-promo">true</span>
+        <span class="in-stock">true</span>
+      </div>
+
+      <!-- 通常: 容量 ml（500ml, ¥120 -> ¥24/100ml） -->
+      <div class="item" data-item-id="F005">
+        <span class="category">飲料</span>
+        <span class="product-name">緑茶</span>
+        <span class="brand">伊藤園</span>
+        <span class="unit">ml</span>
+        <span class="unit-size">500</span>
+        <span class="price">120</span>
+        <span class="is-promo">false</span>
+        <span class="in-stock">false</span>
+      </div>
+
+      <!-- item_id を持たないノード: parse はスキップする。 -->
+      <div class="item">
+        <span class="category">穀類</span>
+        <span class="product-name">無名</span>
+        <span class="price">999</span>
+      </div>
+    </main>
+  </body>
+</html>
