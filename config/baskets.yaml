@@ -41,6 +41,10 @@ housing:
   # age_band / walk_band の境界（特徴量バンド化に使用）。
   age_bands: [5, 10, 20, 30]     # 築年バンド境界（年）
   walk_bands: [5, 10, 15]        # 徒歩バンド境界（分）
+  # ¥/m^2 異常値の winsorize 閾値（ETL normalize_listing。無ければ既定 1000/50000）。
+  winsor_rent_per_m2:
+    min: 1000
+    max: 50000
   # 代表ユニット: 予測対象の固定スペック + ストックウェイト。
   # 下記はプレースホルダ。運用者が対象エリアのストック構成に更新する。
   representative_units:

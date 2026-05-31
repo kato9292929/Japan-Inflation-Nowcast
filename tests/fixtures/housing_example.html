@@ -1,0 +1,65 @@
+<!--
+  住居アダプタ参照実装（scrapers/housing/example.py）の HTML 契約に一致する
+  固定フィクスチャ。実在サイトの再現ではなくテスト専用の合成データ。
+-->
+<!DOCTYPE html>
+<html lang="ja">
+  <head><meta charset="utf-8"><title>listings fixture</title></head>
+  <body>
+    <main>
+      <div class="listing" data-listing-id="L001">
+        <span class="ward">渋谷区</span>
+        <span class="address">渋谷区道玄坂1丁目2-3</span>
+        <span class="station">渋谷</span>
+        <span class="walk-min">5</span>
+        <span class="rent-total">120,000</span>
+        <span class="mgmt-fee">8,000</span>
+        <span class="area-m2">25.5</span>
+        <span class="madori">1K</span>
+        <span class="build-year">2010</span>
+        <span class="floor">3</span>
+        <span class="structure">RC</span>
+        <span class="deposit">120,000</span>
+        <span class="key-money">120,000</span>
+      </div>
+
+      <div class="listing" data-listing-id="L002">
+        <span class="ward">新宿区</span>
+        <span class="address">新宿区西新宿2-8-1</span>
+        <span class="station">新宿</span>
+        <span class="walk-min">8</span>
+        <span class="rent-total">180,000</span>
+        <span class="mgmt-fee">10,000</span>
+        <span class="area-m2">40.0</span>
+        <span class="madori">1LDK</span>
+        <span class="build-year">2005</span>
+        <span class="floor">7</span>
+        <span class="structure">SRC</span>
+        <span class="deposit">180,000</span>
+        <span class="key-money">0</span>
+      </div>
+
+      <div class="listing" data-listing-id="L003">
+        <span class="ward">目黒区</span>
+        <span class="address">目黒区中目黒3-1-1</span>
+        <span class="station">中目黒</span>
+        <span class="walk-min">12</span>
+        <span class="rent-total">250,000</span>
+        <span class="mgmt-fee">15,000</span>
+        <span class="area-m2">55.2</span>
+        <span class="madori">2LDK</span>
+        <span class="build-year">1995</span>
+        <span class="floor">2</span>
+        <span class="structure">RC</span>
+        <span class="deposit">500,000</span>
+        <span class="key-money">250,000</span>
+      </div>
+
+      <!-- listing_id を持たないノード: parse はスキップする。 -->
+      <div class="listing">
+        <span class="ward">港区</span>
+        <span class="rent-total">300,000</span>
+      </div>
+    </main>
+  </body>
+</html>
