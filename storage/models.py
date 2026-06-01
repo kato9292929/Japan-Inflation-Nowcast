@@ -10,8 +10,8 @@
 
 from __future__ import annotations
 
+from datetime import UTC, datetime
 from datetime import date as Date  # 別名: フィールド名 `date` と型名の衝突を避ける
-from datetime import datetime
 from typing import Any
 
 from sqlalchemy import Column
@@ -181,7 +181,7 @@ class IndexValue(SQLModel, table=True):
     smoothing_window_days: int | None = None
     methodology_version: str = Field(index=True)
 
-    created_at: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
 
 # --------------------------------------------------------------------------- #
