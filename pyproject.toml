@@ -51,6 +51,7 @@ packages = [
     "index_engine",
     "api",
     "jobs",
+    "methodology",
 ]
 
 [tool.pytest.ini_options]
