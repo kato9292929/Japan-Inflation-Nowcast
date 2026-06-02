@@ -68,19 +68,4 @@
 #       礼金: key_money
 
 housing: []
-food:
-  # day-0 スモークテスト用ソース（ライフのスクショ抽出 18 品目・全品特売の一回限りスナップショット）。
-  # 実速報ではない。後で除去/差替する前提。
-  - id: life_panel
-    enabled: true
-    type: csv
-    path: data/life_panel.csv
-    column_map:
-      商品ID: item_id
-      分類: category
-      品名: product_name
-      ブランド: brand
-      単位: unit
-      内容量: unit_size
-      価格: price
-      特売: is_promo
+food: []

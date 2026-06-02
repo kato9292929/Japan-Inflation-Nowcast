@@ -131,7 +131,7 @@ def _persist_index(session, value: dict[str, Any]) -> None:
             yoy_pct=value.get("yoy_pct"),
             mom_pct=value.get("mom_pct"),
             wow_pct=value.get("wow_pct"),
-            n=value.get("n"),
+            n=value.get("n", value.get("n_items")),
             n_new=value.get("n_new"),
             series_type=series_type,
             coverage_pct=value.get("coverage_pct"),

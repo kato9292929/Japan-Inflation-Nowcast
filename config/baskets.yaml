@@ -18,7 +18,7 @@ composite_weights:
 # --- 食料 中分類（CPI 食料の内訳）と上位集計ウェイト（§6-2）---
 # elementary（Jevons）→ 中分類 → これらウェイトでラスパイレス加重。
 food:
-  default_promo_mode: incl_promo   # スモークテスト一時設定（全品特売のため）。後で excl_promo に戻す
+  default_promo_mode: excl_promo   # 基調は特売除外（§6-2）
   categories:
     # name はそのまま food_raw.category にマップする CPI 食料中分類。
     # weight は中分類間のラスパイレス加重（合計は内部で正規化）。
@@ -32,7 +32,7 @@ food:
     - { name: "菓子類",     weight: 1 }
     - { name: "調理食品",   weight: 1 }
     - { name: "飲料",       weight: 1 }
-    - { name: "豆腐・大豆製品", weight: 1 }   # スモークテスト用 暫定（後で総務省CPIウェイトに差替）
+    - { name: "豆腐・大豆製品", weight: 1 }   # 暫定ウェイト（後で総務省CPIウェイトに差替）
 
 # --- 住居 代表バスケット（§6-1）---
 # 回転ヘドニックで予測する代表ユニット群（ward × madori 固定スペック）と
