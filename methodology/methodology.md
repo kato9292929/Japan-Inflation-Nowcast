@@ -45,7 +45,7 @@ ln(rent_total) ~ log_area + C(ward) + C(age_band) + C(walk_band)
   （当期 unit_price / 基準期 unit_price）の幾何平均。`unit_price` はパックサイズ・単位差を
   吸収した正準単価（質量 ¥/100g・容量 ¥/100ml・個数 ¥/個）。
 - **上位集計（ラスパイレス）**: 中分類を CPI 食料ウェイト（下表）で加重。
-- **特売**: `incl_promo` / `excl_promo` の 2 系列。基調は `excl_promo`。
+- **特売**: `incl_promo` / `excl_promo` の 2 系列。基調は `incl_promo`。
 - **SKU 入替**: 両期 matched-SKU のみで相対を取り、消失/新規はチェーンで連続化。
 
 ### 食料 中分類ウェイト
@@ -62,6 +62,7 @@ ln(rent_total) ~ log_area + C(ward) + C(age_band) + C(walk_band)
 | 菓子類 | 1 |
 | 調理食品 | 1 |
 | 飲料 | 1 |
+| 豆腐・大豆製品 | 1 |
 
 ## 合成 JP-INFL-NOWCAST + coverage
 
