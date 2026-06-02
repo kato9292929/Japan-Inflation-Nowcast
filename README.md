@@ -51,6 +51,16 @@ uv run uvicorn api.app:app --reload
 | `methodology/` | 公開方法論 |
 | `dashboard/`, `oracle/` | Phase 8（任意） |
 
+## データ取り込み
+
+2 経路を同じ adapter 登録の仕組みで扱う（どちらも `config/sources.yaml` が空なら何もしない安全既定）:
+
+1. **スクレイピング**（`type: scrape`, 既定）: 下記ハード制約に従う。
+2. **CSV 取り込み**（`type: csv`）: 公式統計（e-Stat 小売物価統計等）や手動パネルの
+   ローカル CSV を**スクレイピング無し**で取り込む。HTTP・robots は使わない。運用者が
+   `path`（CSV パス）と `column_map`（CSV 列名 → raw フィールド名）を記入する。各 CSV の
+   利用規約・著作権・関連法の遵守は運用者責任（§8）。記入例は `config/sources.yaml` 参照。
+
 ## スクレイピング規約（重要・ハード制約 §8）
 
 - `config/sources.yaml` が **空なら何も取得しない**安全既定。対象サイトは運用者が明示記入する。

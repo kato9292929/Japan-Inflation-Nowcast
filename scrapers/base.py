@@ -45,11 +45,18 @@ class DisallowedPathError(Exception):
 
 @dataclass(frozen=True)
 class SourceConfig:
-    """1 ソースの設定（config/sources.yaml の 1 エントリ）。"""
+    """1 ソースの設定（config/sources.yaml の 1 エントリ）。
+
+    type='scrape'（既定, HTTP スクレイピング）/ 'csv'（ローカル CSV 取り込み）。
+    csv の場合は path（CSV パス）と column_map（CSV 列名 -> raw フィールド名）を使う。
+    """
 
     id: str
-    base_url: str
+    base_url: str = ""
     enabled: bool = False
+    type: str = "scrape"
+    path: str | None = None
+    column_map: dict[str, str] = field(default_factory=dict)
     rate_limit_seconds: float = 5.0
     max_concurrency: int = 1
     respect_robots: bool = True
@@ -61,6 +68,7 @@ def load_sources(kind: str, path: Path = SOURCES_PATH) -> list[SourceConfig]:
 
     安全既定（§8）: ファイルが無い / 空 / 当該種別が無い場合は空リストを返す
     （= 何も取得しない）。enabled=False のソースも除外する。
+    type='csv' のソースは path / column_map を読み取る。
     """
     if not path.exists():
         return []
@@ -70,8 +78,11 @@ def load_sources(kind: str, path: Path = SOURCES_PATH) -> list[SourceConfig]:
     for entry in entries:
         cfg = SourceConfig(
             id=entry["id"],
-            base_url=entry["base_url"],
+            base_url=entry.get("base_url", ""),
             enabled=bool(entry.get("enabled", False)),
+            type=str(entry.get("type", "scrape")),
+            path=entry.get("path"),
+            column_map=dict(entry.get("column_map") or {}),
             rate_limit_seconds=float(entry.get("rate_limit_seconds", 5.0)),
             max_concurrency=int(entry.get("max_concurrency", 1)),
             respect_robots=bool(entry.get("respect_robots", True)),

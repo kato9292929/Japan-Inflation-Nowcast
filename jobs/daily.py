@@ -24,9 +24,11 @@ from etl import food as etl_food
 from etl import housing as etl_housing
 from index_engine import composite, flow, food, hedonic, laspeyres
 from methodology.generate import CURRENT_VERSION, record_version, write_methodology
-from scrapers.base import load_sources
+from scrapers.base import SourceConfig, load_sources
 from scrapers.food import ExampleFoodScraper
+from scrapers.food.csv_import import CsvFoodImporter
 from scrapers.housing import ExampleHousingScraper
+from scrapers.housing.csv_import import CsvHousingImporter
 from storage.db import get_session, get_settings, init_db
 from storage.models import FoodClean, IndexValue, ListingClean
 
@@ -34,10 +36,17 @@ logger = logging.getLogger("jobs.daily")
 
 CONFIG_DIR = Path(__file__).resolve().parent.parent / "config"
 
-# 運用者が登録するアダプタ表（source.id -> アダプタクラス）。
-# 既定は参照アダプタのみ。実サイト向けは運用者が追加する（§8）。
-HOUSING_ADAPTERS = {"example": ExampleHousingScraper}
-FOOD_ADAPTERS = {"example": ExampleFoodScraper}
+# 運用者が登録するアダプタ表。type='csv' は "csv" キー、それ以外は source.id で解決。
+# 既定は参照アダプタ + CSV インポータのみ。実サイト向けは運用者が追加する（§8）。
+HOUSING_ADAPTERS = {"example": ExampleHousingScraper, "csv": CsvHousingImporter}
+FOOD_ADAPTERS = {"example": ExampleFoodScraper, "csv": CsvFoodImporter}
+
+
+def _resolve_adapter(adapters: dict, src: SourceConfig):
+    """type='csv' なら CSV インポータ、それ以外は source.id でアダプタを解決する。"""
+    if src.type == "csv":
+        return adapters.get("csv")
+    return adapters.get(src.id)
 
 NOWCAST = "JP-INFL-NOWCAST"
 FOOD_CODE = "JP-INFL-FOOD"
@@ -75,17 +84,17 @@ def _scrape(as_of: date) -> int:
     s = get_settings()
     total = 0
     for src in load_sources("housing"):
-        cls = HOUSING_ADAPTERS.get(src.id)
+        cls = _resolve_adapter(HOUSING_ADAPTERS, src)
         if cls is None:
-            logger.warning("no housing adapter registered for source '%s'; skip", src.id)
+            logger.warning("no housing adapter for source '%s' (type=%s); skip", src.id, src.type)
             continue
         adapter = cls(src, user_agent=s.scraper_user_agent, contact=s.scraper_contact)
         records = adapter.run()
         total += etl_housing.upsert_raw(records, scrape_date=as_of)
     for src in load_sources("food"):
-        cls = FOOD_ADAPTERS.get(src.id)
+        cls = _resolve_adapter(FOOD_ADAPTERS, src)
         if cls is None:
-            logger.warning("no food adapter registered for source '%s'; skip", src.id)
+            logger.warning("no food adapter for source '%s' (type=%s); skip", src.id, src.type)
             continue
         adapter = cls(src, user_agent=s.scraper_user_agent, contact=s.scraper_contact)
         records = adapter.run()

@@ -25,6 +25,47 @@
 #     max_concurrency: 1
 #     respect_robots: true
 #     start_paths: []
+#
+# CSV 取り込み（スクレイピング無し。公式統計 e-Stat 等や手動パネル）の記入例:
+#   type: csv を指定し、path（CSV パス）と column_map（CSV列名 -> raw フィールド名）を書く。
+#   利用規約・著作権・関連法の遵守は運用者責任（§8）。生データは再配布しない。
+#
+# food:
+#   - id: estat_food
+#     enabled: true
+#     type: csv
+#     path: "data/estat_food.csv"
+#     column_map:                # CSV 列名: raw フィールド名
+#       商品ID: item_id
+#       中分類: category
+#       商品名: product_name
+#       メーカー: brand
+#       単位: unit
+#       内容量: unit_size
+#       価格: price
+#       特売: is_promo
+#       在庫: in_stock
+#
+# housing:
+#   - id: manual_housing
+#     enabled: true
+#     type: csv
+#     path: "data/housing_panel.csv"
+#     column_map:
+#       物件ID: listing_id
+#       区: ward
+#       住所: address_norm
+#       駅: station
+#       徒歩分: walk_min
+#       家賃: rent_total
+#       管理費: mgmt_fee
+#       面積: area_m2
+#       間取り: madori
+#       築年: build_year
+#       階: floor
+#       構造: structure
+#       敷金: deposit
+#       礼金: key_money
 
 housing: []
 food: []
