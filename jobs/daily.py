@@ -25,6 +25,7 @@ from etl import housing as etl_housing
 from index_engine import composite, flow, food, hedonic, laspeyres
 from methodology.generate import CURRENT_VERSION, record_version, write_methodology
 from scrapers.base import SourceConfig, load_sources
+from scrapers.estat import EStatFoodFetcher
 from scrapers.food import ExampleFoodScraper
 from scrapers.food.csv_import import CsvFoodImporter
 from scrapers.housing import ExampleHousingScraper
@@ -36,16 +37,20 @@ logger = logging.getLogger("jobs.daily")
 
 CONFIG_DIR = Path(__file__).resolve().parent.parent / "config"
 
-# 運用者が登録するアダプタ表。type='csv' は "csv" キー、それ以外は source.id で解決。
-# 既定は参照アダプタ + CSV インポータのみ。実サイト向けは運用者が追加する（§8）。
+# 運用者が登録するアダプタ表。type（'csv'/'estat'）が登録されていればそれで解決し、
+# それ以外（'scrape'）は source.id で解決する。実サイト向けは運用者が追加する（§8）。
 HOUSING_ADAPTERS = {"example": ExampleHousingScraper, "csv": CsvHousingImporter}
-FOOD_ADAPTERS = {"example": ExampleFoodScraper, "csv": CsvFoodImporter}
+FOOD_ADAPTERS = {
+    "example": ExampleFoodScraper,
+    "csv": CsvFoodImporter,
+    "estat": EStatFoodFetcher,
+}
 
 
 def _resolve_adapter(adapters: dict, src: SourceConfig):
-    """type='csv' なら CSV インポータ、それ以外は source.id でアダプタを解決する。"""
-    if src.type == "csv":
-        return adapters.get("csv")
+    """type が登録済み（csv/estat）ならそれ、'scrape' は source.id でアダプタを解決する。"""
+    if src.type in adapters:
+        return adapters[src.type]
     return adapters.get(src.id)
 
 NOWCAST = "JP-INFL-NOWCAST"

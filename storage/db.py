@@ -33,6 +33,9 @@ class Settings(BaseSettings):
     )
     scraper_contact: str = Field(default="ops@example.com", alias="SCRAPER_CONTACT")
 
+    # e-Stat（政府統計 API）の appId。運用者の環境にのみ入れる（このサンドボックスでは未設定）。
+    estat_app_id: str = Field(default="", alias="ESTAT_APP_ID")
+
     base_date: date = Field(default=date(2025, 1, 1), alias="BASE_DATE")
     rebase_policy: str = Field(default="annual", alias="REBASE_POLICY")
 

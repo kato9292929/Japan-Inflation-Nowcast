@@ -60,6 +60,14 @@ uv run uvicorn api.app:app --reload
    ローカル CSV を**スクレイピング無し**で取り込む。HTTP・robots は使わない。運用者が
    `path`（CSV パス）と `column_map`（CSV 列名 → raw フィールド名）を記入する。各 CSV の
    利用規約・著作権・関連法の遵守は運用者責任（§8）。記入例は `config/sources.yaml` 参照。
+3. **e-Stat API**（`type: estat`）: 政府統計 API から小売物価（価格・検証アンカー）や
+   2020 年基準 CPI ウェイトを取得する。`appId` は `.env` の `ESTAT_APP_ID` に入れる。
+   - **実 statsDataId の特定と live 取得は運用者の環境で行う**（このサンドボックス /
+     CI からは `api.e-stat.go.jp` に出られないため、コードは実通信なしでモックテスト済み）。
+     対象の `statsDataId`・品目/地域コードは運用者が appId で特定して `options` に pin する。
+   - CPI 公式ウェイトの一括反映: `uv run jin-fetch-weights --stats-data-id <ID>` で
+     `config/baskets.yaml` の `food.categories[*].weight` を**公式取得値**に書き換える
+     （ハードコードしない）。利用規約・出典表示の遵守は運用者責任（§8）。
 
 ## スクレイピング規約（重要・ハード制約 §8）
 

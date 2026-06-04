@@ -57,6 +57,7 @@ class SourceConfig:
     type: str = "scrape"
     path: str | None = None
     column_map: dict[str, str] = field(default_factory=dict)
+    options: dict[str, Any] = field(default_factory=dict)
     rate_limit_seconds: float = 5.0
     max_concurrency: int = 1
     respect_robots: bool = True
@@ -83,6 +84,7 @@ def load_sources(kind: str, path: Path = SOURCES_PATH) -> list[SourceConfig]:
             type=str(entry.get("type", "scrape")),
             path=entry.get("path"),
             column_map=dict(entry.get("column_map") or {}),
+            options=dict(entry.get("options") or {}),
             rate_limit_seconds=float(entry.get("rate_limit_seconds", 5.0)),
             max_concurrency=int(entry.get("max_concurrency", 1)),
             respect_robots=bool(entry.get("respect_robots", True)),

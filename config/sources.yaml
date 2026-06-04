@@ -67,5 +67,23 @@
 #       敷金: deposit
 #       礼金: key_money
 
+# e-Stat（政府統計 API）取り込み（type: estat）の記入例:
+#   appId は .env の ESTAT_APP_ID に入れる。statsDataId と品目/地域コードは運用者が pin する。
+#   実通信は運用者の環境でのみ（このサンドボックスからは api.e-stat.go.jp に出られない）。
+#
+# food:
+#   - id: estat_retail_price
+#     enabled: true
+#     type: estat
+#     options:
+#       stats_data_id: "0003XXXXXX"   # 小売物価統計の statsDataId（運用者が pin）
+#       item_class_id: cat01
+#       cdArea: "13100"               # 例: 東京都区部
+#       cdTime: "2025000606"          # 時点コード（任意）
+#       default_unit: g
+#       unit_size: 100
+#       category_map:                 # 品目コード or 品目名 -> CPI 食料中分類
+#         "001": 穀類
+
 housing: []
 food: []
