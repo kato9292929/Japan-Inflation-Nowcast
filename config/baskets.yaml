@@ -4,7 +4,7 @@
 # 注意: これは「公式 CPI」ではなくナウキャストの加重に用いる参照ウェイト（§0 非交渉制約）。
 # リベース時は methodology_versions に version を起こして更新する。
 
-base_date: "2025-01-01"        # 指数の基準期（.env の BASE_DATE と整合させる）
+base_date: "2026-06-04"        # 定点シリーズの基準期（day-1。以降固定。.env の BASE_DATE と整合）
 weights_source: "MIC CPI (placeholder weights — 運用者が基準年ウェイトに更新する)"
 
 # --- 合成ウェイト（CPI 10000 分比のうち食料・住居）---
@@ -33,6 +33,8 @@ food:
     - { name: "調理食品",   weight: 1 }
     - { name: "飲料",       weight: 1 }
     - { name: "豆腐・大豆製品", weight: 1 }   # 暫定ウェイト（後で総務省CPIウェイトに差替）
+    - { name: "大豆製品",   weight: 1 }       # ライフバスケットの分類名（暫定ウェイト）
+    - { name: "酒類",       weight: 1 }       # 暫定ウェイト（後で総務省CPIウェイトに差替）
 
 # --- 住居 代表バスケット（§6-1）---
 # 回転ヘドニックで予測する代表ユニット群（ward × madori 固定スペック）と

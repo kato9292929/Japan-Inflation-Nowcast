@@ -7,7 +7,7 @@
 > 粒度で公開します（盛りません）。
 
 - 生成元: `config/baskets.yaml`
-- 基準期 (base_date): `2025-01-01`
+- 基準期 (base_date): `2026-06-04`
 - ウェイト出典 (weights_source): MIC CPI (placeholder weights — 運用者が基準年ウェイトに更新する)
 - methodology_version: `v1`
 
@@ -63,6 +63,8 @@ ln(rent_total) ~ log_area + C(ward) + C(age_band) + C(walk_band)
 | 調理食品 | 1 |
 | 飲料 | 1 |
 | 豆腐・大豆製品 | 1 |
+| 大豆製品 | 1 |
+| 酒類 | 1 |
 
 ## 合成 JP-INFL-NOWCAST + coverage
 
@@ -103,4 +105,4 @@ coverage_pct = Σ(weights) / 10000 × 100 = 47.13%
 
 | version | effective_date | changelog |
 |---------|----------------|-----------|
-| `v1` | 2025-01-01 | 初版（食料 + 住居の部分カバー合成）。 |
+| `v1` | 2026-06-04 | 初版（食料 + 住居の部分カバー合成）。 |
