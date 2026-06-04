@@ -16,10 +16,12 @@ from datetime import datetime, timedelta
 from typing import Any
 
 from fastapi import Depends, FastAPI, HTTPException
+from fastapi.responses import HTMLResponse
 from pydantic import BaseModel, Field
 from sqlmodel import select
 
 from api.x402 import history_gate, payment_gate
+from dashboard.render import build_headline_view, render_html
 from storage.db import get_session
 from storage.models import IndexValue
 
@@ -185,6 +187,27 @@ def history(code: str, days: int = 90, _gate: None = Depends(history_gate())) ->
         raise HTTPException(status_code=404, detail=f"unknown index_code: {code}")
     cutoff = max(r.date for r in rows) - timedelta(days=days)
     return [_row_to_out(r) for r in rows if r.date > cutoff]
+
+
+@app.get("/dashboard", response_class=HTMLResponse)
+def dashboard() -> str:
+    """無償 headline ダッシュボード（読み取り専用, §1）。NOWCAST の最新値 + 直近 90 日。
+
+    §0 遵守: 部分カバーのナウキャスト（速報）であること・coverage_pct を画面に明示。
+    """
+    with get_session() as session:
+        latest_row = _latest_row(session, NOWCAST)
+        rows = session.exec(
+            select(IndexValue)
+            .where(IndexValue.index_code == NOWCAST)
+            .order_by(IndexValue.date)
+        ).all()
+    if latest_row is None:
+        return "<html><body><p>no data yet</p></body></html>"
+    cutoff = max(r.date for r in rows) - timedelta(days=FREE_HISTORY_DAYS)
+    history = [_row_to_out(r).model_dump(mode="json") for r in rows if r.date > cutoff]
+    view = build_headline_view(_row_to_out(latest_row).model_dump(mode="json"), history)
+    return render_html(view)
 
 
 @app.get("/v1/methodology")

@@ -1,12 +1,15 @@
-# dashboard/ — 無償 headline 表示（Phase 8・任意）
+# dashboard/ — 無償 headline 表示（§1, Phase 8）
 
-合成ナウキャストの headline（日次・直近 90 日）+ coverage 表示を無償で見せる人間向け画面。
+合成ナウキャストの headline（最新値 + 直近 90 日 + coverage + disclaimer）を無償で見せる
+読み取り専用ビュー。
 
-予定（§9 Phase 8）:
-- 積み上げ内訳（食料 / 住居）チャート。
-- 総務省 CPI 比較チャート（参照用）。
-- coverage コピー（「CPI バスケットの約 X% をカバー」, §0）。
+- 描画ロジック: `dashboard/render.py`（純粋関数 `build_headline_view` / `render_html` /
+  `coverage_label`）。無償 API レスポンス形を入力に取り、実通信はしない。
+- 配信: API の `GET /dashboard`（HTML を返す）。無償 API（`/v1/indices/JP-INFL-NOWCAST/latest`
+  と `/history`）を内部参照する。
 
-> **誤認防止（§0）:** 「公式 CPI」ではなくナウキャスト（速報）である旨を必ず明示する。
+> **誤認防止（§0）:** 「総務省の公式統計とは異なる部分カバーのナウキャスト（速報）」
+> である旨と `coverage_pct`（必ず 100% 未満）を画面に必ず出す。「公式 CPI」「CPI そのもの」
+> と誤認させる表記は入れない。
 
-Phase 8 着手まで実装は置かない。
+live 配信（ホスティング・CDN 等）は運用者環境で行う。

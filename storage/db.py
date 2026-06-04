@@ -36,6 +36,12 @@ class Settings(BaseSettings):
     # e-Stat（政府統計 API）の appId。運用者の環境にのみ入れる（このサンドボックスでは未設定）。
     estat_app_id: str = Field(default="", alias="ESTAT_APP_ID")
 
+    # オンチェーンオラクル publish（任意）。3 つ揃ったときだけ有効（既定は無効）。
+    oracle_rpc_url: str = Field(default="", alias="ORACLE_RPC_URL")
+    oracle_private_key: str = Field(default="", alias="ORACLE_PRIVATE_KEY")
+    oracle_contract: str = Field(default="", alias="ORACLE_CONTRACT")
+    oracle_chain: str = Field(default="base-sepolia", alias="ORACLE_CHAIN")
+
     base_date: date = Field(default=date(2025, 1, 1), alias="BASE_DATE")
     rebase_policy: str = Field(default="annual", alias="REBASE_POLICY")
 

@@ -281,6 +281,14 @@ def run(
             report = _validate(official_csv)
             logger.info("validation:\n%s", report.get("text", ""))
 
+    # 任意ステップ: オンチェーン publish（既定は無効。env が揃ったときだけ実送信）。
+    with _Stage("oracle"):
+        from oracle.publisher import publish_latest
+
+        with get_session() as session:
+            res = publish_latest(session)
+        logger.info("oracle: %s (%s)", res.get("status"), res.get("reason", ""))
+
     logger.info("daily run done: as_of=%s components=%s", as_of, sorted(components))
     return 0
 

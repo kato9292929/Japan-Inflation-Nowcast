@@ -28,6 +28,8 @@ dependencies = [
 # 必要時のみ。JS 描画サイト用。
 browser = ["playwright>=1.48"]
 postgres = ["psycopg[binary]>=3.2"]
+# オンチェーン publish（運用者環境のみ。テストは web3 注入で実送信なし）。
+oracle = ["web3>=7.0"]
 
 [dependency-groups]
 dev = [
@@ -53,6 +55,8 @@ packages = [
     "api",
     "jobs",
     "methodology",
+    "dashboard",
+    "oracle",
 ]
 
 [tool.pytest.ini_options]
