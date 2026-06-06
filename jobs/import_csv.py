@@ -21,6 +21,7 @@ from etl import housing as etl_housing
 from scrapers.base import SourceConfig
 from scrapers.food.csv_import import CsvFoodImporter
 from scrapers.housing.csv_import import CsvHousingImporter
+from storage.db import init_db
 
 logger = logging.getLogger("jobs.import_csv")
 
@@ -57,6 +58,7 @@ def import_csv(
     path: str, *, scrape_date: date, kind: str = "food", source_id: str = "csv_import"
 ) -> int:
     """CSV を指定日付で取り込み、clean まで再構築する。Returns: 取り込み行数。"""
+    init_db()  # 新規 DB でもテーブルを保証（冪等）
     if kind == "food":
         cfg = SourceConfig(
             id=source_id, enabled=True, type="csv", path=path, column_map=FOOD_COLUMN_MAP
