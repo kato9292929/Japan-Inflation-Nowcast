@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import argparse
 import logging
+import math
 import time
 from datetime import date
 from pathlib import Path
@@ -57,6 +58,11 @@ NOWCAST = "JP-INFL-NOWCAST"
 FOOD_CODE = "JP-INFL-FOOD"
 HOUSING_CODE = "JP-INFL-HOUSING"
 BASE_VALUE = 100.0
+
+
+def _finite(value: Any) -> bool:
+    """None / NaN を除外（NOT NULL 制約違反や NaN 保存を防ぐ）。"""
+    return value is not None and not (isinstance(value, float) and math.isnan(value))
 
 
 # --------------------------------------------------------------------------- #
@@ -200,16 +206,24 @@ def _build_indices(session, *, as_of: date, base_date: date) -> dict[str, float]
         except Exception as exc:  # noqa: BLE001
             logger.warning("housing flow failed: %s", exc)
 
-    # --- 食料 ---
+    # --- 食料（incl_promo / excl_promo の 2 系列を保存。合成は excl_promo を採用）---
     food_df = _clean_df(session, FoodClean)
     if not food_df.empty:
         try:
-            fd = food.compute(
+            both = food.compute(
                 food_df, as_of=as_of, base_date=base_date, base_value=BASE_VALUE,
-                methodology_version=CURRENT_VERSION,
+                methodology_version=CURRENT_VERSION, promo_mode="both",
             )
-            _persist_index(session, fd)
-            components[FOOD_CODE] = fd["value"]
+            for mode in ("excl_promo", "incl_promo"):
+                fd = both[mode]
+                if _finite(fd.get("value")):
+                    _persist_index(session, fd)
+                else:
+                    logger.warning(
+                        "food %s skipped: value=%s (matched 不足)", mode, fd.get("value")
+                    )
+            if _finite(both["excl_promo"].get("value")):
+                components[FOOD_CODE] = both["excl_promo"]["value"]
         except Exception as exc:  # noqa: BLE001
             logger.warning("food index failed: %s", exc)
 

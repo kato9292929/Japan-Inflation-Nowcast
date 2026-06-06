@@ -41,6 +41,7 @@ dev = [
 [project.scripts]
 jin-daily = "jobs.daily:main"
 jin-fetch-weights = "scrapers.estat.weights:main"
+jin-import-csv = "jobs.import_csv:main"
 
 [build-system]
 requires = ["hatchling"]
