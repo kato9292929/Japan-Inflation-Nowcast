@@ -14,7 +14,7 @@ from datetime import UTC, datetime
 from datetime import date as Date  # 別名: フィールド名 `date` と型名の衝突を避ける
 from typing import Any
 
-from sqlalchemy import Column
+from sqlalchemy import Column, Index, UniqueConstraint
 from sqlalchemy.types import JSON
 from sqlmodel import Field, SQLModel
 
@@ -90,9 +90,19 @@ class ListingClean(SQLModel, table=True):
 # 食料 生データ / クリーン（§5, §6-2）
 # --------------------------------------------------------------------------- #
 class FoodRaw(SQLModel, table=True):
-    """食料の生取得。再配布禁止（§8）。同一 SKU をライフサイクル追跡。"""
+    """食料の生取得（日次パネル, §5, §6-2）。再配布禁止（§8）。
+
+    natural key は (source, item_id, scrape_date)。SKU ごとに 1 日 1 行を保持し、
+    任意の過去日のスナップショットを復元できる（固定基準日に対する複数日 Jevons の前提）。
+    ライフサイクル列（first_seen/last_seen/is_active）は SKU 単位の真実で、同一 SKU の
+    全行に冗長コピーされる（etl.food.upsert_raw が整合させる）。
+    """
 
     __tablename__ = "food_raw"
+    __table_args__ = (
+        UniqueConstraint("source", "item_id", "scrape_date", name="uq_food_raw_sku_date"),
+        Index("ix_food_raw_source_date", "source", "scrape_date"),
+    )
 
     id: int | None = Field(default=None, primary_key=True)
     item_id: str = Field(index=True, description="ソース内の商品ID（SKU）")
@@ -115,9 +125,17 @@ class FoodRaw(SQLModel, table=True):
 
 
 class FoodClean(SQLModel, table=True):
-    """食料の名寄せ・単価正規化・ライフサイクル済み（§5）。指数エンジンの入力。"""
+    """食料の名寄せ・単価正規化・ライフサイクル済み（日次パネル, §5）。指数エンジンの入力。
+
+    natural key は (source, item_id, scrape_date)。各 scrape_date 行を独立に保持し、
+    _snapshot(on=date) が日付ごとに正しい SKU セットを返せるようにする。
+    """
 
     __tablename__ = "food_clean"
+    __table_args__ = (
+        UniqueConstraint("source", "item_id", "scrape_date", name="uq_food_clean_sku_date"),
+        Index("ix_food_clean_source_date", "source", "scrape_date"),
+    )
 
     id: int | None = Field(default=None, primary_key=True)
     item_id: str = Field(index=True)
