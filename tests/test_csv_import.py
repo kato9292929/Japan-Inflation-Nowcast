@@ -200,7 +200,9 @@ def test_daily_run_picks_up_csv_source(fresh_db, tmp_path, monkeypatch) -> None:
         clean = s.exec(select(FoodClean).where(FoodClean.source == "estat_food")).all()
         food_idx = s.exec(
             select(IndexValue).where(
-                IndexValue.index_code == "JP-INFL-FOOD", IndexValue.date == AS_OF
+                IndexValue.index_code == "JP-INFL-FOOD",
+                IndexValue.date == AS_OF,
+                IndexValue.series_type == "food_excl_promo",
             )
         ).all()
         nowcast = s.exec(

@@ -115,9 +115,12 @@ def test_daily_run_builds_all_series(fresh_db, tmp_path) -> None:
     assert rc == 0
 
     nowcast = _rows(fresh_db, index_code="JP-INFL-NOWCAST", date=AS_OF)
-    food = _rows(fresh_db, index_code="JP-INFL-FOOD", date=AS_OF)
+    # 食料は incl_promo / excl_promo の 2 系列を保存（Phase 9）。
+    food_all = _rows(fresh_db, index_code="JP-INFL-FOOD", date=AS_OF)
+    food = _rows(fresh_db, index_code="JP-INFL-FOOD", date=AS_OF, series_type="food_excl_promo")
     housing = _rows(fresh_db, index_code="JP-INFL-HOUSING", series_type="stock_hedonic")
     assert len(nowcast) == 1
+    assert {r.series_type for r in food_all} == {"food_excl_promo", "food_incl_promo"}
     assert len(food) == 1
     assert len(housing) == 1
 
@@ -140,7 +143,10 @@ def test_daily_run_idempotent(fresh_db, tmp_path) -> None:
     daily.run(as_of=AS_OF, methodology_path=tmp_path / "m.md")
 
     assert len(_rows(fresh_db, index_code="JP-INFL-NOWCAST", date=AS_OF)) == 1
-    assert len(_rows(fresh_db, index_code="JP-INFL-FOOD", date=AS_OF)) == 1
+    assert (
+        len(_rows(fresh_db, index_code="JP-INFL-FOOD", date=AS_OF, series_type="food_excl_promo"))
+        == 1
+    )
     assert len(_rows(fresh_db, index_code="JP-INFL-HOUSING", series_type="stock_hedonic")) == 1
 
 
@@ -161,7 +167,10 @@ def test_daily_run_partial_recovery(fresh_db, tmp_path, monkeypatch) -> None:
 
     # 住居 hedonic は失敗 -> コンポーネント欠落。食料は出る。
     assert len(_rows(fresh_db, index_code="JP-INFL-HOUSING", series_type="stock_hedonic")) == 0
-    assert len(_rows(fresh_db, index_code="JP-INFL-FOOD", date=AS_OF)) == 1
+    assert (
+        len(_rows(fresh_db, index_code="JP-INFL-FOOD", date=AS_OF, series_type="food_excl_promo"))
+        == 1
+    )
     # 合成は食料のみ -> coverage は食料分だけ（< 全体）。
     nowcast = _rows(fresh_db, index_code="JP-INFL-NOWCAST", date=AS_OF)
     assert len(nowcast) == 1
