@@ -16,6 +16,7 @@
 from __future__ import annotations
 
 import re
+from collections import defaultdict
 from datetime import date
 from typing import Any
 
@@ -170,17 +171,40 @@ def _coerce_raw(record: dict[str, Any]) -> dict[str, Any]:
     }
 
 
-def upsert_raw(records: list[dict[str, Any]], *, scrape_date: date) -> int:
-    """生レコードを food_raw に冪等 upsert し、ライフサイクルを更新する。
+def _recompute_lifecycle(session: Any, source: str) -> None:
+    """当該 source の全 SKU について first_seen/last_seen/is_active を整合させる。
 
-    - 冪等キー = (source, item_id)。
-    - 新規: first_seen = last_seen = scrape_date, is_active=True。
-    - 既存: last_seen=scrape_date, is_active=True、フィールド更新（first_seen 保持）。
-    - 今回バッチに無い既存 active 行（同一 source）は is_active=False（棚落ち/取扱終了）。
+    - first_seen = SKU の全行の min(scrape_date)、last_seen = max(scrape_date)。
+    - is_active = (last_seen == その source の最も新しい scrape_date)。棚落ち SKU は False。
+    - 値は SKU 単位の真実として全行に書き戻す（冗長コピー）。
+    """
+    rows = session.exec(select(FoodRaw).where(FoodRaw.source == source)).all()
+    if not rows:
+        return
+    global_max = max(r.scrape_date for r in rows)
+    by_sku: dict[str, list[FoodRaw]] = defaultdict(list)
+    for r in rows:
+        by_sku[r.item_id].append(r)
+    for group in by_sku.values():
+        first = min(r.scrape_date for r in group)
+        last = max(r.scrape_date for r in group)
+        active = last == global_max
+        for r in group:
+            r.first_seen = first
+            r.last_seen = last
+            r.is_active = active
+            session.add(r)
+
+
+def upsert_raw(records: list[dict[str, Any]], *, scrape_date: date) -> int:
+    """生レコードを food_raw（日次パネル）に冪等 upsert し、ライフサイクルを整合させる。
+
+    - 冪等キー = (source, item_id, scrape_date)。同日同 SKU の再ランは更新（行は増えない）。
+    - 既存日付行が無ければ新規 INSERT（過去日の行は保持＝パネル化）。
+    - バッチ後、影響 source の全 SKU の first_seen/last_seen/is_active を recompute（棚落ち含む）。
 
     Returns: 取り込んだ行数（= records 件数）。
     """
-    seen_keys: set[tuple[str, str]] = set()
     sources_in_batch: set[str] = set()
     count = 0
 
@@ -188,7 +212,6 @@ def upsert_raw(records: list[dict[str, Any]], *, scrape_date: date) -> int:
         for rec in records:
             source = rec["source"]
             item_id = rec["item_id"]
-            seen_keys.add((source, item_id))
             sources_in_batch.add(source)
             fields = _coerce_raw(rec)
 
@@ -196,6 +219,7 @@ def upsert_raw(records: list[dict[str, Any]], *, scrape_date: date) -> int:
                 select(FoodRaw).where(
                     FoodRaw.source == source,
                     FoodRaw.item_id == item_id,
+                    FoodRaw.scrape_date == scrape_date,
                 )
             ).first()
 
@@ -212,26 +236,13 @@ def upsert_raw(records: list[dict[str, Any]], *, scrape_date: date) -> int:
                     )
                 )
             else:
-                existing.scrape_date = scrape_date
-                existing.last_seen = scrape_date
-                existing.is_active = True  # first_seen は保持
                 for key, value in fields.items():
                     setattr(existing, key, value)
                 session.add(existing)
             count += 1
 
-        # 棚落ち: 今回バッチに現れなかった既存 active 行を is_active=False。
         for source in sources_in_batch:
-            actives = session.exec(
-                select(FoodRaw).where(
-                    FoodRaw.source == source,
-                    FoodRaw.is_active.is_(True),
-                )
-            ).all()
-            for row in actives:
-                if (row.source, row.item_id) not in seen_keys:
-                    row.is_active = False
-                    session.add(row)
+            _recompute_lifecycle(session, source)
 
         session.commit()
 
@@ -260,11 +271,12 @@ def _row_to_dict(row: FoodRaw) -> dict[str, Any]:
 
 
 def run(*, scrape_date: date) -> int:
-    """food_raw -> food_clean を冪等に再構築する。
+    """food_raw（日次パネル）-> food_clean を冪等に投影する。
 
-    raw を読み、(source, item_id) で dedup（同一は最新 scrape_date を採用）、
-    resolve_sku_key と normalize_unit_price を付与、category と is_promo を保持して
-    clean へ upsert（同キーは更新）。同 scrape_date 再実行でも二重化しない。
+    raw の全行（全 scrape_date）を food_clean に 1:1 投影する。各 scrape_date 行を
+    独立行として保持し（dedup しない）、resolve_sku_key / normalize_unit_price を付与、
+    category・is_promo・ライフサイクル列を raw から継承する。
+    clean の冪等キーは (source, item_id, scrape_date)。同日再ランでも二重化しない。
 
     Returns: 生成/更新した clean 行数。
     """
@@ -272,27 +284,20 @@ def run(*, scrape_date: date) -> int:
     with get_session() as session:
         raw_rows = session.exec(select(FoodRaw)).all()
 
-        latest: dict[tuple[str, str], FoodRaw] = {}
         for row in raw_rows:
-            key = (row.source, row.item_id)
-            prev = latest.get(key)
-            if prev is None or row.scrape_date >= prev.scrape_date:
-                latest[key] = row
-
-        for (source, item_id), row in latest.items():
             rec = _row_to_dict(row)
             sku_key = resolve_sku_key(rec)
             unit_price = normalize_unit_price(rec)
 
             existing = session.exec(
                 select(FoodClean).where(
-                    FoodClean.source == source,
-                    FoodClean.item_id == item_id,
+                    FoodClean.source == row.source,
+                    FoodClean.item_id == row.item_id,
+                    FoodClean.scrape_date == row.scrape_date,
                 )
             ).first()
 
             payload = {
-                "scrape_date": scrape_date,
                 "first_seen": row.first_seen,
                 "last_seen": row.last_seen,
                 "is_active": row.is_active,
@@ -303,7 +308,14 @@ def run(*, scrape_date: date) -> int:
                 payload[f] = rec.get(f)
 
             if existing is None:
-                session.add(FoodClean(source=source, item_id=item_id, **payload))
+                session.add(
+                    FoodClean(
+                        source=row.source,
+                        item_id=row.item_id,
+                        scrape_date=row.scrape_date,
+                        **payload,
+                    )
+                )
             else:
                 for key, value in payload.items():
                     setattr(existing, key, value)
