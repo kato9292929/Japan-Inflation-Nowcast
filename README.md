@@ -69,6 +69,30 @@ uv run uvicorn api.app:app --reload
      `config/baskets.yaml` の `food.categories[*].weight` を**公式取得値**に書き換える
      （ハードコードしない）。利用規約・出典表示の遵守は運用者責任（§8）。
 
+### 日次パネルと定点運用（食料）
+
+食料の `food_raw` / `food_clean` は **(source, item_id, scrape_date) を natural key とする
+日次パネル**。SKU ごとに 1 日 1 行を保持し、過去日のスナップショットを失わないため、
+**固定基準日（base_date）に対する複数日 Jevons** が成立する。
+
+CSV からの取り込み・バックフィル手順（開発／運用）:
+
+```bash
+# DB をクリーンに（任意。既存 DB は gitignore）
+rm -f data/*.db
+
+# 各日の CSV を scrape_date 付きで取り込む（日次パネルに追記）
+uv run jin-import-csv data/life_basket_20260604.csv --date 2026-06-04
+uv run jin-import-csv data/life_basket_20260605.csv --date 2026-06-05
+
+# 指数を計算（base_date は .env / 環境変数 BASE_DATE で固定）
+BASE_DATE=2026-06-04 uv run jin-daily --date 2026-06-05
+```
+
+`jin-daily` は食料を `food_incl_promo` / `food_excl_promo` の 2 系列で `index_values` に
+保存する（合成 `JP-INFL-NOWCAST` は基調の `excl_promo` を採用）。matched-SKU が無い等で
+値が NaN になる系列は保存をスキップ（DB を壊さない）。
+
 ## スクレイピング規約（重要・ハード制約 §8）
 
 - `config/sources.yaml` が **空なら何も取得しない**安全既定。対象サイトは運用者が明示記入する。
