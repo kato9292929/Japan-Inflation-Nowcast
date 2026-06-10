@@ -1,0 +1,5 @@
+# macro reference fetchers（scripts/fetch_*.py）の最小依存。
+# GitHub Actions の `pip install -r requirements.txt` 用。
+pandas>=2.2
+requests>=2.32
+pyarrow>=17

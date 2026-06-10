@@ -1,0 +1,47 @@
+name: fetch-macro-monthly
+
+# マクロ参照系列（日銀 CGPI 等）を日次で取得し、parquet に diff があれば PR を切る。
+# cron: 毎日 23:00 UTC = 08:00 JST。手動実行も可（workflow_dispatch）。
+
+on:
+  schedule:
+    - cron: "23 0 * * *"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  fetch-cgpi:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install deps
+        run: pip install -r requirements.txt
+
+      - name: Fetch CGPI (latest months, idempotent upsert)
+        run: python scripts/fetch_cgpi.py
+
+      # data/ は .gitignore 配下のため force-add してから PR を作る。
+      - name: Stage parquet (force, gitignored)
+        run: git add -f data/macro_reference.parquet || true
+
+      - name: Create Pull Request on diff
+        uses: peter-evans/create-pull-request@v6
+        with:
+          add-paths: data/macro_reference.parquet
+          branch: macro/cgpi-update
+          commit-message: "chore(macro): update CGPI reference series"
+          title: "chore(macro): update CGPI reference series"
+          body: |
+            Automated CGPI (日銀 企業物価指数・総合) monthly reference update.
+
+            Source: https://www.boj.or.jp/statistics/pi/cgpi_release/index.htm/
+            派生集計（level / yoy_pct, flash/final）を data/macro_reference.parquet に upsert。
+          labels: macro-reference
