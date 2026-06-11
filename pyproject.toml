@@ -24,6 +24,7 @@ dependencies = [
     "scikit-learn>=1.5",
     "requests>=2.32",
     "pyarrow>=17",
+    "lxml>=5.0",
 ]
 
 [project.optional-dependencies]

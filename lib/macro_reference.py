@@ -4,15 +4,17 @@
 parquet は .gitignore 配下（GitHub Actions が更新して PR で反映）。
 
 スキーマ（columns）:
-    source         : str  例 "boj"
-    series_id      : str  例 "cgpi_total"
-    period         : str  "YYYY-MM"
+    source         : str       例 "boj"
+    series_id      : str       例 "cgpi_total"
+    period         : date       月初日（YYYY-MM-01）。月次の代表日。
     value          : float
-    metric         : str  "level" | "yoy_pct"
-    release_type   : str  "flash"（速報） | "final"（確報）
-    fetched_at     : str  ISO8601 UTC
+    metric         : str       "level" | "yoy_pct"
+    release_type   : str       取得経路/版（例 "mtshtml"）。日銀は直近月を遡及改訂(r)する
+                               ため、同一自然キーの再取得で値が上書きされる設計。
+    fetched_at     : str       ISO8601 UTC
 
-自然キー: (source, series_id, period, metric, release_type)。upsert は同キーを置換する。
+自然キー: (source, series_id, period, metric, release_type)。upsert は同キーを置換する
+（= 改訂値で上書き）。
 """
 
 from __future__ import annotations
@@ -32,9 +34,17 @@ NATURAL_KEY = ["source", "series_id", "period", "metric", "release_type"]
 
 def empty_frame() -> pd.DataFrame:
     """空のスキーマ DataFrame。"""
-    return pd.DataFrame({c: pd.Series(dtype="object") for c in COLUMNS}).astype(
-        {"value": "float64"}
-    )
+    df = pd.DataFrame({c: pd.Series(dtype="object") for c in COLUMNS})
+    df["value"] = df["value"].astype("float64")
+    df["period"] = pd.to_datetime(df["period"])  # datetime64[ns]
+    return df
+
+
+def _normalize_period(df: pd.DataFrame) -> pd.DataFrame:
+    """period 列を月初日の datetime64 に正規化する。"""
+    if "period" in df.columns:
+        df["period"] = pd.to_datetime(df["period"]).dt.normalize()
+    return df
 
 
 def load(path: Path = PARQUET_PATH) -> pd.DataFrame:
@@ -46,7 +56,7 @@ def load(path: Path = PARQUET_PATH) -> pd.DataFrame:
     for c in COLUMNS:
         if c not in df.columns:
             df[c] = pd.NA
-    return df[COLUMNS]
+    return _normalize_period(df[COLUMNS])
 
 
 def now_iso() -> str:
@@ -66,7 +76,7 @@ def upsert(rows: pd.DataFrame, *, path: Path = PARQUET_PATH) -> int:
     for c in COLUMNS:
         if c not in rows.columns:
             raise ValueError(f"upsert: 必須カラム欠落 {c}")
-    rows = rows[COLUMNS]
+    rows = _normalize_period(rows[COLUMNS])
 
     combined = pd.concat([load(path), rows], ignore_index=True)
     # 後勝ち（新しい rows を優先）で自然キー重複を排除。
@@ -94,13 +104,12 @@ def get_latest_value(
     sub = df[(df["series_id"] == series_id) & (df["metric"] == metric)].copy()
     if sub.empty:
         return None
-    sub["_final"] = (sub["release_type"] == "final").astype(int)
-    sub = sub.sort_values(["period", "fetched_at", "_final"], ascending=[True, True, True])
+    sub = sub.sort_values(["period", "fetched_at"], ascending=[True, True])
     row = sub.iloc[-1]
     return {
         "source": row["source"],
         "series_id": row["series_id"],
-        "period": row["period"],
+        "period": pd.Timestamp(row["period"]).date(),
         "value": float(row["value"]),
         "metric": row["metric"],
         "release_type": row["release_type"],
