@@ -303,6 +303,13 @@ def run(
             res = publish_latest(session)
         logger.info("oracle: %s (%s)", res.get("status"), res.get("reason", ""))
 
+    # 配信用 JSON を書き出す（osd の x402 endpoint が読む。観測値のみ・予測なし）。
+    with _Stage("export-public"):
+        from jobs.export_public import write_public_json
+
+        payload = write_public_json(base_date=base_date)
+        logger.info("export-public: %d series rows", len(payload.get("series", [])))
+
     logger.info("daily run done: as_of=%s components=%s", as_of, sorted(components))
     return 0
 
