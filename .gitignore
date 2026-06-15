@@ -15,11 +15,12 @@ dist/
 .env.*
 !.env.example
 
-# ローカル DB / 生データ（再配布禁止 §8）
+# ローカル DB / 生データ（再配布禁止 §8）。/data/ はリポジトリ直下のみ無視
+# （src/data/ の配信用 JSON は配信層が import するため追跡対象）。
 *.db
 *.sqlite
 *.sqlite3
-data/
+/data/
 raw/
 
 # テスト・ツール
@@ -32,3 +33,8 @@ htmlcov/
 .DS_Store
 .idea/
 .vscode/
+
+# Node / Next.js (x402 serving layer)
+node_modules/
+.next/
+next-env.d.ts
