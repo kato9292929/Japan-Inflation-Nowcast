@@ -1,0 +1,30 @@
+:root {
+  --bg: #0c0d0f;
+  --panel: #141518;
+  --text: #e9e6dd;
+  --dim: #8f8b80;
+  --faint: #56534b;
+  --line: rgba(233, 230, 221, 0.09);
+  --warm: #e06a6a; /* 上昇 */
+  --cold: #5aa9e6; /* 下落 */
+  --signal: #c8a24b; /* 金 */
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+a {
+  color: inherit;
+}

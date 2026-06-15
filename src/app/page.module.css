@@ -1,0 +1,222 @@
+.page {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 72px 24px 96px;
+}
+
+.display {
+  font-family: "Fraunces", Georgia, "Times New Roman", serif;
+}
+
+/* 1. eyebrow */
+.eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--dim);
+}
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--signal);
+  box-shadow: 0 0 0 0 rgba(200, 162, 75, 0.6);
+  animation: pulse 2.4s ease-out infinite;
+}
+@keyframes pulse {
+  0% { box-shadow: 0 0 0 0 rgba(200, 162, 75, 0.55); }
+  70% { box-shadow: 0 0 0 9px rgba(200, 162, 75, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(200, 162, 75, 0); }
+}
+
+/* 2. h1 */
+.h1 {
+  font-family: "Fraunces", Georgia, serif;
+  font-weight: 900;
+  font-size: clamp(40px, 7.5vw, 84px);
+  line-height: 1.02;
+  letter-spacing: -0.01em;
+  margin: 22px 0 0;
+}
+.kansoku {
+  font-style: italic;
+  font-weight: 900;
+  color: var(--signal);
+}
+
+/* 3. lede */
+.lede {
+  max-width: 60ch;
+  margin: 22px 0 0;
+  font-size: 15px;
+  line-height: 1.85;
+  color: var(--dim);
+}
+
+/* 4. instrument panel */
+.panel {
+  margin: 44px 0 0;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background-color: var(--panel);
+  background-image: repeating-linear-gradient(
+    to bottom,
+    transparent 0,
+    transparent 33px,
+    var(--line) 33px,
+    var(--line) 34px
+  );
+  overflow: hidden;
+}
+.panelBar {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--line);
+  font-size: 11.5px;
+  letter-spacing: 0.08em;
+  color: var(--faint);
+  text-transform: uppercase;
+}
+.gauges {
+  display: flex;
+}
+.gauge {
+  flex: 1;
+  padding: 26px 20px 28px;
+  border-right: 1px solid var(--line);
+}
+.gauge:last-child {
+  border-right: none;
+}
+.gaugeLabel {
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--faint);
+}
+.gaugeVal {
+  font-family: "Fraunces", Georgia, serif;
+  font-weight: 600;
+  font-size: clamp(34px, 5.4vw, 52px);
+  line-height: 1.05;
+  margin: 10px 0 6px;
+  font-variant-numeric: tabular-nums;
+}
+.gaugeDelta {
+  font-size: 12.5px;
+  color: var(--text);
+}
+.gaugeSub {
+  margin-top: 4px;
+  font-size: 11.5px;
+  color: var(--faint);
+}
+.cold { color: var(--cold); }
+.warm { color: var(--warm); }
+.gold { color: var(--signal); }
+
+/* sparkline */
+.spark {
+  padding: 18px 20px 16px;
+  border-top: 1px solid var(--line);
+}
+.sparkSvg {
+  display: block;
+  width: 100%;
+  height: 88px;
+}
+.sparkAxis {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 6px;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--faint);
+}
+
+/* 5. endpoints */
+.endpoints {
+  margin: 48px 0 0;
+  border-top: 1px solid var(--line);
+}
+.endpointRow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 2px;
+  border-bottom: 1px solid var(--line);
+}
+.epMain {
+  min-width: 0;
+}
+.epPath {
+  font-size: 14.5px;
+  font-weight: 500;
+  color: var(--text);
+}
+.epPath .verb {
+  color: var(--faint);
+  margin-right: 8px;
+}
+.epDesc {
+  margin-top: 5px;
+  font-size: 12.5px;
+  line-height: 1.6;
+  color: var(--dim);
+}
+.epPrice {
+  flex: none;
+  font-family: "Fraunces", Georgia, serif;
+  font-weight: 600;
+  font-size: 15px;
+  white-space: nowrap;
+}
+
+/* 6. note */
+.note {
+  margin: 40px 0 0;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 18px 20px;
+}
+.note p {
+  margin: 0;
+  padding: 7px 0;
+  font-size: 12.5px;
+  line-height: 1.7;
+  color: var(--dim);
+  border-bottom: 1px dashed var(--line);
+}
+.note p:last-child {
+  border-bottom: none;
+}
+
+/* 7. footer */
+.footer {
+  margin: 56px 0 0;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  color: var(--faint);
+}
+
+@media (max-width: 640px) {
+  .page { padding: 48px 18px 72px; }
+  .gauges { flex-direction: column; }
+  .gauge { border-right: none; border-bottom: 1px solid var(--line); }
+  .gauge:last-child { border-bottom: none; }
+  .endpointRow { flex-direction: column; gap: 8px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dot { animation: none; }
+}
