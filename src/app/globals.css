@@ -20,7 +20,7 @@ body {
   padding: 0;
   background: var(--bg);
   color: var(--text);
-  font-family: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-family: "Outfit", "Helvetica Neue", Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
