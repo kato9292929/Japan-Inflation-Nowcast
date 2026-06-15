@@ -3,8 +3,9 @@
 検証済みデータソース（2026-06-11 確認）:
 
   ソース A（primary）: 日銀 主要時系列統計データ表（HTML）
-    URL: https://www.stat-search.boj.or.jp/ssi/mtshtml/pr01_m_1.html （日本語）
-         https://www.stat-search.boj.or.jp/ssi/mtshtml/pr01_m_1_en.html （英語）
+    URL: https://www.stat-search.boj.or.jp/ssi/mtshtml/pr01_m_1_en.html （英語・UTF-8、既定）
+         https://www.stat-search.boj.or.jp/ssi/mtshtml/pr01_m_1.html （日本語・Shift-JIS）
+    日本語版は Shift-JIS で文字化けし parse が落ちるため、UTF-8 の英語版を使う。系列コードは同一。
     認証不要・静的 URL。公表日当日に更新。単一の HTML テーブルで、ヘッダ部に
     「Name of time-series / Series code / Unit / Start / End / Last update」のメタ行が
     縦に並び、その下に YYYY/MM 行ラベルの月次データが続く。欠損は文字列 "ND"。
@@ -54,7 +55,7 @@ SOURCE = "boj"
 SERIES_ID = "cgpi_total"
 RELEASE_TYPE = "mtshtml"  # 取得経路を release_type に記録（速報/確報の区別は日銀側で訂正値(r)管理）
 
-MTSHTML_URL = "https://www.stat-search.boj.or.jp/ssi/mtshtml/pr01_m_1.html"
+MTSHTML_URL = "https://www.stat-search.boj.or.jp/ssi/mtshtml/pr01_m_1_en.html"
 BULK_ZIP_URL = "https://www.stat-search.boj.or.jp/info/cgpi_m_jp.zip"
 
 # 国内企業物価指数 総平均（2020=100）と前年比(%)の系列コード。
