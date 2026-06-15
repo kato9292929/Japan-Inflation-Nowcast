@@ -1,0 +1,442 @@
+{
+  "source": "japan-inflation-nowcast",
+  "base_date": "2026-06-04",
+  "generated_at": "2026-06-15T13:04:51.937366+00:00",
+  "methodology": "Jevons elementary (matched-SKU geometric mean) + 10-category equal-weight upper aggregation; excl_promo removes SKUs flagged promo on base or current day; unit prices canonicalized (¥/100g, ¥/100ml, ¥/unit); base_date fixed.",
+  "coverage_note": "single store, Tokyo metro delivery area, mid-tier supermarket (Life). Not nationally representative.",
+  "license": "observation data; derived aggregates only; see repo",
+  "latest": {
+    "source": "japan-inflation-nowcast",
+    "as_of": "2026-06-09",
+    "base_date": "2026-06-04",
+    "index": {
+      "excl_promo": 100.82,
+      "incl_promo": 98.54
+    },
+    "matched_sku": {
+      "excl": 46,
+      "incl": 58
+    },
+    "upstream": {
+      "cgpi_yoy_pct": null,
+      "cgpi_as_of": null
+    },
+    "methodology": "Jevons elementary (matched-SKU geometric mean) + 10-category equal-weight upper aggregation; excl_promo removes SKUs flagged promo on base or current day; unit prices canonicalized (¥/100g, ¥/100ml, ¥/unit); base_date fixed.",
+    "coverage_note": "single store, Tokyo metro delivery area, mid-tier supermarket (Life). Not nationally representative.",
+    "license": "observation data; derived aggregates only; see repo",
+    "source_timestamp": "2026-06-15T13:04:51.937366+00:00"
+  },
+  "series": [
+    {
+      "date": "2026-06-04",
+      "excl": 100.0,
+      "incl": 100.0,
+      "m_excl": null,
+      "m_incl": null
+    },
+    {
+      "date": "2026-06-05",
+      "excl": 100.82,
+      "incl": 99.26,
+      "m_excl": 51,
+      "m_incl": 66
+    },
+    {
+      "date": "2026-06-06",
+      "excl": 100.82,
+      "incl": 98.79,
+      "m_excl": 54,
+      "m_incl": 68
+    },
+    {
+      "date": "2026-06-07",
+      "excl": 100.59,
+      "incl": 100.54,
+      "m_excl": 52,
+      "m_incl": 62
+    },
+    {
+      "date": "2026-06-08",
+      "excl": 100.8,
+      "incl": 101.4,
+      "m_excl": 56,
+      "m_incl": 63
+    },
+    {
+      "date": "2026-06-09",
+      "excl": 100.82,
+      "incl": 98.54,
+      "m_excl": 46,
+      "m_incl": 58
+    }
+  ],
+  "movers_by_date": {
+    "2026-06-05": [
+      {
+        "category": "野菜・海藻",
+        "item": "国内産 小松菜 1袋",
+        "pct": -38.4,
+        "promo_tag": true,
+        "note": "1 day(s) at this level"
+      },
+      {
+        "category": "果物",
+        "item": "サンゴールドキウイ 1個",
+        "pct": -36.5,
+        "promo_tag": true,
+        "note": "1 day(s) at this level"
+      },
+      {
+        "category": "穀類",
+        "item": "ヤマザキ ロイヤルブレッド 5枚",
+        "pct": 31.6,
+        "promo_tag": false,
+        "note": "1 day(s) at this level"
+      },
+      {
+        "category": "穀類",
+        "item": "ヤマザキ ロイヤルブレッド 6枚",
+        "pct": 31.6,
+        "promo_tag": false,
+        "note": "1 day(s) at this level"
+      },
+      {
+        "category": "乳卵類",
+        "item": "森永 おいしい牛乳 900ml",
+        "pct": 21.6,
+        "promo_tag": false,
+        "note": "1 day(s) at this level"
+      },
+      {
+        "category": "野菜・海藻",
+        "item": "国内産 にら 1束",
+        "pct": -19.8,
+        "promo_tag": true,
+        "note": "1 day(s) at this level"
+      },
+      {
+        "category": "野菜・海藻",
+        "item": "国内産 きゅうり バラ 1本",
+        "pct": -18.6,
+        "promo_tag": true,
+        "note": "1 day(s) at this level"
+      },
+      {
+        "category": "野菜・海藻",
+        "item": "国内産 キャベツ 1玉",
+        "pct": 15.2,
+        "promo_tag": false,
+        "note": "1 day(s) at this level"
+      },
+      {
+        "category": "穀類",
+        "item": "マルちゃん あったかごはん 200g×5",
+        "pct": -11.1,
+        "promo_tag": true,
+        "note": "1 day(s) at this level"
+      },
+      {
+        "category": "乳卵類",
+        "item": "明治 おいしい牛乳 900ml",
+        "pct": -7.4,
+        "promo_tag": true,
+        "note": "1 day(s) at this level"
+      },
+      {
+        "category": "飲料",
+        "item": "GREEN DAKARA やさしい麦茶 2L",
+        "pct": -6.0,
+        "promo_tag": true,
+        "note": "1 day(s) at this level"
+      },
+      {
+        "category": "魚介類",
+        "item": "MEL認証 生銀さけ 養殖 2切 130g目安",
+        "pct": 5.6,
+        "promo_tag": false,
+        "note": "1 day(s) at this level"
+      },
+      {
+        "category": "飲料",
+        "item": "伊藤園 健康ミネラルむぎ茶 650ml",
+        "pct": -4.7,
+        "promo_tag": true,
+        "note": "1 day(s) at this level"
+      }
+    ],
+    "2026-06-06": [
+      {
+        "category": "果物",
+        "item": "アボカド 1個",
+        "pct": -50.2,
+        "promo_tag": true,
+        "note": "1 day(s) at this level"
+      },
+      {
+        "category": "果物",
+        "item": "サンゴールドキウイ 1個",
+        "pct": -36.5,
+        "promo_tag": true,
+        "note": "2 day(s) at this level"
+      },
+      {
+        "category": "穀類",
+        "item": "ヤマザキ ロイヤルブレッド 5枚",
+        "pct": 31.6,
+        "promo_tag": false,
+        "note": "2 day(s) at this level"
+      },
+      {
+        "category": "穀類",
+        "item": "ヤマザキ ロイヤルブレッド 6枚",
+        "pct": 31.6,
+        "promo_tag": false,
+        "note": "2 day(s) at this level"
+      },
+      {
+        "category": "野菜・海藻",
+        "item": "国内産 レタス 1玉",
+        "pct": -28.1,
+        "promo_tag": true,
+        "note": "1 day(s) at this level"
+      },
+      {
+        "category": "乳卵類",
+        "item": "森永 おいしい牛乳 900ml",
+        "pct": 21.6,
+        "promo_tag": false,
+        "note": "2 day(s) at this level"
+      },
+      {
+        "category": "野菜・海藻",
+        "item": "国内産 キャベツ 1玉",
+        "pct": 15.2,
+        "promo_tag": false,
+        "note": "2 day(s) at this level"
+      },
+      {
+        "category": "穀類",
+        "item": "マルちゃん あったかごはん 200g×5",
+        "pct": -11.1,
+        "promo_tag": true,
+        "note": "2 day(s) at this level"
+      },
+      {
+        "category": "乳卵類",
+        "item": "明治 おいしい牛乳 900ml",
+        "pct": -7.4,
+        "promo_tag": true,
+        "note": "2 day(s) at this level"
+      },
+      {
+        "category": "飲料",
+        "item": "GREEN DAKARA やさしい麦茶 2L",
+        "pct": -6.0,
+        "promo_tag": true,
+        "note": "2 day(s) at this level"
+      },
+      {
+        "category": "魚介類",
+        "item": "MEL認証 生銀さけ 養殖 2切 130g目安",
+        "pct": 5.6,
+        "promo_tag": false,
+        "note": "2 day(s) at this level"
+      },
+      {
+        "category": "飲料",
+        "item": "伊藤園 健康ミネラルむぎ茶 650ml",
+        "pct": -4.7,
+        "promo_tag": true,
+        "note": "2 day(s) at this level"
+      }
+    ],
+    "2026-06-07": [
+      {
+        "category": "穀類",
+        "item": "ヤマザキ ロイヤルブレッド 5枚",
+        "pct": 31.6,
+        "promo_tag": false,
+        "note": "3 day(s) at this level"
+      },
+      {
+        "category": "穀類",
+        "item": "ヤマザキ ロイヤルブレッド 6枚",
+        "pct": 31.6,
+        "promo_tag": false,
+        "note": "3 day(s) at this level"
+      },
+      {
+        "category": "大豆製品",
+        "item": "スマイルライフ 絹とうふ 150g×3",
+        "pct": -24.0,
+        "promo_tag": true,
+        "note": "1 day(s) at this level"
+      },
+      {
+        "category": "乳卵類",
+        "item": "森永 おいしい牛乳 900ml",
+        "pct": 21.6,
+        "promo_tag": false,
+        "note": "3 day(s) at this level"
+      },
+      {
+        "category": "野菜・海藻",
+        "item": "国内産 キャベツ 1玉",
+        "pct": 15.2,
+        "promo_tag": false,
+        "note": "3 day(s) at this level"
+      },
+      {
+        "category": "魚介類",
+        "item": "MEL認証 生銀さけ 養殖 2切 130g目安",
+        "pct": 11.2,
+        "promo_tag": false,
+        "note": "1 day(s) at this level"
+      },
+      {
+        "category": "穀類",
+        "item": "マルちゃん あったかごはん 200g×5",
+        "pct": -11.1,
+        "promo_tag": true,
+        "note": "3 day(s) at this level"
+      },
+      {
+        "category": "乳卵類",
+        "item": "明治 おいしい牛乳 900ml",
+        "pct": -7.4,
+        "promo_tag": false,
+        "note": "3 day(s) at this level"
+      },
+      {
+        "category": "飲料",
+        "item": "GREEN DAKARA やさしい麦茶 2L",
+        "pct": -7.1,
+        "promo_tag": false,
+        "note": "1 day(s) at this level"
+      },
+      {
+        "category": "飲料",
+        "item": "伊藤園 健康ミネラルむぎ茶 650ml",
+        "pct": -4.7,
+        "promo_tag": true,
+        "note": "3 day(s) at this level"
+      }
+    ],
+    "2026-06-08": [
+      {
+        "category": "穀類",
+        "item": "ヤマザキ ロイヤルブレッド 5枚",
+        "pct": 31.6,
+        "promo_tag": false,
+        "note": "4 day(s) at this level"
+      },
+      {
+        "category": "穀類",
+        "item": "ヤマザキ ロイヤルブレッド 6枚",
+        "pct": 31.6,
+        "promo_tag": false,
+        "note": "4 day(s) at this level"
+      },
+      {
+        "category": "乳卵類",
+        "item": "森永 おいしい牛乳 900ml",
+        "pct": 21.6,
+        "promo_tag": false,
+        "note": "4 day(s) at this level"
+      },
+      {
+        "category": "野菜・海藻",
+        "item": "国内産 キャベツ 1玉",
+        "pct": 15.2,
+        "promo_tag": false,
+        "note": "4 day(s) at this level"
+      },
+      {
+        "category": "野菜・海藻",
+        "item": "国内産 レタス 1玉",
+        "pct": -11.5,
+        "promo_tag": false,
+        "note": "1 day(s) at this level"
+      },
+      {
+        "category": "魚介類",
+        "item": "MEL認証 生銀さけ 養殖 2切 130g目安",
+        "pct": 11.2,
+        "promo_tag": false,
+        "note": "2 day(s) at this level"
+      },
+      {
+        "category": "野菜・海藻",
+        "item": "国内産 トマト 袋 3〜5玉",
+        "pct": 11.1,
+        "promo_tag": false,
+        "note": "1 day(s) at this level"
+      }
+    ],
+    "2026-06-09": [
+      {
+        "category": "果物",
+        "item": "アボカド 1個",
+        "pct": -50.2,
+        "promo_tag": true,
+        "note": "1 day(s) at this level"
+      },
+      {
+        "category": "果物",
+        "item": "サンゴールドキウイ 1個",
+        "pct": -37.6,
+        "promo_tag": true,
+        "note": "1 day(s) at this level"
+      },
+      {
+        "category": "穀類",
+        "item": "ヤマザキ ロイヤルブレッド 5枚",
+        "pct": 31.6,
+        "promo_tag": false,
+        "note": "5 day(s) at this level"
+      },
+      {
+        "category": "穀類",
+        "item": "ヤマザキ ロイヤルブレッド 6枚",
+        "pct": 31.6,
+        "promo_tag": false,
+        "note": "5 day(s) at this level"
+      },
+      {
+        "category": "乳卵類",
+        "item": "森永 おいしい牛乳 900ml",
+        "pct": 21.6,
+        "promo_tag": false,
+        "note": "5 day(s) at this level"
+      },
+      {
+        "category": "野菜・海藻",
+        "item": "国内産 トマト 袋 3〜5玉",
+        "pct": -16.8,
+        "promo_tag": true,
+        "note": "1 day(s) at this level"
+      },
+      {
+        "category": "野菜・海藻",
+        "item": "国内産 キャベツ 1玉",
+        "pct": 15.2,
+        "promo_tag": false,
+        "note": "5 day(s) at this level"
+      },
+      {
+        "category": "肉類",
+        "item": "牛肉こま切れ 210g",
+        "pct": -4.5,
+        "promo_tag": true,
+        "note": "1 day(s) at this level"
+      },
+      {
+        "category": "肉類",
+        "item": "牛肉こま切れ 牛丼用 150g",
+        "pct": -4.3,
+        "promo_tag": true,
+        "note": "1 day(s) at this level"
+      }
+    ]
+  }
+}

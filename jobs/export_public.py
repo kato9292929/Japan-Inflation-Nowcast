@@ -197,6 +197,7 @@ def build_public_payload(session: Any, *, base_date: date | None = None) -> dict
         base_date = get_settings().base_date
 
     movers = _movers_by_date(panel, base_date)
+    generated_at = datetime.now(UTC).isoformat()
     if latest is not None:
         latest = {
             "source": SOURCE,
@@ -208,12 +209,13 @@ def build_public_payload(session: Any, *, base_date: date | None = None) -> dict
             "methodology": METHODOLOGY,
             "coverage_note": COVERAGE_NOTE,
             "license": LICENSE,
+            "source_timestamp": generated_at,
         }
 
     return {
         "source": SOURCE,
         "base_date": base_date.isoformat(),
-        "generated_at": datetime.now(UTC).isoformat(),
+        "generated_at": generated_at,
         "methodology": METHODOLOGY,
         "coverage_note": COVERAGE_NOTE,
         "license": LICENSE,
