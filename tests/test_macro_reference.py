@@ -45,6 +45,29 @@ def test_parse_mtshtml_known_values() -> None:
     assert by_period.loc["2025-04", "yoy_pct"] == 3.9
 
 
+def test_norm_code_handles_backslash_keeps_percent() -> None:
+    import scripts.fetch_cgpi as fetch
+
+    # 実ページ表記（`_` の前にバックスラッシュ、全角/半角空白あり）を正規化。
+    assert fetch._norm_code("PR01'PRCG20\\_2200000000") == "PR01'PRCG20_2200000000"
+    assert fetch._norm_code(" PR01'PRCG20\\_2200000000%　") == "PR01'PRCG20_2200000000%"
+    # % は保持され、level と yoy は別物のまま（取り違え防止）。
+    assert fetch._norm_code(fetch.LEVEL_CODE) != fetch._norm_code(fetch.YOY_CODE)
+    assert fetch._norm_code(fetch.YOY_CODE).endswith("%")
+    assert not fetch._norm_code(fetch.LEVEL_CODE).endswith("%")
+
+
+def test_parse_does_not_swap_level_and_yoy() -> None:
+    """level（2020=100, ~100超）と yoy（%, 小さい）を取り違えていないこと。"""
+    import scripts.fetch_cgpi as fetch
+
+    parsed = fetch.parse_mtshtml_table(_html())
+    assert (parsed["level"] > 100).all()      # 指数水準
+    assert (parsed["yoy_pct"].abs() < 20).all()  # 前年比 %
+    # 同月で level != yoy（同じ列を二重に拾っていない）。
+    assert (parsed["level"] != parsed["yoy_pct"]).all()
+
+
 # --------------------------------------------------------------------------- #
 # upsert + get_latest_value（period は date 月初日）
 # --------------------------------------------------------------------------- #

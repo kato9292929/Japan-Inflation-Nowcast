@@ -83,6 +83,16 @@ def download_cgpi(url: str = MTSHTML_URL, *, timeout: float = 30.0) -> str:
     return raw.decode("utf-8", errors="replace")
 
 
+def _norm_code(s: str) -> str:
+    """系列コードの表記ズレを吸収（バックスラッシュ・半角/全角空白を除去）。
+
+    日銀ページは "PR01'PRCG20\\_2200000000" のように `_` の前にバックスラッシュを置く。
+    照合前に両辺を正規化して完全一致(==)で比べる。`%` は **除去しない**（level と yoy は
+    `%` の有無だけが違うため）。
+    """
+    return s.replace("\\", "").replace(" ", "").replace("　", "").strip()
+
+
 def _to_num(cell: object) -> float:
     """セル文字列を float に。"ND" 等の欠損トークンは NaN。"""
     s = str(cell).strip().replace(",", "")
@@ -117,11 +127,11 @@ def parse_mtshtml_table(html: str) -> pd.DataFrame:
         if code_row_idx is None:
             continue
 
-        codes = {str(df.iat[code_row_idx, c]).strip(): c for c in range(df.shape[1])}
-        if LEVEL_CODE not in codes or YOY_CODE not in codes:
+        codes = {_norm_code(str(df.iat[code_row_idx, c])): c for c in range(df.shape[1])}
+        if _norm_code(LEVEL_CODE) not in codes or _norm_code(YOY_CODE) not in codes:
             continue
-        level_col = codes[LEVEL_CODE]
-        yoy_col = codes[YOY_CODE]
+        level_col = codes[_norm_code(LEVEL_CODE)]
+        yoy_col = codes[_norm_code(YOY_CODE)]
 
         records = []
         for i in range(len(df)):
