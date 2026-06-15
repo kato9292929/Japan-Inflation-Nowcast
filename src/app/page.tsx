@@ -30,17 +30,12 @@ export default function Home() {
     <main className={styles.page}>
       <p className={styles.eyebrow}>
         <span className={styles.dot} aria-hidden />
-        Japan Inflation Nowcast · x402 API
+        日次食品物価インデックス
       </p>
 
       <h1 className={styles.h1}>
-        店頭の値段を、毎日<span className={styles.kansoku}>観測</span>する。
+        Japan Inflation Nowcast <span className={styles.gold}>× x402</span>
       </h1>
-
-      <p className={styles.lede}>
-        日本のスーパーの棚値を人手で毎日観測し、日次の食品物価指数にする。予測ではなく観測。
-        上流の企業物価とつないで、エージェントが per-call で叩ける形で配信する。
-      </p>
 
       {/* 計器パネル */}
       <section className={styles.panel} aria-label="JP-INFL-FOOD instrument panel">
@@ -109,13 +104,6 @@ export default function Home() {
           </div>
           <div className={`${styles.epPrice} ${styles.gold}`}>$0.02</div>
         </div>
-      </section>
-
-      {/* note */}
-      <section className={styles.note}>
-        <p>返すのは観測値・方法論・movers のみ。確率や予測値は返さない。</p>
-        <p>指数は base 2026-06-04 固定の Jevons + 10 カテゴリ等ウェイト。</p>
-        <p>単一店舗・東京メトロ配送圏・中価格帯スーパーの観測。全国を代表するものではない。</p>
       </section>
 
       <footer className={styles.footer}>
