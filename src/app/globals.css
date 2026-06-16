@@ -1,11 +1,14 @@
 :root {
-  --paper: #f4f0e6; /* 生成りの紙 */
-  --paper-2: #efe9db; /* わずかに沈めた紙（パネル地） */
-  --ink: #22201c; /* 墨 */
-  --ink-dim: #6b665b; /* 薄墨 */
-  --ink-faint: #9b9484; /* 罫の文字 */
-  --rule: rgba(34, 32, 28, 0.1); /* 罫線 */
-  --vermilion: #c0392b; /* 朱 — アクセントは1色のみ */
+  --bg: #0c0d0f; /* 近黒 */
+  --panel: #141518;
+  --panel-2: #17181c;
+  --text: #e9e6dd;
+  --dim: #8f8b80;
+  --faint: #56534b;
+  --line: rgba(233, 230, 221, 0.09);
+  --gold: #c8a24b; /* ワードマーク / ブランドのグロー */
+  --green: #5fae7e; /* 価格・下降・x402 副アクセント */
+  --red: #e06a6a; /* 上昇 */
 }
 
 * {
@@ -16,29 +19,17 @@ html,
 body {
   margin: 0;
   padding: 0;
-  color: var(--ink);
-  background-color: var(--paper);
-  /* うっすらと横罫（ノートの地紋） */
-  background-image: repeating-linear-gradient(
-    to bottom,
-    transparent 0,
-    transparent 33px,
-    var(--rule) 33px,
-    var(--rule) 34px
-  );
-  font-family: "Noto Serif JP", "Hiragino Mincho ProN", "Yu Mincho", serif;
-  font-weight: 400;
+  background: var(--bg);
+  color: var(--text);
+  font-family: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
 
 a {
-  color: var(--vermilion);
-  text-underline-offset: 3px;
-  text-decoration-thickness: 1px;
+  color: inherit;
 }
 
-/* 数値・指数・コードは等幅で読み取り値として差別化 */
 .mono {
   font-family: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
   font-variant-numeric: tabular-nums;

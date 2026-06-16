@@ -2,9 +2,9 @@ import type { ReactNode } from "react";
 import "./globals.css";
 
 export const metadata = {
-  title: "Japan Inflation Nowcast — 観測日誌",
+  title: "Japan Inflation Nowcast — x402 API",
   description:
-    "東京近郊の単一スーパー店頭価格を毎日観測した、固定基準 Jevons の日次食品物価指数。予測ではなく観測。x402 で per-call 配信。",
+    "東京近郊・単一店舗の店頭食品価格を毎日観測した、固定基準 Jevons の日次食品物価指数。予測ではなく観測。x402 で per-call 配信。",
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
@@ -14,7 +14,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link
-          href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,900;1,9..144,600&family=IBM+Plex+Mono:wght@400;500&display=swap"
           rel="stylesheet"
         />
       </head>
