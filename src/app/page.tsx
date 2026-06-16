@@ -1,16 +1,17 @@
 import styles from "./page.module.css";
+import { getJinLatest } from "@/lib/jin-data";
+import jin from "@/data/jin_public.json";
+import upstream from "@/data/upstream.json";
 
-// excl_promo 8 日間（Day-1..Day-8）。観測値（予測ではない）。
-const SPARK = [100.0, 100.8157, 100.8157, 100.5871, 100.7978, 100.8157, 99.5403, 99.5923];
-
+// 末端の観測トレイル（excl_promo）。観測値のみ・予測ではない。固定基準 100。
 function Sparkline({ data }: { data: number[] }) {
-  const W = 600;
-  const H = 88;
-  const pad = 12;
+  const W = 560;
+  const H = 64;
+  const pad = 10;
   const min = Math.min(...data, 100);
   const max = Math.max(...data, 100);
   const span = max - min || 1;
-  const x = (i: number) => (i / (data.length - 1)) * W;
+  const x = (i: number) => pad + (i / (data.length - 1)) * (W - 2 * pad);
   const y = (v: number) => H - pad - ((v - min) / span) * (H - 2 * pad);
   const pts = data.map((v, i) => `${x(i).toFixed(1)},${y(v).toFixed(1)}`).join(" ");
   const baseY = y(100).toFixed(1);
@@ -18,92 +19,132 @@ function Sparkline({ data }: { data: number[] }) {
   const lastY = y(data[data.length - 1]).toFixed(1);
   return (
     <svg className={styles.sparkSvg} viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none" aria-hidden>
-      <line x1="0" y1={baseY} x2={W} y2={baseY} stroke="var(--faint)" strokeWidth="1" strokeDasharray="3 4" />
-      <polyline points={pts} fill="none" stroke="var(--cold)" strokeWidth="1.6" strokeLinejoin="round" strokeLinecap="round" />
-      <circle cx={lastX} cy={lastY} r="3.4" fill="var(--signal)" />
+      <line x1={pad} y1={baseY} x2={W - pad} y2={baseY} stroke="var(--rule)" strokeWidth="1" strokeDasharray="2 4" />
+      <polyline points={pts} fill="none" stroke="var(--ink)" strokeWidth="1.4" strokeLinejoin="round" strokeLinecap="round" />
+      <circle cx={lastX} cy={lastY} r="3.2" fill="var(--vermilion)" />
     </svg>
   );
 }
 
 export default function Home() {
+  const latest = getJinLatest();
+  const trail = jin.series.map((r) => r.excl);
+
   return (
     <main className={styles.page}>
-      <p className={styles.eyebrow}>
-        <span className={styles.dot} aria-hidden />
-        日次食品物価インデックス
-      </p>
+      <header className={styles.head}>
+        <p className={styles.eyebrow}>
+          <span className={styles.seal} aria-hidden>
+            観測
+          </span>
+          OBSERVATION LOG ／ 観測日誌
+        </p>
+        <h1 className={styles.h1}>Japan Inflation Nowcast</h1>
+        <p className={styles.kicker}>
+          東京近郊・単一店舗の店頭価格を、毎日 手で観測する。予測ではなく観測。
+        </p>
+      </header>
 
-      <h1 className={styles.h1}>
-        Japan Inflation Nowcast <span className={styles.gold}>× x402</span>
-      </h1>
+      {/* 1. 上流 — マクロの文脈 */}
+      <section className={styles.section}>
+        <h2 className={styles.h2}>
+          <span className={styles.h2num}>上流</span>マクロの文脈
+        </h2>
+        <p className={styles.lead}>
+          末端の店頭価格を読むための背景。主役ではない。一次ソースへのリンクのみを置く。
+        </p>
+        <ul className={styles.upstream}>
+          {upstream.items.map((it) => (
+            <li key={it.source_url} className={styles.upRow}>
+              <span className={`${styles.upDate} mono`}>{it.date}</span>
+              <a className={styles.upTitle} href={it.source_url} target="_blank" rel="noopener noreferrer">
+                {it.title}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
 
-      {/* 計器パネル */}
-      <section className={styles.panel} aria-label="JP-INFL-FOOD instrument panel">
-        <div className={styles.panelBar}>
-          <span>JP-INFL-FOOD ／ base 2026-06-04</span>
-          <span>as of 2026-06-12</span>
+      {/* 2. 上流から末端へ落ちる導線 */}
+      <div className={styles.flow} aria-hidden>
+        <span className={styles.flowLine} />
+        <span className={styles.flowLabel}>上流から末端へ流れ落ちる</span>
+        <span className={styles.flowArrow}>↓</span>
+      </div>
+
+      {/* 3. 末端 — 主題 */}
+      <section className={`${styles.section} ${styles.terminal}`}>
+        <h2 className={styles.h2}>
+          <span className={styles.h2num}>末端</span>店頭の食品物価（主題）
+        </h2>
+        <div className={`${styles.meta} mono`}>
+          <span>JP-INFL-FOOD</span>
+          <span>base {latest.base_date} = 100</span>
+          <span>as of {latest.as_of}</span>
         </div>
 
-        <div className={styles.gauges}>
-          <div className={styles.gauge}>
-            <div className={styles.gaugeLabel}>excl_promo · 基調</div>
-            <div className={`${styles.gaugeVal} ${styles.cold} ${styles.display}`}>99.59</div>
-            <div className={styles.gaugeDelta}>−0.41 vs base</div>
-            <div className={styles.gaugeSub}>特売除外 · matched 45</div>
+        <div className={styles.reads}>
+          <div className={styles.read}>
+            <div className={styles.readLabel}>excl_promo · 基調（特売除外）</div>
+            <div className={`${styles.readVal} mono`}>{latest.index.excl_promo.toFixed(2)}</div>
+            <div className={`${styles.readSub} mono`}>matched {latest.matched_sku.excl} SKU</div>
           </div>
-          <div className={styles.gauge}>
-            <div className={styles.gaugeLabel}>incl_promo · 特売込</div>
-            <div className={`${styles.gaugeVal} ${styles.cold} ${styles.display}`}>99.53</div>
-            <div className={styles.gaugeDelta}>−0.47 vs base</div>
-            <div className={styles.gaugeSub}>全 matched 56</div>
-          </div>
-          <div className={styles.gauge}>
-            <div className={styles.gaugeLabel}>上流 CGPI · 前年比</div>
-            <div className={`${styles.gaugeVal} ${styles.warm} ${styles.display}`}>+6.3%</div>
-            <div className={styles.gaugeDelta}>日銀 企業物価 2026-05</div>
-            <div className={styles.gaugeSub}>末端は逆向きに割れる →</div>
+          <div className={styles.read}>
+            <div className={styles.readLabel}>incl_promo · 特売込</div>
+            <div className={`${styles.readVal} mono`}>{latest.index.incl_promo.toFixed(2)}</div>
+            <div className={`${styles.readSub} mono`}>matched {latest.matched_sku.incl} SKU</div>
           </div>
         </div>
 
         <div className={styles.spark}>
-          <Sparkline data={SPARK} />
-          <div className={styles.sparkAxis}>
-            <span>Day-1</span>
+          <Sparkline data={trail} />
+          <div className={`${styles.sparkAxis} mono`}>
+            <span>{jin.series[0].date}</span>
             <span>excl_promo · baseline 100</span>
-            <span>Day-8</span>
+            <span>{jin.series[jin.series.length - 1].date}</span>
           </div>
         </div>
       </section>
 
-      {/* Endpoints */}
-      <section className={styles.endpoints}>
-        <div className={styles.endpointRow}>
-          <div className={styles.epMain}>
-            <div className={styles.epPath}>
-              <span className={styles.verb}>GET</span>/api/jin/latest
-            </div>
-            <div className={styles.epDesc}>最新観測日の指数。観測値 + matched + 方法論 + coverage。</div>
-          </div>
-          <div className={`${styles.epPrice} ${styles.cold}`}>free</div>
-        </div>
-        <div className={styles.endpointRow}>
-          <div className={styles.epMain}>
-            <div className={styles.epPath}>
-              <span className={styles.verb}>GET</span>/api/jin/series?from=&amp;to=
-            </div>
-            <div className={styles.epDesc}>指数の時系列。Solana USDC で per-call 決済。</div>
-          </div>
-          <div className={`${styles.epPrice} ${styles.gold}`}>$0.01</div>
-        </div>
-        <div className={styles.endpointRow}>
-          <div className={styles.epMain}>
-            <div className={styles.epPath}>
-              <span className={styles.verb}>GET</span>/api/jin/movers?date=
-            </div>
-            <div className={styles.epDesc}>その日動いた品目。特売タグ付き。POS 集計では潰れる層。</div>
-          </div>
-          <div className={`${styles.epPrice} ${styles.gold}`}>$0.02</div>
-        </div>
+      {/* 4. endpoints */}
+      <section className={styles.section}>
+        <h2 className={styles.h2}>
+          <span className={styles.h2num}>配信</span>endpoints
+        </h2>
+        <ul className={styles.eps}>
+          <li className={styles.epRow}>
+            <code className={`${styles.epPath} mono`}>GET /api/jin/latest</code>
+            <span className={styles.epDesc}>最新観測日の指数。観測値 + matched + 方法論。</span>
+            <span className={`${styles.epPrice} mono`}>free</span>
+          </li>
+          <li className={styles.epRow}>
+            <code className={`${styles.epPath} mono`}>GET /api/jin/series</code>
+            <span className={styles.epDesc}>指数の時系列。x402（機械向け）。</span>
+            <span className={`${styles.epPrice} ${styles.paid} mono`}>$0.01 · 402</span>
+          </li>
+          <li className={styles.epRow}>
+            <code className={`${styles.epPath} mono`}>GET /api/jin/movers</code>
+            <span className={styles.epDesc}>その日動いた品目。特売タグ付き。x402（機械向け）。</span>
+            <span className={`${styles.epPrice} ${styles.paid} mono`}>$0.02 · 402</span>
+          </li>
+        </ul>
+        <p className={styles.epNote}>
+          有料系列は機械向けの 402 応答。決済は Solana USDC。詳細は{" "}
+          <a className="mono" href="/.well-known/x402.json">/.well-known/x402.json</a> を参照。
+        </p>
+      </section>
+
+      {/* 5. 注記 */}
+      <section className={styles.section}>
+        <h2 className={styles.h2}>
+          <span className={styles.h2num}>注記</span>観測条件
+        </h2>
+        <ul className={styles.notes}>
+          <li>日次・固定基準（{latest.base_date} = 100）の Jevons 指数。マッチした同一 SKU の幾何平均。</li>
+          <li>{latest.coverage_note}</li>
+          <li>excl_promo は基準日・当日いずれかで特売タグの付いた SKU を除外した基調系列。</li>
+          <li>これは観測であって予測ではない。確率値や見通しは返さない。</li>
+        </ul>
       </section>
 
       <footer className={styles.footer}>

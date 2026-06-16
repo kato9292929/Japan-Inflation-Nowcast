@@ -1,0 +1,20 @@
+{
+  "note": "運用者が手で差し込む上流マクロの文脈。事実の見出し + 一次ソースへのリンク + 日付のみ。予測・確率・解釈は書かない。第三者投稿は本文を載せずリンクのみ。",
+  "items": [
+    {
+      "title": "日銀 企業物価指数（CGPI）月次公表",
+      "source_url": "https://www.boj.or.jp/statistics/pi/cgpi_release/index.htm",
+      "date": "2026-05"
+    },
+    {
+      "title": "総務省統計局 消費者物価指数（CPI）",
+      "source_url": "https://www.stat.go.jp/data/cpi/",
+      "date": "2026-04"
+    },
+    {
+      "title": "日銀 金融政策決定会合",
+      "source_url": "https://www.boj.or.jp/mopo/mpmsche_minu/index.htm",
+      "date": "2026-06"
+    }
+  ]
+}

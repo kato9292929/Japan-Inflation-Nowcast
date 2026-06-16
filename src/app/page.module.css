@@ -1,223 +1,272 @@
 .page {
-  max-width: 960px;
+  max-width: 760px;
   margin: 0 auto;
-  padding: 72px 24px 96px;
+  padding: 80px 28px 112px;
 }
 
-.display {
-  font-family: "Outfit", "Helvetica Neue", Arial, sans-serif;
+/* header */
+.head {
+  padding-bottom: 8px;
 }
-
-/* 1. eyebrow */
 .eyebrow {
   display: flex;
   align-items: center;
-  gap: 10px;
-  font-size: 12px;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: var(--dim);
-}
-.dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--signal);
-  box-shadow: 0 0 0 0 rgba(200, 162, 75, 0.6);
-  animation: pulse 2.4s ease-out infinite;
-}
-@keyframes pulse {
-  0% { box-shadow: 0 0 0 0 rgba(200, 162, 75, 0.55); }
-  70% { box-shadow: 0 0 0 9px rgba(200, 162, 75, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(200, 162, 75, 0); }
-}
-
-/* 2. h1 */
-.h1 {
-  font-family: "Outfit", "Helvetica Neue", Arial, sans-serif;
-  font-weight: 900;
-  font-size: clamp(40px, 7.5vw, 84px);
-  line-height: 1.02;
-  letter-spacing: -0.02em;
-  margin: 22px 0 0;
-}
-.kansoku {
-  font-style: italic;
-  font-weight: 900;
-  color: var(--signal);
-}
-
-/* 3. lede */
-.lede {
-  max-width: 60ch;
-  margin: 22px 0 0;
-  font-size: 15px;
-  line-height: 1.85;
-  color: var(--dim);
-}
-
-/* 4. instrument panel */
-.panel {
-  margin: 44px 0 0;
-  border: 1px solid var(--line);
-  border-radius: 4px;
-  background-color: var(--panel);
-  background-image: repeating-linear-gradient(
-    to bottom,
-    transparent 0,
-    transparent 33px,
-    var(--line) 33px,
-    var(--line) 34px
-  );
-  overflow: hidden;
-}
-.panelBar {
-  display: flex;
-  justify-content: space-between;
   gap: 12px;
-  padding: 12px 16px;
-  border-bottom: 1px solid var(--line);
-  font-size: 11.5px;
-  letter-spacing: 0.08em;
-  color: var(--faint);
-  text-transform: uppercase;
+  margin: 0;
+  font-size: 12px;
+  letter-spacing: 0.2em;
+  color: var(--ink-dim);
 }
-.gauges {
+.seal {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  font-size: 12px;
+  letter-spacing: 0;
+  color: var(--paper);
+  background: var(--vermilion);
+  border-radius: 3px;
+  /* 朱印のにじみ */
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.12);
+}
+.h1 {
+  margin: 22px 0 0;
+  font-weight: 700;
+  font-size: clamp(34px, 6vw, 60px);
+  line-height: 1.08;
+  letter-spacing: 0.01em;
+}
+.kicker {
+  margin: 16px 0 0;
+  max-width: 46ch;
+  font-size: 15px;
+  line-height: 1.95;
+  color: var(--ink-dim);
+}
+
+/* section 共通 */
+.section {
+  margin: 56px 0 0;
+}
+.h2 {
   display: flex;
-}
-.gauge {
-  flex: 1;
-  padding: 26px 20px 28px;
-  border-right: 1px solid var(--line);
-}
-.gauge:last-child {
-  border-right: none;
-}
-.gaugeLabel {
-  font-size: 11px;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--faint);
-}
-.gaugeVal {
-  font-family: "Outfit", "Helvetica Neue", Arial, sans-serif;
+  align-items: baseline;
+  gap: 14px;
+  margin: 0 0 18px;
+  font-size: 19px;
   font-weight: 600;
-  font-size: clamp(34px, 5.4vw, 52px);
-  line-height: 1.05;
-  margin: 10px 0 6px;
-  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--rule);
 }
-.gaugeDelta {
-  font-size: 12.5px;
-  color: var(--text);
+.h2num {
+  flex: none;
+  font-size: 12px;
+  letter-spacing: 0.18em;
+  color: var(--vermilion);
 }
-.gaugeSub {
-  margin-top: 4px;
+.lead {
+  margin: 0 0 18px;
+  font-size: 13.5px;
+  line-height: 1.9;
+  color: var(--ink-dim);
+}
+
+/* 上流 */
+.upstream {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.upRow {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  padding: 12px 0;
+  border-bottom: 1px dotted var(--rule);
+}
+.upDate {
+  flex: none;
+  width: 64px;
+  font-size: 12px;
+  color: var(--ink-faint);
+}
+.upTitle {
+  font-size: 15px;
+  line-height: 1.6;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+}
+.upTitle:hover {
+  border-bottom-color: var(--vermilion);
+}
+
+/* 上流→末端 導線 */
+.flow {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin: 40px 0 8px;
+  color: var(--ink-faint);
+}
+.flowLine {
+  width: 1px;
+  height: 44px;
+  background: linear-gradient(to bottom, transparent, var(--vermilion));
+}
+.flowLabel {
+  font-size: 11px;
+  letter-spacing: 0.22em;
+}
+.flowArrow {
+  font-size: 18px;
+  line-height: 1;
+  color: var(--vermilion);
+}
+
+/* 末端（主題） */
+.terminal .h2 {
+  font-size: 21px;
+}
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 20px;
   font-size: 11.5px;
-  color: var(--faint);
+  letter-spacing: 0.06em;
+  color: var(--ink-faint);
+  text-transform: uppercase;
 }
-.cold { color: var(--cold); }
-.warm { color: var(--warm); }
-.gold { color: var(--signal); }
+.reads {
+  display: flex;
+  gap: 28px;
+  margin: 26px 0 0;
+}
+.read {
+  flex: 1;
+  padding: 22px 24px 24px;
+  background: var(--paper-2);
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+}
+.readLabel {
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  color: var(--ink-dim);
+}
+.readVal {
+  margin: 12px 0 4px;
+  font-size: clamp(40px, 7vw, 56px);
+  font-weight: 500;
+  line-height: 1;
+  color: var(--ink);
+}
+.readSub {
+  font-size: 12px;
+  color: var(--ink-faint);
+}
 
 /* sparkline */
 .spark {
-  padding: 18px 20px 16px;
-  border-top: 1px solid var(--line);
+  margin: 26px 0 0;
 }
 .sparkSvg {
   display: block;
   width: 100%;
-  height: 88px;
+  height: 64px;
 }
 .sparkAxis {
   display: flex;
   justify-content: space-between;
-  margin-top: 6px;
+  margin-top: 8px;
   font-size: 11px;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.06em;
+  color: var(--ink-faint);
   text-transform: uppercase;
-  color: var(--faint);
 }
 
-/* 5. endpoints */
-.endpoints {
-  margin: 48px 0 0;
-  border-top: 1px solid var(--line);
+/* endpoints */
+.eps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
 }
-.endpointRow {
+.epRow {
   display: flex;
   align-items: baseline;
-  justify-content: space-between;
   gap: 16px;
-  padding: 18px 2px;
-  border-bottom: 1px solid var(--line);
-}
-.epMain {
-  min-width: 0;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--rule);
 }
 .epPath {
-  font-family: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--text);
-}
-.epPath .verb {
-  color: var(--faint);
-  margin-right: 8px;
+  flex: none;
+  font-size: 13px;
+  color: var(--ink);
 }
 .epDesc {
-  margin-top: 5px;
+  flex: 1;
+  min-width: 0;
   font-size: 12.5px;
   line-height: 1.6;
-  color: var(--dim);
+  color: var(--ink-dim);
 }
 .epPrice {
   flex: none;
-  font-family: "Outfit", "Helvetica Neue", Arial, sans-serif;
-  font-weight: 600;
-  font-size: 15px;
-  white-space: nowrap;
-}
-
-/* 6. note */
-.note {
-  margin: 40px 0 0;
-  border: 1px solid var(--line);
-  border-radius: 4px;
-  padding: 18px 20px;
-}
-.note p {
-  margin: 0;
-  padding: 7px 0;
   font-size: 12.5px;
-  line-height: 1.7;
-  color: var(--dim);
-  border-bottom: 1px dashed var(--line);
+  color: var(--ink-dim);
 }
-.note p:last-child {
-  border-bottom: none;
+.epPrice.paid {
+  color: var(--vermilion);
+}
+.epNote {
+  margin: 18px 0 0;
+  font-size: 12.5px;
+  line-height: 1.8;
+  color: var(--ink-dim);
 }
 
-/* 7. footer */
+/* 注記 */
+.notes {
+  margin: 0;
+  padding-left: 1.2em;
+}
+.notes li {
+  margin: 0 0 10px;
+  font-size: 13px;
+  line-height: 1.85;
+  color: var(--ink-dim);
+}
+
+/* footer */
 .footer {
-  margin: 56px 0 0;
+  margin: 72px 0 0;
+  padding-top: 18px;
+  border-top: 1px solid var(--rule);
   display: flex;
   justify-content: space-between;
   gap: 12px;
   font-size: 12px;
-  letter-spacing: 0.08em;
-  color: var(--faint);
+  letter-spacing: 0.06em;
+  color: var(--ink-faint);
 }
 
 @media (max-width: 640px) {
-  .page { padding: 48px 18px 72px; }
-  .gauges { flex-direction: column; }
-  .gauge { border-right: none; border-bottom: 1px solid var(--line); }
-  .gauge:last-child { border-bottom: none; }
-  .endpointRow { flex-direction: column; gap: 8px; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .dot { animation: none; }
+  .page {
+    padding: 52px 20px 80px;
+  }
+  .reads {
+    flex-direction: column;
+    gap: 16px;
+  }
+  .epRow {
+    flex-wrap: wrap;
+    gap: 6px 12px;
+  }
+  .epDesc {
+    order: 3;
+    flex-basis: 100%;
+  }
 }
