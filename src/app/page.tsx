@@ -40,9 +40,6 @@ export default function Home() {
           OBSERVATION LOG ／ 観測日誌
         </p>
         <h1 className={styles.h1}>Japan Inflation Nowcast</h1>
-        <p className={styles.kicker}>
-          東京近郊・単一店舗の店頭価格を、毎日 手で観測する。予測ではなく観測。
-        </p>
       </header>
 
       {/* 1. 上流 — マクロの文脈 */}
@@ -50,9 +47,6 @@ export default function Home() {
         <h2 className={styles.h2}>
           <span className={styles.h2num}>上流</span>マクロの文脈
         </h2>
-        <p className={styles.lead}>
-          末端の店頭価格を読むための背景。主役ではない。一次ソースへのリンクのみを置く。
-        </p>
         <ul className={styles.upstream}>
           {upstream.items.map((it) => (
             <li key={it.source_url} className={styles.upRow}>
@@ -68,7 +62,6 @@ export default function Home() {
       {/* 2. 上流から末端へ落ちる導線 */}
       <div className={styles.flow} aria-hidden>
         <span className={styles.flowLine} />
-        <span className={styles.flowLabel}>上流から末端へ流れ落ちる</span>
         <span className={styles.flowArrow}>↓</span>
       </div>
 
