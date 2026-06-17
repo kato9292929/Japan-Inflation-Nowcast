@@ -1,30 +1,30 @@
 {
   "source": "japan-inflation-nowcast",
   "base_date": "2026-06-04",
-  "generated_at": "2026-06-15T13:04:51.937366+00:00",
+  "generated_at": "2026-06-17T17:49:21.553954+00:00",
   "methodology": "Jevons elementary (matched-SKU geometric mean) + 10-category equal-weight upper aggregation; excl_promo removes SKUs flagged promo on base or current day; unit prices canonicalized (¥/100g, ¥/100ml, ¥/unit); base_date fixed.",
   "coverage_note": "single store, Tokyo metro delivery area, mid-tier supermarket (Life). Not nationally representative.",
   "license": "observation data; derived aggregates only; see repo",
   "latest": {
     "source": "japan-inflation-nowcast",
-    "as_of": "2026-06-09",
+    "as_of": "2026-06-18",
     "base_date": "2026-06-04",
     "index": {
-      "excl_promo": 100.82,
-      "incl_promo": 98.54
+      "excl_promo": 99.9,
+      "incl_promo": 98.1
     },
     "matched_sku": {
-      "excl": 46,
-      "incl": 58
+      "excl": 41,
+      "incl": 61
     },
     "upstream": {
-      "cgpi_yoy_pct": null,
-      "cgpi_as_of": null
+      "cgpi_yoy_pct": 6.3,
+      "cgpi_as_of": "2026-05-01"
     },
     "methodology": "Jevons elementary (matched-SKU geometric mean) + 10-category equal-weight upper aggregation; excl_promo removes SKUs flagged promo on base or current day; unit prices canonicalized (¥/100g, ¥/100ml, ¥/unit); base_date fixed.",
     "coverage_note": "single store, Tokyo metro delivery area, mid-tier supermarket (Life). Not nationally representative.",
     "license": "observation data; derived aggregates only; see repo",
-    "source_timestamp": "2026-06-15T13:04:51.937366+00:00"
+    "source_timestamp": "2026-06-17T17:49:21.553954+00:00"
   },
   "series": [
     {
@@ -68,6 +68,13 @@
       "incl": 98.54,
       "m_excl": 46,
       "m_incl": 58
+    },
+    {
+      "date": "2026-06-18",
+      "excl": 99.9,
+      "incl": 98.1,
+      "m_excl": 41,
+      "m_incl": 61
     }
   ],
   "movers_by_date": {
@@ -435,6 +442,113 @@
         "item": "牛肉こま切れ 牛丼用 150g",
         "pct": -4.3,
         "promo_tag": true,
+        "note": "1 day(s) at this level"
+      }
+    ],
+    "2026-06-18": [
+      {
+        "category": "果物",
+        "item": "サンゴールドキウイ 1個",
+        "pct": -36.5,
+        "promo_tag": true,
+        "note": "1 day(s) at this level"
+      },
+      {
+        "category": "果物",
+        "item": "アボカド 1個",
+        "pct": -35.2,
+        "promo_tag": true,
+        "note": "1 day(s) at this level"
+      },
+      {
+        "category": "野菜・海藻",
+        "item": "国内産 にら 1束",
+        "pct": -19.8,
+        "promo_tag": true,
+        "note": "1 day(s) at this level"
+      },
+      {
+        "category": "野菜・海藻",
+        "item": "国内産 キャベツ 1玉",
+        "pct": 15.2,
+        "promo_tag": false,
+        "note": "6 day(s) at this level"
+      },
+      {
+        "category": "穀類",
+        "item": "パスコ 超熟 6枚",
+        "pct": -14.1,
+        "promo_tag": true,
+        "note": "1 day(s) at this level"
+      },
+      {
+        "category": "野菜・海藻",
+        "item": "国内産 白菜 1/4切 1パック",
+        "pct": -13.2,
+        "promo_tag": false,
+        "note": "1 day(s) at this level"
+      },
+      {
+        "category": "大豆製品",
+        "item": "スマイルライフ もめん豆腐 320g",
+        "pct": 12.9,
+        "promo_tag": false,
+        "note": "1 day(s) at this level"
+      },
+      {
+        "category": "大豆製品",
+        "item": "スマイルライフ 極小粒納豆 45g×3",
+        "pct": 10.4,
+        "promo_tag": false,
+        "note": "1 day(s) at this level"
+      },
+      {
+        "category": "穀類",
+        "item": "秋田県産 あきたこまち 5kg",
+        "pct": -6.7,
+        "promo_tag": false,
+        "note": "1 day(s) at this level"
+      },
+      {
+        "category": "野菜・海藻",
+        "item": "国内産 トマト 袋 3〜5玉",
+        "pct": 6.2,
+        "promo_tag": true,
+        "note": "1 day(s) at this level"
+      },
+      {
+        "category": "魚介類",
+        "item": "骨取り銀さけ チリ産 2切 130g目安",
+        "pct": -5.3,
+        "promo_tag": true,
+        "note": "1 day(s) at this level"
+      },
+      {
+        "category": "魚介類",
+        "item": "骨取り銀さけ チリ産 3切 195g目安",
+        "pct": -5.3,
+        "promo_tag": true,
+        "note": "1 day(s) at this level"
+      },
+      {
+        "category": "酒類",
+        "item": "アサヒ スーパードライ 350ml×6缶",
+        "pct": -3.8,
+        "promo_tag": true,
+        "note": "1 day(s) at this level"
+      },
+      {
+        "category": "酒類",
+        "item": "キリン 一番搾り 350ml×6缶",
+        "pct": -1.0,
+        "promo_tag": true,
+        "note": "1 day(s) at this level"
+      },
+      {
+        "category": "酒類",
+        "item": "キリン 晴れ風 350ml×6缶",
+        "pct": -1.0,
+        "promo_tag": false,
         "note": "1 day(s) at this level"
       }
     ]
