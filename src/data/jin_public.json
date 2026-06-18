@@ -1,7 +1,7 @@
 {
   "source": "japan-inflation-nowcast",
   "base_date": "2026-06-04",
-  "generated_at": "2026-06-18T03:29:02.410646+00:00",
+  "generated_at": "2026-06-18T03:34:52.244768+00:00",
   "methodology": "Jevons elementary (matched-SKU geometric mean) + 10-category equal-weight upper aggregation; excl_promo removes SKUs flagged promo on base or current day; unit prices canonicalized (¥/100g, ¥/100ml, ¥/unit); base_date fixed.",
   "coverage_note": "single store, Tokyo metro delivery area, mid-tier supermarket (Life). Not nationally representative.",
   "license": "observation data; derived aggregates only; see repo",
@@ -24,7 +24,7 @@
     "methodology": "Jevons elementary (matched-SKU geometric mean) + 10-category equal-weight upper aggregation; excl_promo removes SKUs flagged promo on base or current day; unit prices canonicalized (¥/100g, ¥/100ml, ¥/unit); base_date fixed.",
     "coverage_note": "single store, Tokyo metro delivery area, mid-tier supermarket (Life). Not nationally representative.",
     "license": "observation data; derived aggregates only; see repo",
-    "source_timestamp": "2026-06-18T03:29:02.410646+00:00"
+    "source_timestamp": "2026-06-18T03:34:52.244768+00:00"
   },
   "series": [
     {
@@ -68,6 +68,20 @@
       "incl": 98.54,
       "m_excl": 46,
       "m_incl": 58
+    },
+    {
+      "date": "2026-06-10",
+      "excl": 99.54,
+      "incl": 99.53,
+      "m_excl": 51,
+      "m_incl": 63
+    },
+    {
+      "date": "2026-06-12",
+      "excl": 99.59,
+      "incl": 99.53,
+      "m_excl": 45,
+      "m_incl": 56
     },
     {
       "date": "2026-06-18",
@@ -445,6 +459,171 @@
         "note": "1 day(s) at this level"
       }
     ],
+    "2026-06-10": [
+      {
+        "category": "穀類",
+        "item": "ヤマザキ ロイヤルブレッド 6枚",
+        "pct": 31.6,
+        "promo_tag": false,
+        "note": "6 day(s) at this level"
+      },
+      {
+        "category": "穀類",
+        "item": "フジパン ネオバターロール 6個入",
+        "pct": -26.3,
+        "promo_tag": false,
+        "note": "1 day(s) at this level"
+      },
+      {
+        "category": "野菜・海藻",
+        "item": "国内産 小松菜 1袋",
+        "pct": -23.2,
+        "promo_tag": true,
+        "note": "1 day(s) at this level"
+      },
+      {
+        "category": "乳卵類",
+        "item": "森永 おいしい牛乳 900ml",
+        "pct": 21.6,
+        "promo_tag": false,
+        "note": "6 day(s) at this level"
+      },
+      {
+        "category": "野菜・海藻",
+        "item": "国内産 キャベツ 1玉",
+        "pct": 15.2,
+        "promo_tag": false,
+        "note": "6 day(s) at this level"
+      },
+      {
+        "category": "野菜・海藻",
+        "item": "国内産 レタス 1玉",
+        "pct": -11.5,
+        "promo_tag": false,
+        "note": "2 day(s) at this level"
+      },
+      {
+        "category": "肉類",
+        "item": "牛肉こま切れ 200g",
+        "pct": -4.5,
+        "promo_tag": true,
+        "note": "1 day(s) at this level"
+      },
+      {
+        "category": "肉類",
+        "item": "牛肉こま切れ 210g",
+        "pct": -4.5,
+        "promo_tag": true,
+        "note": "2 day(s) at this level"
+      },
+      {
+        "category": "肉類",
+        "item": "牛肉こま切れ 牛丼用 150g",
+        "pct": -4.3,
+        "promo_tag": true,
+        "note": "2 day(s) at this level"
+      },
+      {
+        "category": "酒類",
+        "item": "アサヒ スーパードライ 350ml×6缶",
+        "pct": -3.8,
+        "promo_tag": false,
+        "note": "1 day(s) at this level"
+      },
+      {
+        "category": "酒類",
+        "item": "キリン 一番搾り 350ml×6缶",
+        "pct": -1.0,
+        "promo_tag": false,
+        "note": "1 day(s) at this level"
+      },
+      {
+        "category": "酒類",
+        "item": "キリン 晴れ風 350ml×6缶",
+        "pct": -1.0,
+        "promo_tag": false,
+        "note": "1 day(s) at this level"
+      }
+    ],
+    "2026-06-12": [
+      {
+        "category": "穀類",
+        "item": "ヤマザキ ロイヤルブレッド 6枚",
+        "pct": 31.6,
+        "promo_tag": false,
+        "note": "7 day(s) at this level"
+      },
+      {
+        "category": "穀類",
+        "item": "フジパン ネオバターロール 6個入",
+        "pct": -26.3,
+        "promo_tag": false,
+        "note": "2 day(s) at this level"
+      },
+      {
+        "category": "野菜・海藻",
+        "item": "国内産 小松菜 1袋",
+        "pct": -23.2,
+        "promo_tag": true,
+        "note": "2 day(s) at this level"
+      },
+      {
+        "category": "乳卵類",
+        "item": "森永 おいしい牛乳 900ml",
+        "pct": 21.6,
+        "promo_tag": false,
+        "note": "7 day(s) at this level"
+      },
+      {
+        "category": "野菜・海藻",
+        "item": "国内産 キャベツ 1玉",
+        "pct": 15.2,
+        "promo_tag": false,
+        "note": "7 day(s) at this level"
+      },
+      {
+        "category": "野菜・海藻",
+        "item": "国内産 レタス 1玉",
+        "pct": -11.5,
+        "promo_tag": false,
+        "note": "3 day(s) at this level"
+      },
+      {
+        "category": "肉類",
+        "item": "牛肉こま切れ 210g",
+        "pct": -4.5,
+        "promo_tag": true,
+        "note": "3 day(s) at this level"
+      },
+      {
+        "category": "肉類",
+        "item": "牛肉こま切れ 牛丼用 150g",
+        "pct": -4.3,
+        "promo_tag": true,
+        "note": "3 day(s) at this level"
+      },
+      {
+        "category": "酒類",
+        "item": "アサヒ スーパードライ 350ml×6缶",
+        "pct": -3.8,
+        "promo_tag": false,
+        "note": "2 day(s) at this level"
+      },
+      {
+        "category": "酒類",
+        "item": "キリン 一番搾り 350ml×6缶",
+        "pct": -1.0,
+        "promo_tag": false,
+        "note": "2 day(s) at this level"
+      },
+      {
+        "category": "酒類",
+        "item": "キリン 晴れ風 350ml×6缶",
+        "pct": -1.0,
+        "promo_tag": false,
+        "note": "2 day(s) at this level"
+      }
+    ],
     "2026-06-18": [
       {
         "category": "果物",
@@ -472,7 +651,7 @@
         "item": "ヤマザキ ロイヤルブレッド 6枚",
         "pct": 31.6,
         "promo_tag": false,
-        "note": "6 day(s) at this level"
+        "note": "8 day(s) at this level"
       },
       {
         "category": "野菜・海藻",
@@ -486,7 +665,7 @@
         "item": "国内産 キャベツ 1玉",
         "pct": 15.2,
         "promo_tag": false,
-        "note": "6 day(s) at this level"
+        "note": "8 day(s) at this level"
       },
       {
         "category": "穀類",
@@ -549,21 +728,21 @@
         "item": "アサヒ スーパードライ 350ml×6缶",
         "pct": -3.8,
         "promo_tag": true,
-        "note": "1 day(s) at this level"
+        "note": "3 day(s) at this level"
       },
       {
         "category": "酒類",
         "item": "キリン 一番搾り 350ml×6缶",
         "pct": -1.0,
         "promo_tag": true,
-        "note": "1 day(s) at this level"
+        "note": "3 day(s) at this level"
       },
       {
         "category": "酒類",
         "item": "キリン 晴れ風 350ml×6缶",
         "pct": -1.0,
         "promo_tag": false,
-        "note": "1 day(s) at this level"
+        "note": "3 day(s) at this level"
       }
     ]
   }
