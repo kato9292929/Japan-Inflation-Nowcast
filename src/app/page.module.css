@@ -189,16 +189,35 @@
   color: var(--gold);
 }
 
-/* 上流 — Macro Wire（WIRED 風） */
+/* 上流 — Macro Wire（WIRED 風の編集グリッド） */
+.wireMast {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 0 0 14px;
+}
+.wireMastTitle {
+  font-family: "Roboto Condensed", "Arial Narrow", sans-serif;
+  font-weight: 900;
+  font-size: 22px;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+.wireMastRule {
+  flex: 1;
+  height: 2px;
+  background: var(--gold);
+  opacity: 0.7;
+}
+
 .ticker {
   display: flex;
   flex-wrap: wrap;
   gap: 8px 24px;
   padding: 12px 16px;
-  margin: 0 0 8px;
-  border: 1px solid var(--line);
-  border-radius: 4px;
-  background: var(--panel);
+  margin: 0 0 22px;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
   font-size: 11.5px;
 }
 .tick {
@@ -214,54 +233,125 @@
   font-weight: 500;
 }
 
-.wire {
-  border-top: 1px solid var(--line);
+/* 3 カラム: 左レール / リード / 右レール */
+.wireGrid {
+  display: grid;
+  grid-template-columns: 1fr 1.7fr 1fr;
+  gap: 0 28px;
 }
-.wireItem {
-  padding: 22px 0 24px;
-  border-bottom: 1px solid var(--line);
+.railL {
+  border-right: 1px solid var(--line);
+  padding-right: 28px;
 }
-.wireItem:first-child {
-  padding-top: 24px;
+.railR {
+  border-left: 1px solid var(--line);
+  padding-left: 28px;
 }
-.wireMeta {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 12px;
-  margin: 0 0 10px;
-}
+
 .wireCat {
+  display: block;
+  font-family: "Roboto Condensed", "Arial Narrow", sans-serif;
   font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.18em;
+  font-weight: 700;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
+  margin: 0 0 8px;
 }
-.wireDate {
-  font-size: 11px;
-  letter-spacing: 0.06em;
-  color: var(--faint);
-}
-.wireHead {
-  margin: 0;
-  font-family: "Fraunces", Georgia, serif;
-  font-weight: 600;
-  font-size: clamp(20px, 3.2vw, 27px);
-  line-height: 1.18;
-  letter-spacing: -0.01em;
+
+/* WIRED ヘッドライン = 太い圧縮グロテスク */
+.heroHead,
+.railHead,
+.railRHead {
+  font-family: "Roboto Condensed", "Arial Narrow", Arial, sans-serif;
+  font-weight: 700;
   color: var(--text);
+  letter-spacing: -0.005em;
+  margin: 0;
 }
-.wireDek {
-  margin: 10px 0 0;
-  max-width: 64ch;
-  font-size: 13.5px;
-  line-height: 1.75;
+
+/* リード */
+.hero {
+  min-width: 0;
+}
+.heroHead {
+  font-size: clamp(30px, 4.4vw, 46px);
+  line-height: 1.04;
+}
+.heroDek {
+  margin: 16px 0 0;
+  font-family: "Fraunces", Georgia, serif;
+  font-size: 16px;
+  line-height: 1.6;
   color: var(--dim);
 }
-/* 先頭記事を少しだけ大きく（WIRED のリード感） */
-.wireItem:first-child .wireHead {
-  font-size: clamp(24px, 4.2vw, 34px);
+.heroDate {
+  display: inline-block;
+  margin: 14px 0 0;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: var(--faint);
+}
+
+/* 左レール item */
+.railItem {
+  padding: 0 0 18px;
+  margin: 0 0 18px;
+  border-bottom: 1px solid var(--line);
+}
+.railItem:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+.railHead {
+  font-size: 19px;
   line-height: 1.12;
+}
+.railDek {
+  margin: 8px 0 0;
+  font-family: "Fraunces", Georgia, serif;
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: var(--dim);
+}
+
+/* 右レール item（見出しのみ） */
+.railRItem {
+  padding: 0 0 16px;
+  margin: 0 0 16px;
+  border-bottom: 1px solid var(--line);
+}
+.railRItem:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+.railRHead {
+  font-size: 17px;
+  line-height: 1.14;
+}
+
+@media (max-width: 900px) {
+  .wireGrid {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+  .railL,
+  .railR {
+    border: none;
+    padding: 0;
+  }
+  .hero {
+    order: -1;
+    padding-bottom: 22px;
+    margin-bottom: 22px;
+    border-bottom: 1px solid var(--line);
+  }
+  .railL {
+    margin-top: 22px;
+    padding-top: 22px;
+    border-top: 1px solid var(--line);
+  }
 }
 
 /* endpoints */

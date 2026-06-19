@@ -141,11 +141,13 @@ export default function Home() {
         <FoodBand />
       </div>
 
-      {/* 上流 — Macro Wire（WIRED 風の編集フィード・事実のみ・リンクなし） */}
+      {/* 上流 — Macro Wire（WIRED 風の編集グリッド・事実のみ・リンクなし） */}
       <section className={styles.section}>
-        <h2 className={styles.h2}>
-          <span className={styles.h2num}>上流</span>Macro Wire
-        </h2>
+        <div className={styles.wireMast}>
+          <span className={styles.h2num}>上流</span>
+          <span className={styles.wireMastTitle}>MACRO WIRE</span>
+          <span className={styles.wireMastRule} aria-hidden />
+        </div>
 
         <div className={`${styles.ticker} mono`} aria-label="market snapshot">
           {upstream.ticker.map((t) => (
@@ -156,17 +158,35 @@ export default function Home() {
           ))}
         </div>
 
-        <div className={styles.wire}>
-          {upstream.items.map((it) => (
-            <article key={it.headline} className={styles.wireItem}>
-              <div className={styles.wireMeta}>
+        <div className={styles.wireGrid}>
+          {/* 左レール: 見出し + 短い要約 */}
+          <div className={styles.railL}>
+            {upstream.items.slice(1, 4).map((it) => (
+              <article key={it.headline} className={styles.railItem}>
                 <span className={`${styles.wireCat} ${styles.gold}`}>{it.category}</span>
-                <span className={`${styles.wireDate} mono`}>{it.date}</span>
-              </div>
-              <h3 className={styles.wireHead}>{it.headline}</h3>
-              <p className={styles.wireDek}>{it.summary}</p>
-            </article>
-          ))}
+                <h3 className={styles.railHead}>{it.headline}</h3>
+                <p className={styles.railDek}>{it.summary}</p>
+              </article>
+            ))}
+          </div>
+
+          {/* 中央: リード */}
+          <article className={styles.hero}>
+            <span className={`${styles.wireCat} ${styles.gold}`}>{upstream.items[0].category}</span>
+            <h3 className={styles.heroHead}>{upstream.items[0].headline}</h3>
+            <p className={styles.heroDek}>{upstream.items[0].summary}</p>
+            <span className={`${styles.heroDate} mono`}>{upstream.items[0].date}</span>
+          </article>
+
+          {/* 右レール: 見出しのみ */}
+          <div className={styles.railR}>
+            {upstream.items.slice(4).map((it) => (
+              <article key={it.headline} className={styles.railRItem}>
+                <span className={`${styles.wireCat} ${styles.gold}`}>{it.category}</span>
+                <h3 className={styles.railRHead}>{it.headline}</h3>
+              </article>
+            ))}
+          </div>
         </div>
       </section>
 
