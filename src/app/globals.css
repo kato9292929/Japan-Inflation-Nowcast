@@ -1,14 +1,15 @@
 :root {
-  --bg: #0c0d0f; /* 近黒 */
-  --panel: #141518;
-  --panel-2: #17181c;
-  --text: #e9e6dd;
-  --dim: #8f8b80;
-  --faint: #56534b;
-  --line: rgba(233, 230, 221, 0.09);
-  --gold: #c8a24b; /* ワードマーク / ブランドのグロー */
-  --green: #5fae7e; /* 価格・下降・x402 副アクセント */
-  --red: #e06a6a; /* 上昇 */
+  --bg: #ffffff; /* WIRED 風の白地 */
+  --paper: #f4f1ea; /* 薄いカード地 */
+  --ink: #15130e; /* 近黒テキスト */
+  --dim: #56524a; /* 副次テキスト */
+  --faint: #8b8579; /* 罫の文字 */
+  --line: rgba(21, 19, 14, 0.16); /* ヘアライン */
+  --rule: #15130e; /* 太い黒罫 */
+  --gold: #c8a24b; /* ブランドの金（塗り） */
+  --gold-ink: #9a7822; /* 白地で読める金（文字） */
+  --red: #c0392b; /* 上昇 */
+  --green: #2f8f5b; /* 下降 */
 }
 
 * {
@@ -20,8 +21,8 @@ body {
   margin: 0;
   padding: 0;
   background: var(--bg);
-  color: var(--text);
-  font-family: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  color: var(--ink);
+  font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", sans-serif;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
