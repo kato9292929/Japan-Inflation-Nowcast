@@ -1,19 +1,73 @@
 {
-  "note": "運用者が手で差し込む上流マクロ。公表済みの事実 + 一次ソース + 日付のみ。value は一次ソースで確認してから入れること（未確認なら null にすればリンクのみ表示）。予測・解釈は書かない。第三者投稿は本文を載せずリンクのみ。",
+  "note": "上流マクロの文脈。WIRED 風の編集フィード。事実の英文要約のみ（記事リンクなし）。第三者の予測・決定は事実として記す（JIN 自身の予測・確率ではない）。運用者が手で差し込む。",
+  "ticker": [
+    { "label": "NIKKEI 225", "value": "71,053.49" },
+    { "label": "DOW", "value": "51,492.55" },
+    { "label": "STOXX 600", "value": "635.06" },
+    { "label": "SHANGHAI", "value": "4,090.48" },
+    { "label": "USD/JPY", "value": "160.59" },
+    { "label": "EUR/JPY", "value": "184.88" }
+  ],
   "items": [
     {
-      "title": "企業物価指数 CGPI 前年比",
-      "value": "+6.3%",
-      "source_label": "日本銀行",
-      "source_url": "https://www.boj.or.jp/statistics/pi/cgpi_release/index.htm",
-      "date": "2026-05"
+      "category": "CENTRAL BANKS",
+      "headline": "Europe's central banks tilt hawkish as energy costs bite",
+      "summary": "June rate decisions skewed toward tightening on Iran-driven energy prices. The ECB raised to 2.25% and the Bank of Japan to 1.00%; the Fed held at 3.5–3.75%, with the BOE (3.75%), SNB (0.00%) and Norges Bank (4.25%) on hold. The Czech National Bank hiked for the first time in four years.",
+      "date": "JUN 2026"
     },
     {
-      "title": "消費者物価指数 CPI",
-      "value": null,
-      "source_label": "総務省統計局",
-      "source_url": "https://www.stat.go.jp/data/cpi/",
-      "date": "2026-04"
+      "category": "RATES / CREDIT",
+      "headline": "Households pile into corporate bonds as yields climb",
+      "summary": "After the BOJ moved its policy rate to 1%, household interest income reached a record. Retail corporate-bond issuance rose 14% year on year to an all-time high, with heavy demand for SoftBank Group and Rakuten Group paper — even as younger borrowers face steeper mortgage and auto-loan costs.",
+      "date": "JUN 2026"
+    },
+    {
+      "category": "FED / FX",
+      "headline": "A 'smaller central bank': the Warsh Fed gets going",
+      "summary": "Under new chair Kevin Warsh, the Fed leans toward balance-sheet runoff and simpler communication, and more FOMC participants now pencil in hikes. The yen briefly touched 161 to the dollar, a two-year low, on broad dollar strength.",
+      "date": "JUN 2026"
+    },
+    {
+      "category": "MARKETS",
+      "headline": "Nikkei tops ¥70,000 as gains concentrate in a few names",
+      "summary": "Total market value is up ¥218tn year to date, more than half of it from a 'Japanese M7' — Kioxia, SoftBank, Advantest, Tokyo Electron, Murata, Shin-Etsu and Hitachi. Semiconductor names led (Kioxia ×9.3, Taiyo Yuden ×5.6) while domestic-demand stocks lagged (Aeon −46%, Nexon −42%, Nintendo −32%).",
+      "date": "JUN 2026"
+    },
+    {
+      "category": "ASIA",
+      "headline": "Indonesia and the Philippines hike to slow currency slides",
+      "summary": "Oil-driven inflation and weak currencies prompted back-to-back rate increases across Southeast Asia, and Singapore tightened for the first time in three and a half years. Separately, BYD was reported as 2025's top global automaker, ahead of Toyota and Volkswagen.",
+      "date": "JUN 2026"
+    },
+    {
+      "category": "COMMODITIES",
+      "headline": "The 'bean-free coffee' race ignites over supply risk",
+      "summary": "Climate-driven supply concerns are pushing alternative coffee into the mainstream. Coca-Cola Japan's CAFÉ WATER (¥149 / 500ml) and Asahi's planned Mirai no BLACK (~¥227 / 430ml) follow US startup Atomo Coffee. Japan is the world's fourth-largest coffee consumer.",
+      "date": "JUN 2026"
+    },
+    {
+      "category": "ENERGY / DIPLOMACY",
+      "headline": "US softens its Iran terms to secure a deal",
+      "summary": "A draft memorandum shows US concessions on enrichment (in-country dilution), the Strait of Hormuz (60 days of free passage) and oil sanctions, with final terms deferred — drawing discontent from parts of the governing party.",
+      "date": "JUN 2026"
+    },
+    {
+      "category": "ASSET MANAGEMENT",
+      "headline": "Big managers weigh bundled alternative-asset funds",
+      "summary": "Nomura, Nissay and peers are studying retail funds that bundle overseas infrastructure and private equity into a single diversified product, after the Investment Trusts Association revised its rules in June. Low liquidity and disclosure remain the open questions.",
+      "date": "JUN 2026"
+    },
+    {
+      "category": "CRYPTO",
+      "headline": "Institutional crypto gains a foothold in Japan",
+      "summary": "A corporate pension fund in Okayama plans to begin crypto investing within FY2026, citing near-zero correlation between bitcoin and the dollar as a diversifier. An EY-Parthenon survey found 73% of global institutions had invested by 2025.",
+      "date": "JUN 2026"
+    },
+    {
+      "category": "LABOR / AI",
+      "headline": "Forward-deployed engineers become tech's hottest hire",
+      "summary": "Salesforce, Google, Anthropic and OpenAI are scaling up hiring and training of forward-deployed engineers. Google is putting $750m into partner workforce development, Anthropic is forming a staffing venture with Blackstone, and OpenAI set up a new company with TPG and acquired UK-based Tomoro AI.",
+      "date": "JUN 2026"
     }
   ]
 }

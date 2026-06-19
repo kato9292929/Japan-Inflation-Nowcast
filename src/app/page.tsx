@@ -141,23 +141,33 @@ export default function Home() {
         <FoodBand />
       </div>
 
-      {/* 上流（実数つき・降格） */}
+      {/* 上流 — Macro Wire（WIRED 風の編集フィード・事実のみ・リンクなし） */}
       <section className={styles.section}>
         <h2 className={styles.h2}>
-          <span className={styles.h2num}>上流</span>マクロの文脈
+          <span className={styles.h2num}>上流</span>Macro Wire
         </h2>
-        <ul className={styles.upstream}>
-          {upstream.items.map((it) => (
-            <li key={it.source_url} className={styles.upRow}>
-              <span className={`${styles.upDate} mono`}>{it.date}</span>
-              <span className={styles.upTitle}>{it.title}</span>
-              {it.value ? <span className={`${styles.upVal} ${styles.gold} mono`}>{it.value}</span> : null}
-              <a className={`${styles.upSrc} mono`} href={it.source_url} target="_blank" rel="noopener noreferrer">
-                {it.source_label} ↗
-              </a>
-            </li>
+
+        <div className={`${styles.ticker} mono`} aria-label="market snapshot">
+          {upstream.ticker.map((t) => (
+            <span key={t.label} className={styles.tick}>
+              <span className={styles.tickLabel}>{t.label}</span>
+              <span className={`${styles.tickVal} ${styles.gold}`}>{t.value}</span>
+            </span>
           ))}
-        </ul>
+        </div>
+
+        <div className={styles.wire}>
+          {upstream.items.map((it) => (
+            <article key={it.headline} className={styles.wireItem}>
+              <div className={styles.wireMeta}>
+                <span className={`${styles.wireCat} ${styles.gold}`}>{it.category}</span>
+                <span className={`${styles.wireDate} mono`}>{it.date}</span>
+              </div>
+              <h3 className={styles.wireHead}>{it.headline}</h3>
+              <p className={styles.wireDek}>{it.summary}</p>
+            </article>
+          ))}
+        </div>
       </section>
 
       {/* endpoints */}
