@@ -138,11 +138,18 @@
 }
 
 /* 中央リード */
-.colC {
+.lead {
   text-align: center;
 }
 .kickerC {
   letter-spacing: 0.22em;
+}
+/* 中央カラムの記事ブロック（API / NOTES）= 記事風・左寄せ */
+.cArticle {
+  margin: 30px 0 0;
+  padding-top: 22px;
+  border-top: 1px solid var(--line);
+  text-align: left;
 }
 .heroHead {
   font-weight: 900;
@@ -277,35 +284,33 @@
   color: var(--faint);
 }
 
-/* 汎用ブロック */
-.block {
-  margin: 44px 0 0;
-  padding-top: 18px;
-  border-top: 3px solid var(--rule);
-}
-
-/* endpoints */
+/* endpoints（中央カラムで縦に積む） */
 .eps {
   list-style: none;
   margin: 0;
   padding: 0;
 }
 .epRow {
-  display: flex;
-  align-items: baseline;
-  gap: 16px;
-  padding: 15px 0;
+  padding: 13px 0;
   border-bottom: 1px solid var(--line);
 }
+.epRow:first-child {
+  padding-top: 0;
+}
+.epTop {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
 .epPath {
-  flex: none;
   font-size: 13px;
   color: var(--ink);
 }
 .epDesc {
-  flex: 1;
-  min-width: 0;
-  font-size: 13px;
+  display: block;
+  margin-top: 5px;
+  font-size: 12.5px;
   line-height: 1.5;
   color: var(--dim);
 }

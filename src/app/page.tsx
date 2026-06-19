@@ -86,13 +86,56 @@ export default function Home() {
             ))}
           </div>
 
-          {/* 中央リード */}
-          <article className={styles.colC}>
-            <span className={`${styles.kicker} ${styles.kickerC}`}>{hero.category}</span>
-            <h1 className={styles.heroHead}>{hero.headline}</h1>
-            <p className={styles.heroDek}>{hero.summary}</p>
-            <span className={`${styles.byline} mono`}>MACRO WIRE · {hero.date}</span>
-          </article>
+          {/* 中央リード + API/NOTES を記事として */}
+          <div className={styles.colC}>
+            <article className={styles.lead}>
+              <span className={`${styles.kicker} ${styles.kickerC}`}>{hero.category}</span>
+              <h1 className={styles.heroHead}>{hero.headline}</h1>
+              <p className={styles.heroDek}>{hero.summary}</p>
+              <span className={`${styles.byline} mono`}>MACRO WIRE · {hero.date}</span>
+            </article>
+
+            <article id="api" className={styles.cArticle}>
+              <span className={styles.kicker}>API ENDPOINTS</span>
+              <ul className={styles.eps}>
+                <li className={styles.epRow}>
+                  <div className={styles.epTop}>
+                    <code className={`${styles.epPath} mono`}>GET /api/jin/latest</code>
+                    <span className={`${styles.badge} ${styles.badgeFree} mono`}>200 ✓ free</span>
+                  </div>
+                  <span className={styles.epDesc}>最新観測日の指数。観測値 + matched + 方法論。</span>
+                </li>
+                <li className={styles.epRow}>
+                  <div className={styles.epTop}>
+                    <code className={`${styles.epPath} mono`}>GET /api/jin/series</code>
+                    <span className={`${styles.badge} mono`}>HTTP/1.1 402 ✓ $0.01</span>
+                  </div>
+                  <span className={styles.epDesc}>指数の時系列。機械向け。</span>
+                </li>
+                <li className={styles.epRow}>
+                  <div className={styles.epTop}>
+                    <code className={`${styles.epPath} mono`}>GET /api/jin/movers</code>
+                    <span className={`${styles.badge} mono`}>HTTP/1.1 402 ✓ $0.02</span>
+                  </div>
+                  <span className={styles.epDesc}>その日動いた品目。特売タグ付き。機械向け。</span>
+                </li>
+              </ul>
+              <p className={styles.epNote}>
+                決済は Solana USDC。discovery は{" "}
+                <a className={`${styles.goldLink} mono`} href="/.well-known/x402.json">/.well-known/x402.json</a>。
+              </p>
+            </article>
+
+            <article className={styles.cArticle}>
+              <span className={styles.kicker}>METHOD / NOTES</span>
+              <ul className={styles.notes}>
+                <li>日次・固定基準（{latest.base_date} = 100）の Jevons 指数。マッチした同一 SKU の幾何平均。</li>
+                <li>{latest.coverage_note}</li>
+                <li>excl_promo は基準日・当日いずれかで特売タグの付いた SKU を除外した基調系列。</li>
+                <li>これは観測であって予測ではない。確率値や見通しは返さない。</li>
+              </ul>
+            </article>
+          </div>
 
           {/* 右レール */}
           <div className={styles.colR}>
@@ -150,43 +193,6 @@ export default function Home() {
               <span>{jin.series[jin.series.length - 1].date}</span>
             </div>
           </div>
-        </section>
-
-        {/* 3. endpoints */}
-        <section id="api" className={styles.block}>
-          <span className={styles.tag}>API ENDPOINTS</span>
-          <ul className={styles.eps}>
-            <li className={styles.epRow}>
-              <code className={`${styles.epPath} mono`}>GET /api/jin/latest</code>
-              <span className={styles.epDesc}>最新観測日の指数。観測値 + matched + 方法論。</span>
-              <span className={`${styles.badge} ${styles.badgeFree} mono`}>200 ✓ free</span>
-            </li>
-            <li className={styles.epRow}>
-              <code className={`${styles.epPath} mono`}>GET /api/jin/series</code>
-              <span className={styles.epDesc}>指数の時系列。機械向け。</span>
-              <span className={`${styles.badge} mono`}>HTTP/1.1 402 ✓ $0.01</span>
-            </li>
-            <li className={styles.epRow}>
-              <code className={`${styles.epPath} mono`}>GET /api/jin/movers</code>
-              <span className={styles.epDesc}>その日動いた品目。特売タグ付き。機械向け。</span>
-              <span className={`${styles.badge} mono`}>HTTP/1.1 402 ✓ $0.02</span>
-            </li>
-          </ul>
-          <p className={styles.epNote}>
-            決済は Solana USDC。discovery は{" "}
-            <a className={`${styles.goldLink} mono`} href="/.well-known/x402.json">/.well-known/x402.json</a>。
-          </p>
-        </section>
-
-        {/* 4. 注記 */}
-        <section className={styles.block}>
-          <span className={styles.tag}>METHOD / NOTES</span>
-          <ul className={styles.notes}>
-            <li>日次・固定基準（{latest.base_date} = 100）の Jevons 指数。マッチした同一 SKU の幾何平均。</li>
-            <li>{latest.coverage_note}</li>
-            <li>excl_promo は基準日・当日いずれかで特売タグの付いた SKU を除外した基調系列。</li>
-            <li>これは観測であって予測ではない。確率値や見通しは返さない。</li>
-          </ul>
         </section>
 
         <footer className={styles.footer}>
