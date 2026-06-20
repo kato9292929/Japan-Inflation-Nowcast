@@ -1,21 +1,21 @@
 {
   "source": "japan-inflation-nowcast",
   "base_date": "2026-06-04",
-  "generated_at": "2026-06-18T03:34:52.244768+00:00",
+  "generated_at": "2026-06-20T09:01:39.187204+00:00",
   "methodology": "Jevons elementary (matched-SKU geometric mean) + 10-category equal-weight upper aggregation; excl_promo removes SKUs flagged promo on base or current day; unit prices canonicalized (¥/100g, ¥/100ml, ¥/unit); base_date fixed.",
   "coverage_note": "single store, Tokyo metro delivery area, mid-tier supermarket (Life). Not nationally representative.",
   "license": "observation data; derived aggregates only; see repo",
   "latest": {
     "source": "japan-inflation-nowcast",
-    "as_of": "2026-06-18",
+    "as_of": "2026-06-20",
     "base_date": "2026-06-04",
     "index": {
-      "excl_promo": 101.06,
-      "incl_promo": 98.95
+      "excl_promo": 99.89,
+      "incl_promo": 98.01
     },
     "matched_sku": {
-      "excl": 44,
-      "incl": 64
+      "excl": 41,
+      "incl": 54
     },
     "upstream": {
       "cgpi_yoy_pct": 6.3,
@@ -24,7 +24,7 @@
     "methodology": "Jevons elementary (matched-SKU geometric mean) + 10-category equal-weight upper aggregation; excl_promo removes SKUs flagged promo on base or current day; unit prices canonicalized (¥/100g, ¥/100ml, ¥/unit); base_date fixed.",
     "coverage_note": "single store, Tokyo metro delivery area, mid-tier supermarket (Life). Not nationally representative.",
     "license": "observation data; derived aggregates only; see repo",
-    "source_timestamp": "2026-06-18T03:34:52.244768+00:00"
+    "source_timestamp": "2026-06-20T09:01:39.187204+00:00"
   },
   "series": [
     {
@@ -89,6 +89,13 @@
       "incl": 98.95,
       "m_excl": 44,
       "m_incl": 64
+    },
+    {
+      "date": "2026-06-20",
+      "excl": 99.89,
+      "incl": 98.01,
+      "m_excl": 41,
+      "m_incl": 54
     }
   ],
   "movers_by_date": {
@@ -743,6 +750,106 @@
         "pct": -1.0,
         "promo_tag": false,
         "note": "3 day(s) at this level"
+      }
+    ],
+    "2026-06-20": [
+      {
+        "category": "果物",
+        "item": "アボカド 1個",
+        "pct": -50.2,
+        "promo_tag": true,
+        "note": "1 day(s) at this level"
+      },
+      {
+        "category": "野菜・海藻",
+        "item": "国内産 レタス 1玉",
+        "pct": -44.8,
+        "promo_tag": true,
+        "note": "1 day(s) at this level"
+      },
+      {
+        "category": "果物",
+        "item": "サンゴールドキウイ 1個",
+        "pct": -37.6,
+        "promo_tag": true,
+        "note": "1 day(s) at this level"
+      },
+      {
+        "category": "乳卵類",
+        "item": "森永 おいしい牛乳 900ml",
+        "pct": 21.6,
+        "promo_tag": false,
+        "note": "1 day(s) at this level"
+      },
+      {
+        "category": "野菜・海藻",
+        "item": "国内産 キャベツ 1玉",
+        "pct": 15.2,
+        "promo_tag": false,
+        "note": "9 day(s) at this level"
+      },
+      {
+        "category": "野菜・海藻",
+        "item": "国内産 白菜 1/4切 1パック",
+        "pct": -13.2,
+        "promo_tag": false,
+        "note": "2 day(s) at this level"
+      },
+      {
+        "category": "大豆製品",
+        "item": "スマイルライフ もめん豆腐 320g",
+        "pct": 12.9,
+        "promo_tag": false,
+        "note": "2 day(s) at this level"
+      },
+      {
+        "category": "魚介類",
+        "item": "MEL認証 生銀さけ 養殖 2切 130g目安",
+        "pct": 11.2,
+        "promo_tag": false,
+        "note": "1 day(s) at this level"
+      },
+      {
+        "category": "大豆製品",
+        "item": "スマイルライフ 極小粒納豆 45g×3",
+        "pct": 10.4,
+        "promo_tag": false,
+        "note": "2 day(s) at this level"
+      },
+      {
+        "category": "野菜・海藻",
+        "item": "愛知産 フルーツ感トマト 中玉 1袋",
+        "pct": -8.0,
+        "promo_tag": true,
+        "note": "1 day(s) at this level"
+      },
+      {
+        "category": "穀類",
+        "item": "秋田県産 あきたこまち 5kg",
+        "pct": -6.7,
+        "promo_tag": false,
+        "note": "2 day(s) at this level"
+      },
+      {
+        "category": "酒類",
+        "item": "アサヒ スーパードライ 350ml×6缶",
+        "pct": -3.8,
+        "promo_tag": true,
+        "note": "4 day(s) at this level"
+      },
+      {
+        "category": "調理食品",
+        "item": "あさりの炊き込み御飯弁当 1パック",
+        "pct": 1.9,
+        "promo_tag": false,
+        "note": "1 day(s) at this level"
+      },
+      {
+        "category": "酒類",
+        "item": "キリン 一番搾り 350ml×6缶",
+        "pct": -1.0,
+        "promo_tag": true,
+        "note": "4 day(s) at this level"
       }
     ]
   }
