@@ -1,6 +1,6 @@
 // x402 discovery。有料2本（series, movers）を Solana leg 付きで列挙。
 // latest は無料なので載せない（README/landing に記載）。
-import { paymentRequirements } from "@/lib/x402";
+import { paymentRequirements, X402_VERSION } from "@/lib/x402";
 
 const SERIES = {
   price: "$0.01",
@@ -16,7 +16,7 @@ const MOVERS = {
 
 export const GET = () =>
   Response.json({
-    x402Version: 1,
+    x402Version: X402_VERSION,
     source: "japan-inflation-nowcast",
     note: "observation data; not official CPI; not a forecast",
     endpoints: [

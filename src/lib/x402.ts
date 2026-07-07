@@ -13,6 +13,10 @@ const USDC_DECIMALS = 6;
 export const NETWORK = process.env.X402_NETWORK ?? "solana";
 export const RECIPIENT = process.env.X402_RECIPIENT ?? "";
 export const FACILITATOR_URL = process.env.X402_FACILITATOR_URL ?? "";
+// x402 プロトコルの提示バージョン。AA/facilitator の受理形に合わせて運用者が設定する。
+// 既定 2（AA parser が v2 accepts 形式を要求するため）。1 に戻す場合は X402_VERSION=1。
+// discovery と 402 challenge の両方がこの単一ソースを使い、バージョン差を作らない。
+export const X402_VERSION = Number(process.env.X402_VERSION ?? 2);
 // 既定は Solana mainnet USDC mint。運用環境で X402_USDC_MINT により上書き可。
 export const USDC_MINT =
   process.env.X402_USDC_MINT ?? "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v";
@@ -48,7 +52,7 @@ export function paymentRequirements(opts: PaywallOptions) {
 
 export function challenge402(opts: PaywallOptions): Response {
   const body = {
-    x402Version: 1,
+    x402Version: X402_VERSION,
     error: "payment required",
     accepts: [paymentRequirements(opts)],
   };
