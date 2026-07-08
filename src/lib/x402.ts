@@ -13,10 +13,13 @@ const USDC_DECIMALS = 6;
 export const NETWORK = process.env.X402_NETWORK ?? "solana";
 export const RECIPIENT = process.env.X402_RECIPIENT ?? "";
 export const FACILITATOR_URL = process.env.X402_FACILITATOR_URL ?? "";
-// x402 プロトコルの提示バージョン。AA/facilitator の受理形に合わせて運用者が設定する。
-// 既定 2（AA parser が v2 accepts 形式を要求するため）。1 に戻す場合は X402_VERSION=1。
+// x402 提示バージョン。実測（2026-07-08 OSD /api リファレンス）に合わせる。
+// 現行 AA は v1 "solana" クライアントのため既定 1（v1 leg）。将来 v2 化する場合のみ X402_VERSION=2。
 // discovery と 402 challenge の両方がこの単一ソースを使い、バージョン差を作らない。
-export const X402_VERSION = Number(process.env.X402_VERSION ?? 2);
+export const X402_VERSION = Number(process.env.X402_VERSION ?? 1);
+// PayAI（facilitator）の fee payer アドレス。exact SVM scheme の extra.feePayer に入る。
+// 実測リファレンスに一致させる値。転記事故防止のため env から取り、直書きしない。
+export const FEE_PAYER = process.env.X402_FEE_PAYER ?? "";
 // 既定は Solana mainnet USDC mint。運用環境で X402_USDC_MINT により上書き可。
 export const USDC_MINT =
   process.env.X402_USDC_MINT ?? "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v";
@@ -46,7 +49,8 @@ export function paymentRequirements(opts: PaywallOptions) {
     payTo: RECIPIENT,
     asset: USDC_MINT,
     maxTimeoutSeconds: 60,
-    extra: { decimals: USDC_DECIMALS, priceUsd: opts.price },
+    // 実測リファレンス（2026-07-08）の exact SVM 形: extra は { resource, feePayer }。
+    extra: { resource: opts.resourcePath, feePayer: FEE_PAYER },
   };
 }
 
