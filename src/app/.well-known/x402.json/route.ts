@@ -1,6 +1,10 @@
-// x402 discovery。有料2本（series, movers）を Solana leg 付きで列挙。
+// x402 discovery。有料2本（series, movers）を静的 v1 leg で列挙。
 // latest は無料なので載せない（README/landing に記載）。
-import { paymentRequirements, X402_VERSION } from "@/lib/x402";
+// feePayer は facilitator /supported から動的取得するため force-static にせず動的化する
+// （feePayer はローテーションするので焼き込むと実物とズレる）。accepts の他値は静的。
+import { buildAccepts, X402_VERSION } from "@/lib/x402";
+
+export const dynamic = "force-dynamic";
 
 const SERIES = {
   price: "$0.01",
@@ -14,13 +18,13 @@ const MOVERS = {
   resourcePath: "/api/jin/movers",
 };
 
-export const GET = () =>
+export const GET = async () =>
   Response.json({
     x402Version: X402_VERSION,
     source: "japan-inflation-nowcast",
     note: "observation data; not official CPI; not a forecast",
     endpoints: [
-      { resource: SERIES.resourcePath, accepts: [paymentRequirements(SERIES)] },
-      { resource: MOVERS.resourcePath, accepts: [paymentRequirements(MOVERS)] },
+      { resource: SERIES.resourcePath, accepts: await buildAccepts(SERIES) },
+      { resource: MOVERS.resourcePath, accepts: await buildAccepts(MOVERS) },
     ],
   });

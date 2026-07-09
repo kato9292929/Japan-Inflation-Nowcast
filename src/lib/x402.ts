@@ -1,6 +1,14 @@
-// x402 課金コア（Solana USDC leg）。osd を参照せず JIN repo 内で自己完結する実装。
-// 観測データ配信のための最小ゲート: X-PAYMENT が無ければ 402 challenge、
-// あれば facilitator で検証して通す。facilitator 未設定なら検証不能として閉じる（402）。
+// x402 課金コア（Solana USDC exact leg / v1）。osd を参照せず JIN repo 内で自己完結する実装。
+// 設計（Solana実装標準 2026-07-08 §1/§3/§4）:
+// - accepts は静的自前構築（facilitator の getSupported からは組まない＝OSD regression 回避）。
+//   facilitator に決めさせるのは feePayer と verify/settle だけ。
+// - feePayer は PayAI /supported の solana エントリ extra.feePayer から動的取得（ローテーションする）。
+//   短 TTL キャッシュ + last-known-good fallback。env 固定・ハードコードしない。
+// - X-PAYMENT 到達時に facilitator(PayAI) へ verify→settle を引き渡し、X-PAYMENT-RESPONSE(base64)
+//   を返す。署名・settle は自前実装しない（PayAI が実行）。
+// 参照した公開一次ソース: x402 1.2.0（v1 requirements=maxAmountRequired・verify/settle 本文
+//   {x402Version,paymentPayload,paymentRequirements}・settleResponseHeader=base64(JSON)）、
+//   @x402/svm exact scheme（extra.feePayer）、PayAI docs（POST /verify・/settle）。
 
 export type PaywallOptions = {
   price: string; // 例 "$0.01"
@@ -12,17 +20,21 @@ const USDC_DECIMALS = 6;
 
 export const NETWORK = process.env.X402_NETWORK ?? "solana";
 export const RECIPIENT = process.env.X402_RECIPIENT ?? "";
-export const FACILITATOR_URL = process.env.X402_FACILITATOR_URL ?? "";
-// x402 提示バージョン。実測（2026-07-08 OSD /api リファレンス）に合わせる。
-// 現行 AA は v1 "solana" クライアントのため既定 1（v1 leg）。将来 v2 化する場合のみ X402_VERSION=2。
-// discovery と 402 challenge の両方がこの単一ソースを使い、バージョン差を作らない。
+// facilitator(PayAI)。/supported /verify /settle のベース URL。既定は PayAI 本番（§1 の一次ソース）。
+export const FACILITATOR_URL =
+  process.env.X402_FACILITATOR_URL ?? "https://facilitator.payai.network";
+// 提示バージョン。現行 AA は v1 "solana" クライアント（実測 2026-07-08）。既定 1。
 export const X402_VERSION = Number(process.env.X402_VERSION ?? 1);
-// PayAI（facilitator）の fee payer アドレス。exact SVM scheme の extra.feePayer に入る。
-// 実測リファレンスに一致させる値。転記事故防止のため env から取り、直書きしない。
-export const FEE_PAYER = process.env.X402_FEE_PAYER ?? "";
 // 既定は Solana mainnet USDC mint。運用環境で X402_USDC_MINT により上書き可。
 export const USDC_MINT =
   process.env.X402_USDC_MINT ?? "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v";
+
+function b64encode(s: string): string {
+  return typeof btoa === "function" ? btoa(s) : Buffer.from(s).toString("base64");
+}
+function b64decode(s: string): string {
+  return typeof atob === "function" ? atob(s) : Buffer.from(s, "base64").toString("utf-8");
+}
 
 export function priceToAtomic(price: string): string {
   const n = Number(price.replace(/[^0-9.]/g, ""));
@@ -35,14 +47,57 @@ export function corsHeaders(): Record<string, string> {
     "access-control-allow-origin": "*",
     "access-control-allow-methods": "GET, OPTIONS",
     "access-control-allow-headers": "Content-Type, X-PAYMENT",
+    // AA クライアントが settle 結果を読めるよう公開する。
+    "access-control-expose-headers": "X-PAYMENT-RESPONSE",
   };
 }
 
-export function paymentRequirements(opts: PaywallOptions) {
+// --------------------------------------------------------------------------- #
+// feePayer 動的取得（/supported。短 TTL + last-known-good fallback。env 固定しない）
+// --------------------------------------------------------------------------- #
+const FEEPAYER_TTL_MS = 60_000;
+let _feePayer: { value: string; ts: number } = { value: "", ts: 0 };
+
+export async function getFeePayer(): Promise<string> {
+  const now = Date.now();
+  if (_feePayer.value && now - _feePayer.ts < FEEPAYER_TTL_MS) return _feePayer.value;
+  try {
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), 2500);
+    const r = await fetch(`${FACILITATOR_URL.replace(/\/$/, "")}/supported`, {
+      signal: ctrl.signal,
+    });
+    clearTimeout(timer);
+    if (r.ok) {
+      const data: unknown = await r.json();
+      const kinds: unknown[] = Array.isArray(data)
+        ? data
+        : ((data as { kinds?: unknown[] })?.kinds ?? []);
+      for (const k of kinds) {
+        const kind = k as { network?: string; extra?: { feePayer?: string } };
+        if (typeof kind?.network === "string" && kind.network.startsWith("solana")) {
+          const fp = kind.extra?.feePayer;
+          if (typeof fp === "string" && fp) {
+            _feePayer = { value: fp, ts: now };
+            return fp;
+          }
+        }
+      }
+    }
+  } catch {
+    // facilitator 到達不能 → last-known-good に fallback（空にしない設計）。
+  }
+  return _feePayer.value; // 初回取得失敗時のみ ""（accepts 自体は非空を保つ）。
+}
+
+// --------------------------------------------------------------------------- #
+// accepts（静的 v1 leg。feePayer だけ動的）
+// --------------------------------------------------------------------------- #
+export function paymentRequirements(opts: PaywallOptions, feePayer: string) {
   return {
     scheme: "exact",
     network: NETWORK,
-    maxAmountRequired: priceToAtomic(opts.price),
+    maxAmountRequired: priceToAtomic(opts.price), // v1 は maxAmountRequired（atomic 整数文字列）
     resource: opts.resourcePath,
     description: opts.description,
     mimeType: "application/json",
@@ -50,33 +105,68 @@ export function paymentRequirements(opts: PaywallOptions) {
     asset: USDC_MINT,
     maxTimeoutSeconds: 60,
     // 実測リファレンス（2026-07-08）の exact SVM 形: extra は { resource, feePayer }。
-    extra: { resource: opts.resourcePath, feePayer: FEE_PAYER },
+    extra: { resource: opts.resourcePath, feePayer },
   };
 }
 
-export function challenge402(opts: PaywallOptions): Response {
+export async function buildAccepts(opts: PaywallOptions) {
+  return [paymentRequirements(opts, await getFeePayer())];
+}
+
+export async function challenge402(opts: PaywallOptions): Promise<Response> {
   const body = {
     x402Version: X402_VERSION,
     error: "payment required",
-    accepts: [paymentRequirements(opts)],
+    accepts: await buildAccepts(opts),
   };
   return Response.json(body, { status: 402, headers: corsHeaders() });
 }
 
-export async function verifyPayment(req: Request, opts: PaywallOptions): Promise<boolean> {
-  const payment = req.headers.get("x-payment");
-  if (!payment) return false;
-  if (!FACILITATOR_URL) return false; // 検証不能 → 安全側で閉じる
+// --------------------------------------------------------------------------- #
+// verify → settle（facilitator/PayAI 引き渡し。署名・settle は自前化しない）
+// --------------------------------------------------------------------------- #
+async function facilitatorPost(path: string, payload: unknown): Promise<Record<string, unknown> | null> {
   try {
-    const r = await fetch(`${FACILITATOR_URL.replace(/\/$/, "")}/verify`, {
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), 8000);
+    const r = await fetch(`${FACILITATOR_URL.replace(/\/$/, "")}${path}`, {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({ payment, requirements: paymentRequirements(opts) }),
+      body: JSON.stringify(payload),
+      signal: ctrl.signal,
     });
-    if (!r.ok) return false;
-    const d = (await r.json()) as { valid?: boolean; isValid?: boolean };
-    return Boolean(d.valid ?? d.isValid ?? false);
+    clearTimeout(timer);
+    if (!r.ok) return null;
+    return (await r.json()) as Record<string, unknown>;
   } catch {
-    return false;
+    return null;
   }
+}
+
+export type SettleOutcome = { pass: boolean; responseHeader?: string };
+
+// X-PAYMENT 到達時: PaymentPayload を facilitator に渡して verify→settle し、
+// X-PAYMENT-RESPONSE 用の base64 ヘッダ値（= settleResponseHeader）を返す。
+export async function verifyThenSettle(
+  xpayment: string,
+  opts: PaywallOptions,
+): Promise<SettleOutcome> {
+  let paymentPayload: unknown;
+  try {
+    paymentPayload = JSON.parse(b64decode(xpayment));
+  } catch {
+    return { pass: false };
+  }
+  const requirements = paymentRequirements(opts, await getFeePayer());
+  const body = { x402Version: X402_VERSION, paymentPayload, paymentRequirements: requirements };
+
+  const verifyRes = await facilitatorPost("/verify", body);
+  const valid = Boolean(verifyRes && (verifyRes.isValid ?? verifyRes.valid));
+  if (!valid) return { pass: false };
+
+  const settleRes = await facilitatorPost("/settle", body);
+  if (!settleRes) return { pass: false };
+  // settleResponseHeader(response) = base64(JSON.stringify(response))（x402 1.2.0）。
+  const responseHeader = b64encode(JSON.stringify(settleRes));
+  return { pass: settleRes.success === true, responseHeader };
 }
