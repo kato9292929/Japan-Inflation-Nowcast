@@ -21,8 +21,10 @@ const USDC_DECIMALS = 6;
 export const NETWORK = process.env.X402_NETWORK ?? "solana";
 export const RECIPIENT = process.env.X402_RECIPIENT ?? "";
 // facilitator(PayAI)。/supported /verify /settle のベース URL。既定は PayAI 本番（§1 の一次ソース）。
+// 空文字 env（設定はされているが値が空）も未設定扱いで既定にフォールバックする（相対URL事故を防ぐ）。
+const _facRaw = process.env.X402_FACILITATOR_URL;
 export const FACILITATOR_URL =
-  process.env.X402_FACILITATOR_URL ?? "https://facilitator.payai.network";
+  _facRaw && _facRaw.trim() ? _facRaw.trim() : "https://facilitator.payai.network";
 // 提示バージョン。現行 AA は v1 "solana" クライアント（実測 2026-07-08）。既定 1。
 export const X402_VERSION = Number(process.env.X402_VERSION ?? 1);
 // 既定は Solana mainnet USDC mint。運用環境で X402_USDC_MINT により上書き可。
@@ -58,36 +60,60 @@ export function corsHeaders(): Record<string, string> {
 const FEEPAYER_TTL_MS = 60_000;
 let _feePayer: { value: string; ts: number } = { value: "", ts: 0 };
 
+// PayAI /supported のレスポンスから Solana の feePayer を抽出する純関数（単体テスト対象）。
+// 期待: network==="solana"（v1・完全一致）の extra.feePayer を優先。無ければ "solana" 前方一致で fallback。
+// よくある取り違えを潰す: kinds に潜る / signers 等の別キーを見ない / EVM系(extra無し)で早期returnしない。
+export function extractSolanaFeePayer(supported: unknown): string {
+  const kinds: unknown[] = Array.isArray(supported)
+    ? supported
+    : Array.isArray((supported as { kinds?: unknown[] })?.kinds)
+      ? (supported as { kinds: unknown[] }).kinds
+      : [];
+  const feePayerOf = (k: unknown): string => {
+    const fp = (k as { extra?: { feePayer?: unknown } })?.extra?.feePayer;
+    return typeof fp === "string" ? fp : "";
+  };
+  // 1) v1 の network==="solana" 完全一致を優先（§1 の期待抽出）。
+  for (const k of kinds) {
+    if ((k as { network?: unknown })?.network === "solana") {
+      const fp = feePayerOf(k);
+      if (fp) return fp;
+    }
+  }
+  // 2) fallback: network が "solana" で始まる任意エントリ（"solana:...", "solana-devnet"）。
+  for (const k of kinds) {
+    const net = (k as { network?: unknown })?.network;
+    if (typeof net === "string" && net.startsWith("solana")) {
+      const fp = feePayerOf(k);
+      if (fp) return fp;
+    }
+  }
+  return "";
+}
+
 export async function getFeePayer(): Promise<string> {
   const now = Date.now();
   if (_feePayer.value && now - _feePayer.ts < FEEPAYER_TTL_MS) return _feePayer.value;
+  const url = `${FACILITATOR_URL.replace(/\/$/, "")}/supported`;
   try {
     const ctrl = new AbortController();
     const timer = setTimeout(() => ctrl.abort(), 2500);
-    const r = await fetch(`${FACILITATOR_URL.replace(/\/$/, "")}/supported`, {
-      signal: ctrl.signal,
-    });
+    const r = await fetch(url, { signal: ctrl.signal, headers: { accept: "application/json" } });
     clearTimeout(timer);
-    if (r.ok) {
-      const data: unknown = await r.json();
-      const kinds: unknown[] = Array.isArray(data)
-        ? data
-        : ((data as { kinds?: unknown[] })?.kinds ?? []);
-      for (const k of kinds) {
-        const kind = k as { network?: string; extra?: { feePayer?: string } };
-        if (typeof kind?.network === "string" && kind.network.startsWith("solana")) {
-          const fp = kind.extra?.feePayer;
-          if (typeof fp === "string" && fp) {
-            _feePayer = { value: fp, ts: now };
-            return fp;
-          }
-        }
+    if (!r.ok) {
+      console.warn(`x402 getFeePayer: ${url} -> HTTP ${r.status}`);
+    } else {
+      const fp = extractSolanaFeePayer(await r.json());
+      if (fp) {
+        _feePayer = { value: fp, ts: now };
+        return fp;
       }
+      console.warn(`x402 getFeePayer: solana feePayer not found at ${url}`);
     }
-  } catch {
-    // facilitator 到達不能 → last-known-good に fallback（空にしない設計）。
+  } catch (e) {
+    console.warn(`x402 getFeePayer: fetch ${url} failed: ${String(e)}`);
   }
-  return _feePayer.value; // 初回取得失敗時のみ ""（accepts 自体は非空を保つ）。
+  return _feePayer.value; // last-known-good（初回取得失敗時のみ ""。accepts 自体は非空を保つ）。
 }
 
 // --------------------------------------------------------------------------- #
