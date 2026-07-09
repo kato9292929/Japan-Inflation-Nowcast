@@ -5,7 +5,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
-import { extractSolanaFeePayer } from "../../src/lib/x402";
+import { extractSolanaFeePayer, resolveFeePayer, HARDCODED_FEE_PAYER } from "../../src/lib/x402";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const fixture = JSON.parse(readFileSync(join(here, "payai-supported.json"), "utf-8"));
@@ -45,4 +45,29 @@ test("solana:... (v2) が配列先頭でも v1 の 'solana' 完全一致を優�
 test("v1 'solana' が無ければ solana 前方一致で fallback", () => {
   const data = { kinds: [{ network: "solana:5eykt", extra: { feePayer: "V2FP" } }] };
   assert.equal(extractSolanaFeePayer(data), "V2FP");
+});
+
+// --- 4 段 fallback (resolveFeePayer) の各分岐 ---
+test("段1 live 成功 → live 値（実測 2wKup…）", () => {
+  const live = extractSolanaFeePayer(fixture);
+  assert.equal(resolveFeePayer(live, "", ""), EXPECTED);
+});
+
+test("段2 live 失敗・last-cached あり → last-cached", () => {
+  assert.equal(resolveFeePayer("", "CACHED_FP", "ENV_FP"), "CACHED_FP");
+});
+
+test("段3 live 失敗・cache無し・env あり → env 値", () => {
+  assert.equal(resolveFeePayer("", "", "ENV_FP"), "ENV_FP");
+});
+
+test("段4 全滅 → hardcoded last-known-good（2wKup…）", () => {
+  assert.equal(resolveFeePayer("", "", ""), HARDCODED_FEE_PAYER);
+  assert.equal(HARDCODED_FEE_PAYER, EXPECTED);
+});
+
+test("どの分岐でも feePayer は非空", () => {
+  for (const args of [["L", "", ""], ["", "C", ""], ["", "", "E"], ["", "", ""]] as const) {
+    assert.ok(resolveFeePayer(args[0], args[1], args[2]).length > 0);
+  }
 });

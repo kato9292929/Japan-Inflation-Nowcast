@@ -57,8 +57,16 @@ export function corsHeaders(): Record<string, string> {
 // --------------------------------------------------------------------------- #
 // feePayer 動的取得（/supported。短 TTL + last-known-good fallback。env 固定しない）
 // --------------------------------------------------------------------------- #
-const FEEPAYER_TTL_MS = 60_000;
-let _feePayer: { value: string; ts: number } = { value: "", ts: 0 };
+// feePayer 解決は 4 段 fallback。どの段でも最終的に非空を保証する（症状ごと消す）。
+//   1) live: PayAI /supported の solana extra.feePayer（3 分 TTL）
+//   2) last-cached: TTL 切れでも直近に取得できた生鮮値
+//   3) env: X402_SOLANA_FEE_PAYER
+//   4) hardcoded last-known-good（最後の保険。live を殺さない）
+// 出典: 本タスク §1/§3 の明示仕様（OSD getSolanaFeePayer と同型。OSD read 不可のため spec から実装）。
+const FEEPAYER_TTL_MS = 180_000; // 3 分
+export const HARDCODED_FEE_PAYER = "2wKupLR9q6wXYppw8Gr2NvWxKBUqm4PPJKkQfoxHDBg4";
+const ENV_FEE_PAYER = (process.env.X402_SOLANA_FEE_PAYER ?? "").trim();
+let _feePayerCache: { value: string; ts: number } = { value: "", ts: 0 };
 
 // PayAI /supported のレスポンスから Solana の feePayer を抽出する純関数（単体テスト対象）。
 // 期待: network==="solana"（v1・完全一致）の extra.feePayer を優先。無ければ "solana" 前方一致で fallback。
@@ -91,9 +99,14 @@ export function extractSolanaFeePayer(supported: unknown): string {
   return "";
 }
 
-export async function getFeePayer(): Promise<string> {
-  const now = Date.now();
-  if (_feePayer.value && now - _feePayer.ts < FEEPAYER_TTL_MS) return _feePayer.value;
+// 4 段の優先順位を決める純関数（各分岐を単体テストする）: live → last-cached → env → hardcoded。
+// どの入力でも最終的に HARDCODED_FEE_PAYER で必ず非空になる。
+export function resolveFeePayer(live: string, cached: string, env: string): string {
+  return live || cached || env || HARDCODED_FEE_PAYER;
+}
+
+// live 取得（PayAI /supported）。失敗時は "" を返す（fallback は getFeePayer 側で処理）。
+async function fetchLiveFeePayer(): Promise<string> {
   const url = `${FACILITATOR_URL.replace(/\/$/, "")}/supported`;
   try {
     const ctrl = new AbortController();
@@ -101,19 +114,30 @@ export async function getFeePayer(): Promise<string> {
     const r = await fetch(url, { signal: ctrl.signal, headers: { accept: "application/json" } });
     clearTimeout(timer);
     if (!r.ok) {
-      console.warn(`x402 getFeePayer: ${url} -> HTTP ${r.status}`);
-    } else {
-      const fp = extractSolanaFeePayer(await r.json());
-      if (fp) {
-        _feePayer = { value: fp, ts: now };
-        return fp;
-      }
-      console.warn(`x402 getFeePayer: solana feePayer not found at ${url}`);
+      console.warn(`x402 feePayer: ${url} -> HTTP ${r.status}`);
+      return "";
     }
+    const fp = extractSolanaFeePayer(await r.json());
+    if (!fp) console.warn(`x402 feePayer: solana feePayer not found at ${url}`);
+    return fp;
   } catch (e) {
-    console.warn(`x402 getFeePayer: fetch ${url} failed: ${String(e)}`);
+    console.warn(`x402 feePayer: fetch ${url} failed: ${String(e)}`);
+    return "";
   }
-  return _feePayer.value; // last-known-good（初回取得失敗時のみ ""。accepts 自体は非空を保つ）。
+}
+
+export async function getFeePayer(): Promise<string> {
+  const now = Date.now();
+  // 1) live: 3 分 TTL 内はキャッシュ済み生鮮値をそのまま使う。
+  if (_feePayerCache.value && now - _feePayerCache.ts < FEEPAYER_TTL_MS) return _feePayerCache.value;
+  // TTL 切れ / 未取得 → live を叩く。取れたらキャッシュ更新して返す。
+  const live = await fetchLiveFeePayer();
+  if (live) {
+    _feePayerCache = { value: live, ts: now };
+    return live;
+  }
+  // 2) last-cached（TTL 切れでも直近の生鮮値） → 3) env → 4) hardcoded。必ず非空。
+  return resolveFeePayer("", _feePayerCache.value, ENV_FEE_PAYER);
 }
 
 // --------------------------------------------------------------------------- #
