@@ -2,7 +2,7 @@
 // latest は無料なので載せない（README/landing に記載）。
 // feePayer は facilitator /supported から動的取得するため force-static にせず動的化する
 // （feePayer はローテーションするので焼き込むと実物とズレる）。accepts の他値は静的。
-import { buildAccepts, X402_VERSION } from "@/lib/x402";
+import { buildAcceptsBoth, X402_VERSION } from "@/lib/x402";
 
 export const dynamic = "force-dynamic";
 
@@ -24,7 +24,7 @@ export const GET = async () =>
     source: "japan-inflation-nowcast",
     note: "observation data; not official CPI; not a forecast",
     endpoints: [
-      { resource: SERIES.resourcePath, accepts: await buildAccepts(SERIES) },
-      { resource: MOVERS.resourcePath, accepts: await buildAccepts(MOVERS) },
+      { resource: SERIES.resourcePath, accepts: await buildAcceptsBoth(SERIES) },
+      { resource: MOVERS.resourcePath, accepts: await buildAcceptsBoth(MOVERS) },
     ],
   });

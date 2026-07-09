@@ -18,7 +18,9 @@ export type PaywallOptions = {
 
 const USDC_DECIMALS = 6;
 
-export const NETWORK = process.env.X402_NETWORK ?? "solana";
+export const NETWORK = process.env.X402_NETWORK ?? "solana"; // v1 leg（bare）
+// v2 leg の network は CAIP-2。既定は Solana mainnet（@x402/svm SOLANA_MAINNET_CAIP2 実値）。
+export const NETWORK_V2 = process.env.X402_NETWORK_V2 ?? "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp";
 export const RECIPIENT = process.env.X402_RECIPIENT ?? "";
 // facilitator(PayAI)。/supported /verify /settle のベース URL。既定は PayAI 本番（§1 の一次ソース）。
 // 空文字 env（設定はされているが値が空）も未設定扱いで既定にフォールバックする（相対URL事故を防ぐ）。
@@ -31,11 +33,20 @@ export const X402_VERSION = Number(process.env.X402_VERSION ?? 1);
 export const USDC_MINT =
   process.env.X402_USDC_MINT ?? "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v";
 
+// UTF-8 セーフな base64。btoa は Latin1 前提で em-dash 等（>255）に throw するため、
+// Node 実行時は Buffer(utf-8) を優先。ブラウザは TextEncoder 経由で UTF-8 バイト化してから btoa。
 function b64encode(s: string): string {
-  return typeof btoa === "function" ? btoa(s) : Buffer.from(s).toString("base64");
+  if (typeof Buffer !== "undefined") return Buffer.from(s, "utf-8").toString("base64");
+  const bytes = new TextEncoder().encode(s);
+  let bin = "";
+  for (const b of bytes) bin += String.fromCharCode(b);
+  return btoa(bin);
 }
 function b64decode(s: string): string {
-  return typeof atob === "function" ? atob(s) : Buffer.from(s, "base64").toString("utf-8");
+  if (typeof Buffer !== "undefined") return Buffer.from(s, "base64").toString("utf-8");
+  const bin = atob(s);
+  const bytes = Uint8Array.from(bin, (c) => c.charCodeAt(0));
+  return new TextDecoder().decode(bytes);
 }
 
 export function priceToAtomic(price: string): string {
@@ -49,8 +60,8 @@ export function corsHeaders(): Record<string, string> {
     "access-control-allow-origin": "*",
     "access-control-allow-methods": "GET, OPTIONS",
     "access-control-allow-headers": "Content-Type, X-PAYMENT",
-    // AA クライアントが settle 結果を読めるよう公開する。
-    "access-control-expose-headers": "X-PAYMENT-RESPONSE",
+    // AA クライアントが v2 の PAYMENT-REQUIRED と settle 結果を読めるよう公開する。
+    "access-control-expose-headers": "X-PAYMENT-RESPONSE, PAYMENT-REQUIRED",
   };
 }
 
@@ -159,17 +170,57 @@ export function paymentRequirements(opts: PaywallOptions, feePayer: string) {
   };
 }
 
+// v2 leg（@x402/core PaymentRequirementsV2Schema）: amount(トップレベル)・network は CAIP-2。
+// v1 と違い maxAmountRequired ではなく amount。accept 内に resource/description は持たない。
+export function paymentRequirementsV2(opts: PaywallOptions, feePayer: string) {
+  return {
+    scheme: "exact",
+    network: NETWORK_V2,
+    amount: priceToAtomic(opts.price),
+    asset: USDC_MINT,
+    payTo: RECIPIENT,
+    maxTimeoutSeconds: 60,
+    extra: { resource: opts.resourcePath, feePayer },
+  };
+}
+
+// v2 の PAYMENT-REQUIRED ヘッダに載せる本体（@x402/core PaymentRequiredV2Schema）。
+export function paymentRequiredV2(opts: PaywallOptions, feePayer: string) {
+  return {
+    x402Version: 2,
+    error: "payment required",
+    resource: { url: opts.resourcePath, description: opts.description, mimeType: "application/json" },
+    accepts: [paymentRequirementsV2(opts, feePayer)],
+  };
+}
+
+// PAYMENT-REQUIRED ヘッダ値 = base64(JSON.stringify(paymentRequired))（@x402/core encodePaymentRequiredHeader）。
+export function encodePaymentRequiredHeader(paymentRequired: unknown): string {
+  return b64encode(JSON.stringify(paymentRequired));
+}
+
 export async function buildAccepts(opts: PaywallOptions) {
   return [paymentRequirements(opts, await getFeePayer())];
 }
 
+// discovery 用: v1 leg + v2 leg を併記（AA が v2 を掴める形）。
+export async function buildAcceptsBoth(opts: PaywallOptions) {
+  const feePayer = await getFeePayer();
+  return [paymentRequirements(opts, feePayer), paymentRequirementsV2(opts, feePayer)];
+}
+
 export async function challenge402(opts: PaywallOptions): Promise<Response> {
+  const feePayer = await getFeePayer(); // v1/v2 で同じ解決値を使う（1 回だけ取得）。
+  // body: v1 leg（"v1 puts in body" — @x402/core）。
   const body = {
     x402Version: X402_VERSION,
     error: "payment required",
-    accepts: await buildAccepts(opts),
+    accepts: [paymentRequirements(opts, feePayer)],
   };
-  return Response.json(body, { status: 402, headers: corsHeaders() });
+  const headers = corsHeaders();
+  // header: v2 leg（"v2 puts in header" — @x402/core）。AA v2 client が掴む。
+  headers["PAYMENT-REQUIRED"] = encodePaymentRequiredHeader(paymentRequiredV2(opts, feePayer));
+  return Response.json(body, { status: 402, headers });
 }
 
 // --------------------------------------------------------------------------- #
