@@ -5,14 +5,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
-import {
-  extractSolanaFeePayer,
-  resolveFeePayer,
-  HARDCODED_FEE_PAYER,
-  paymentRequirementsV2,
-  paymentRequiredV2,
-  encodePaymentRequiredHeader,
-} from "../../src/lib/x402";
+import { extractSolanaFeePayer, resolveFeePayer, HARDCODED_FEE_PAYER } from "../../src/lib/x402";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const fixture = JSON.parse(readFileSync(join(here, "payai-supported.json"), "utf-8"));
@@ -77,27 +70,4 @@ test("どの分岐でも feePayer は非空", () => {
   for (const args of [["L", "", ""], ["", "C", ""], ["", "", "E"], ["", "", ""]] as const) {
     assert.ok(resolveFeePayer(args[0], args[1], args[2]).length > 0);
   }
-});
-
-// --- v2 leg（@x402/core PaymentRequirementsV2Schema 準拠）---
-const OPTS = { price: "$0.02", description: "movers", resourcePath: "/api/jin/movers" };
-
-test("v2 leg は amount(トップレベル)・CAIP-2 network・extra.feePayer 非空", () => {
-  const leg = paymentRequirementsV2(OPTS, "FP");
-  assert.equal(leg.scheme, "exact");
-  assert.equal(leg.network, "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp");
-  assert.equal(leg.amount, "20000"); // v2 は amount。maxAmountRequired ではない
-  assert.equal("maxAmountRequired" in leg, false);
-  assert.equal(leg.extra.feePayer, "FP");
-  assert.equal(leg.extra.resource, "/api/jin/movers");
-});
-
-test("PAYMENT-REQUIRED ヘッダは base64(JSON) の v2 paymentRequired（x402Version:2・accepts.min1）", () => {
-  const header = encodePaymentRequiredHeader(paymentRequiredV2(OPTS, "FP"));
-  const decoded = JSON.parse(Buffer.from(header, "base64").toString("utf-8"));
-  assert.equal(decoded.x402Version, 2);
-  assert.equal(decoded.resource.url, "/api/jin/movers");
-  assert.ok(Array.isArray(decoded.accepts) && decoded.accepts.length >= 1);
-  assert.equal(decoded.accepts[0].amount, "20000");
-  assert.equal(decoded.accepts[0].network, "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp");
 });
