@@ -30,6 +30,12 @@ export const X402_VERSION = Number(process.env.X402_VERSION ?? 1);
 // 既定は Solana mainnet USDC mint。運用環境で X402_USDC_MINT により上書き可。
 export const USDC_MINT =
   process.env.X402_USDC_MINT ?? "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v";
+// v2 leg の network（CAIP-2）。既定 Solana mainnet（@x402/svm SOLANA_MAINNET_CAIP2 実値）。
+export const NETWORK_V2 =
+  process.env.X402_NETWORK_V2 ?? "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp";
+// facilitator の sign→settle 窓。300 が安全側（OSD/X-alpha 実測形と一致）。60→300。
+export const MAX_TIMEOUT_SECONDS = Number(process.env.X402_MAX_TIMEOUT_SECONDS ?? 300);
+export const MIME_TYPE = process.env.X402_MIME_TYPE ?? "application/json";
 
 // UTF-8 セーフな base64。btoa は Latin1 前提で em-dash 等（>255）に throw するため、
 // Node 実行時は Buffer(utf-8) を優先。ブラウザは TextEncoder 経由で UTF-8 バイト化してから btoa。
@@ -150,34 +156,60 @@ export async function getFeePayer(): Promise<string> {
 }
 
 // --------------------------------------------------------------------------- #
-// accepts（静的 v1 leg。feePayer だけ動的）
+// accepts（v1 + v2 併記。X-alpha 実測確定形。両 leg に top-level 必須4フィールド）
+// canonical @x402/core PaymentRequirements V1/V2 は resource/description/mimeType/
+// maxTimeoutSeconds を top-level に要求する。欠落が PayAI /verify の
+// invalid_payment_requirements の原因。extra.resource は代替にならない（top-level 必須）。
+// resource は実測形どおりフル URL。feePayer だけ動的（4段 fallback）。
 // --------------------------------------------------------------------------- #
-export function paymentRequirements(opts: PaywallOptions, feePayer: string) {
+export function paymentRequirements(opts: PaywallOptions, feePayer: string, resource: string) {
   return {
     scheme: "exact",
-    network: NETWORK,
+    network: NETWORK, // v1 は bare "solana"
     maxAmountRequired: priceToAtomic(opts.price), // v1 は maxAmountRequired（atomic 整数文字列）
-    resource: opts.resourcePath,
+    resource,
     description: opts.description,
-    mimeType: "application/json",
+    mimeType: MIME_TYPE,
     payTo: RECIPIENT,
     asset: USDC_MINT,
-    maxTimeoutSeconds: 60,
-    // 実測リファレンス（2026-07-08）の exact SVM 形: extra は { resource, feePayer }。
-    extra: { resource: opts.resourcePath, feePayer },
+    maxTimeoutSeconds: MAX_TIMEOUT_SECONDS,
+    extra: { resource, feePayer },
   };
 }
 
-export async function buildAccepts(opts: PaywallOptions) {
-  return [paymentRequirements(opts, await getFeePayer())];
+export function paymentRequirementsV2(opts: PaywallOptions, feePayer: string, resource: string) {
+  return {
+    scheme: "exact",
+    network: NETWORK_V2, // v2 は CAIP-2 "solana:5eykt…"
+    amount: priceToAtomic(opts.price), // v2 は amount（値は v1 と同一・フィールド名だけ違う）
+    resource,
+    description: opts.description,
+    mimeType: MIME_TYPE,
+    payTo: RECIPIENT,
+    asset: USDC_MINT,
+    maxTimeoutSeconds: MAX_TIMEOUT_SECONDS,
+    extra: { resource, feePayer },
+  };
 }
 
-// OSD 同型の v1 "solana" leg（body）。AA の v1 client は body の accepts を読む。
-export async function challenge402(opts: PaywallOptions): Promise<Response> {
+// v1 leg 先・v2 leg 後（length 2）。本番 AA は policy 込みで v2 leg を掴む（X-alpha 実測）。
+export function buildLegs(opts: PaywallOptions, feePayer: string, resource: string) {
+  return [
+    paymentRequirements(opts, feePayer, resource),
+    paymentRequirementsV2(opts, feePayer, resource),
+  ];
+}
+
+export async function buildAccepts(opts: PaywallOptions, resource: string) {
+  return buildLegs(opts, await getFeePayer(), resource);
+}
+
+// body に v1+v2 併記（"body puts requirements" — v1 client は body accepts を読む）。
+export async function challenge402(opts: PaywallOptions, resource: string): Promise<Response> {
   const body = {
     x402Version: X402_VERSION,
     error: "payment required",
-    accepts: await buildAccepts(opts),
+    accepts: await buildAccepts(opts, resource),
   };
   return Response.json(body, { status: 402, headers: corsHeaders() });
 }
@@ -210,6 +242,7 @@ export type SettleOutcome = { pass: boolean; responseHeader?: string };
 export async function verifyThenSettle(
   xpayment: string,
   opts: PaywallOptions,
+  resource: string,
 ): Promise<SettleOutcome> {
   let paymentPayload: unknown;
   try {
@@ -217,8 +250,15 @@ export async function verifyThenSettle(
   } catch {
     return { pass: false };
   }
-  const requirements = paymentRequirements(opts, await getFeePayer());
-  const body = { x402Version: X402_VERSION, paymentPayload, paymentRequirements: requirements };
+  // AA が払った leg（network の CAIP-2 有無）に一致する requirements を facilitator に渡す。
+  const payload = paymentPayload as { network?: string; x402Version?: number };
+  const feePayer = await getFeePayer();
+  const isV2 = typeof payload?.network === "string" && payload.network.includes(":");
+  const requirements = isV2
+    ? paymentRequirementsV2(opts, feePayer, resource)
+    : paymentRequirements(opts, feePayer, resource);
+  const version = typeof payload?.x402Version === "number" ? payload.x402Version : X402_VERSION;
+  const body = { x402Version: version, paymentPayload, paymentRequirements: requirements };
 
   const verifyRes = await facilitatorPost("/verify", body);
   const valid = Boolean(verifyRes && (verifyRes.isValid ?? verifyRes.valid));

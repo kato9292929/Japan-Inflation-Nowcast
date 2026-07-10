@@ -10,7 +10,7 @@ export const GET = withSolanaOnlyPaywall(
   {
     price: "$0.01",
     description:
-      "Japan Inflation Nowcast — daily food index series (excl/incl, matched SKU count). " +
+      "JIN daily food index series (excl/incl, matched SKU count). " +
       "Single-store observation, not official CPI, not a forecast.",
     resourcePath: "/api/jin/series",
   },

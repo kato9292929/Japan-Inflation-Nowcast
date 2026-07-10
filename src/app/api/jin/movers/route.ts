@@ -11,7 +11,7 @@ export const GET = withSolanaOnlyPaywall(
   {
     price: "$0.02",
     description:
-      "Japan Inflation Nowcast — per-day mover SKUs vs base date, with promo tags. " +
+      "JIN daily inflation nowcast movers: per-day mover SKUs vs base date, with promo tags. " +
       "Single-store observation, not a forecast.",
     resourcePath: "/api/jin/movers",
   },

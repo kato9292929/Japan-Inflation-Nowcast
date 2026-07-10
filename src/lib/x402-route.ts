@@ -8,13 +8,16 @@ type Handler = (req: Request) => Promise<Response> | Response;
 
 export function withSolanaOnlyPaywall(handler: Handler, opts: PaywallOptions): Handler {
   return async (req: Request): Promise<Response> => {
+    // resource は実測形どおりフル URL（origin + path）。canonical schema の resource 必須項目。
+    const u = new URL(req.url);
+    const resource = `${u.origin}${u.pathname}`;
     const xpayment = req.headers.get("x-payment");
-    if (!xpayment) return challenge402(opts); // 未払い → 非空 402 accepts
+    if (!xpayment) return challenge402(opts, resource); // 未払い → v1+v2 併記 402
 
-    const { pass, responseHeader } = await verifyThenSettle(xpayment, opts);
+    const { pass, responseHeader } = await verifyThenSettle(xpayment, opts, resource);
     if (!pass) {
       // 検証/決済失敗 → 402 を返す。settle まで到達していれば結果を PAYMENT-RESPONSE で返す。
-      const res = await challenge402(opts);
+      const res = await challenge402(opts, resource);
       if (responseHeader) res.headers.set("X-PAYMENT-RESPONSE", responseHeader);
       return res;
     }
