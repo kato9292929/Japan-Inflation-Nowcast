@@ -5,7 +5,13 @@ import jin from "@/data/jin_public.json";
 
 export function getJinLatest() {
   // latest は観測値 + coverage_note + methodology を内包。source_timestamp を併記。
-  return { ...jin.latest, source_timestamp: jin.generated_at };
+  // passthrough_gap は追加のみ・nullable（上流CGPI↔下流JIN の観測ブロック。
+  // 数値gapは not_comparable で非公開＝予測publishにならない）。欠けても応答は成立する。
+  return {
+    ...jin.latest,
+    source_timestamp: jin.generated_at,
+    passthrough_gap: jin.passthrough_gap ?? null,
+  };
 }
 
 export function getJinSeries(from?: string | null, to?: string | null) {
