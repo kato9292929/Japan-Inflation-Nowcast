@@ -933,7 +933,7 @@
     ]
   },
   "passthrough_gap": {
-    "as_of": "2026-07-11T05:41:23Z",
+    "as_of": "2026-07-11T06:00:39Z",
     "upstream": {
       "source": "CGPI",
       "as_of_month": "2026-05",
@@ -948,7 +948,12 @@
       "window_days": 25,
       "cum_pct_since_base": 1.11,
       "rate_pct": null,
-      "basis": "cum_since_base_only"
+      "basis": "cum_since_base_only",
+      "incl_secondary": {
+        "latest_index": 101.01,
+        "cum_pct_since_base": 1.01,
+        "basis": "cum_since_base_only"
+      }
     },
     "gap": {
       "status": "not_comparable",
@@ -956,6 +961,12 @@
       "maturity": "short_window",
       "reading": "上流CGPI YoY +6.3% に対し、店頭は base比 +1.11%(25日)。窓が短く年率比較は不能。転嫁の到達度はcum_pct_since_baseで追う。",
       "caveat": "月次が2点貯まった時点でMoM年率のgap(maturing)に自動昇格する。"
+    },
+    "promo_absorption": {
+      "excl_minus_incl_pt": 0.1,
+      "as_of": "2026-06-29",
+      "reading": "特売が基調(excl)の上昇を店頭でどれだけ吸収/隠しているか。プラスが大きいほど特売が転嫁を覆い隠している（『補助金で物価が見えにくい』の民間・特売版）。",
+      "caveat": "短窓では日次特売のオンオフでぶれる。方向の観測用。"
     }
   }
 }

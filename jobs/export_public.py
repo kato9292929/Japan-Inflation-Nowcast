@@ -202,13 +202,20 @@ def _passthrough_gap(series: list[dict[str, Any]], base_date: date) -> dict[str,
         jin = pd.Series(
             {pd.to_datetime(r["date"]): r["excl"] for r in series if r.get("excl") is not None}
         ).sort_index()
+        # incl(特売込) secondary。取れなければ None（promo_absorption は省略される）。
+        jin_incl = pd.Series(
+            {pd.to_datetime(r["date"]): r["incl"] for r in series if r.get("incl") is not None}
+        ).sort_index()
+        jin_incl = jin_incl if not jin_incl.empty else None
         macro = _load_macro()
         cg = macro[(macro["series_id"] == "cgpi_total") & (macro["metric"] == "yoy_pct")].copy()
         if jin.empty or cg.empty:
             return None
         cg["period"] = pd.to_datetime(cg["period"])
         cgpi = cg.sort_values("period").set_index("period")["value"]
-        block = compute_spread(cgpi, jin, cgpi_mode="yoy", base_date=base_date.isoformat())
+        block = compute_spread(
+            cgpi, jin, jin_incl=jin_incl, cgpi_mode="yoy", base_date=base_date.isoformat()
+        )
         return block.get("passthrough_gap")
     except Exception:  # noqa: BLE001  参照系が無くても本体は出す（部分復旧）
         return None
