@@ -18,8 +18,8 @@
       "incl": 57
     },
     "upstream": {
-      "cgpi_yoy_pct": 6.3,
-      "cgpi_as_of": "2026-05-01"
+      "cgpi_yoy_pct": 7.1,
+      "cgpi_as_of": "2026-06-01"
     },
     "methodology": "Jevons elementary (matched-SKU geometric mean) + 10-category equal-weight upper aggregation; excl_promo removes SKUs flagged promo on base or current day; unit prices canonicalized (¥/100g, ¥/100ml, ¥/unit); base_date fixed.",
     "coverage_note": "single store, Tokyo metro delivery area, mid-tier supermarket (Life). Not nationally representative.",
@@ -933,11 +933,11 @@
     ]
   },
   "passthrough_gap": {
-    "as_of": "2026-07-11T06:00:39Z",
+    "as_of": "2026-07-11T08:40:49Z",
     "upstream": {
       "source": "CGPI",
-      "as_of_month": "2026-05",
-      "yoy_pct": 6.3
+      "as_of_month": "2026-06",
+      "yoy_pct": 7.1
     },
     "downstream": {
       "source": "JIN",
@@ -959,7 +959,7 @@
       "status": "not_comparable",
       "upstream_minus_downstream_pt": null,
       "maturity": "short_window",
-      "reading": "上流CGPI YoY +6.3% に対し、店頭は base比 +1.11%(25日)。窓が短く年率比較は不能。転嫁の到達度はcum_pct_since_baseで追う。",
+      "reading": "上流CGPI YoY +7.1% に対し、店頭は base比 +1.11%(25日)。窓が短く年率比較は不能。転嫁の到達度はcum_pct_since_baseで追う。",
       "caveat": "月次が2点貯まった時点でMoM年率のgap(maturing)に自動昇格する。"
     },
     "promo_absorption": {
