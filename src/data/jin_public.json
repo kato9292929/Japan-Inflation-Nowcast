@@ -931,5 +931,31 @@
         "note": "3 day(s) at this level"
       }
     ]
+  },
+  "passthrough_gap": {
+    "as_of": "2026-07-11T05:41:23Z",
+    "upstream": {
+      "source": "CGPI",
+      "as_of_month": "2026-05",
+      "yoy_pct": 6.3
+    },
+    "downstream": {
+      "source": "JIN",
+      "base_date": "2026-06-04",
+      "base_index": 100.0,
+      "latest_date": "2026-06-29",
+      "latest_index": 101.11,
+      "window_days": 25,
+      "cum_pct_since_base": 1.11,
+      "rate_pct": null,
+      "basis": "cum_since_base_only"
+    },
+    "gap": {
+      "status": "not_comparable",
+      "upstream_minus_downstream_pt": null,
+      "maturity": "short_window",
+      "reading": "上流CGPI YoY +6.3% に対し、店頭は base比 +1.11%(25日)。窓が短く年率比較は不能。転嫁の到達度はcum_pct_since_baseで追う。",
+      "caveat": "月次が2点貯まった時点でMoM年率のgap(maturing)に自動昇格する。"
+    }
   }
 }

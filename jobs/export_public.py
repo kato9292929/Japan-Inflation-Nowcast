@@ -189,6 +189,31 @@ def _days_at_level(sku_series: pd.Series, d: date) -> str:
     return f"{count} day(s) at this level"
 
 
+def _passthrough_gap(series: list[dict[str, Any]], base_date: date) -> dict[str, Any] | None:
+    """上流 CGPI YoY と 下流 JIN(excl) の乖離ブロック（観測。予測ではない）。
+
+    short_window（JIN が月次で 2 点未満）では数値 gap を出さず not_comparable とし、
+    上流 YoY と base 比実測（cum_pct_since_base）の並置に留める。CGPI 参照が無ければ None。
+    """
+    try:
+        from lib.macro_reference import load as _load_macro
+        from scripts.spread_monitor import compute_spread
+
+        jin = pd.Series(
+            {pd.to_datetime(r["date"]): r["excl"] for r in series if r.get("excl") is not None}
+        ).sort_index()
+        macro = _load_macro()
+        cg = macro[(macro["series_id"] == "cgpi_total") & (macro["metric"] == "yoy_pct")].copy()
+        if jin.empty or cg.empty:
+            return None
+        cg["period"] = pd.to_datetime(cg["period"])
+        cgpi = cg.sort_values("period").set_index("period")["value"]
+        block = compute_spread(cgpi, jin, cgpi_mode="yoy", base_date=base_date.isoformat())
+        return block.get("passthrough_gap")
+    except Exception:  # noqa: BLE001  参照系が無くても本体は出す（部分復旧）
+        return None
+
+
 def build_public_payload(session: Any, *, base_date: date | None = None) -> dict[str, Any]:
     """配信用ペイロード（観測値のみ・予測なし）を組み立てる。"""
     series, latest = _series_and_latest(session)
@@ -222,6 +247,8 @@ def build_public_payload(session: Any, *, base_date: date | None = None) -> dict
         "latest": latest,
         "series": series,
         "movers_by_date": movers,
+        # 上流CGPI vs 下流JIN の乖離（観測ブロック。short_window では数値gap非公開）。
+        "passthrough_gap": _passthrough_gap(series, base_date),
     }
 
 
