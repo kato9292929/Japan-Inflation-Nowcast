@@ -1,9 +1,9 @@
-// GET /api/jin/latest — 無料・CORS open。最新観測日の指数（観測値のみ）。
+// GET /api/jin/latest — 無料・CORS open。最新観測日の指数（観測値のみ）＋ passthrough_gap。
 import { getJinLatest } from "@/lib/jin-data";
-import { corsHeaders } from "@/lib/x402";
-import { corsPreflight } from "@/lib/x402-route";
+import { corsHeaders, corsPreflight } from "@/lib/x402-route";
+import { NextResponse } from "next/server";
 
 export const dynamic = "force-static";
 
-export const GET = () => Response.json(getJinLatest(), { headers: corsHeaders() });
+export const GET = () => NextResponse.json(getJinLatest(), { headers: corsHeaders() });
 export const OPTIONS = () => corsPreflight();
