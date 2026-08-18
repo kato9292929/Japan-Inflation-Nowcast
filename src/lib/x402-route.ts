@@ -12,7 +12,7 @@ import { x402Server } from "./x402-server";
 const SOLANA_NETWORK: Network = "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp"; // CAIP-2
 const PAY_TO = process.env.X402_RECIPIENT ?? "4s8XQC2WzRfgH8Xiep7ybnCW11VKRCMwxQF6jknx3VPf";
 // resource は絶対URL。本番ドメインを既定に（PUBLIC_BASE_URL で上書き可）。
-const PUBLIC_BASE_URL = process.env.PUBLIC_BASE_URL ?? "https://jin-orcin-pi.vercel.app";
+const PUBLIC_BASE_URL = process.env.PUBLIC_BASE_URL ?? "https://jin.x402jp.com";
 
 export type PaywallOptions = { price: string; description: string; resourcePath: string };
 
