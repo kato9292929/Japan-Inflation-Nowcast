@@ -3,6 +3,7 @@ import Wire from "./Wire";
 import { getJinLatest } from "@/lib/jin-data";
 import jin from "@/data/jin_public.json";
 import upstream from "@/data/upstream.json";
+import foodBrief from "@/data/food_brief.json";
 
 // 観測トレイル（excl_promo）。観測値のみ・予測ではない。固定基準 100。
 function Sparkline({ data }: { data: number[] }) {
@@ -48,6 +49,7 @@ export default function Home() {
       ticker={upstream.ticker}
       baseDate={latest.base_date}
       coverageNote={latest.coverage_note}
+      foodBrief={foodBrief}
     >
       {/* 2. 食品物価の観測（記事の下）。ドメイン言語固定・言語切替の対象外。 */}
       <section id="food" className={styles.jin}>

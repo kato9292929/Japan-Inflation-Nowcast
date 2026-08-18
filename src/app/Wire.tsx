@@ -16,6 +16,18 @@ type Item = {
 };
 type Tick = { label: string; value: string };
 
+type Mover = { label_ja: string; label_en: string; pct: number; tag: string };
+type FoodBrief = {
+  as_of: string;
+  window_label_ja: string;
+  window_label_en: string;
+  headline_ja: string;
+  headline_en: string;
+  summary_ja: string;
+  summary_en: string;
+  movers: Mover[];
+};
+
 // _ja が無い / 空文字なら英語に落とす。データ欠けで空表示にしない。
 function pickText(item: Item, key: "headline" | "summary", lang: Lang): string {
   const jaVal = key === "headline" ? item.headline_ja : item.summary_ja;
@@ -28,12 +40,14 @@ export default function Wire({
   ticker,
   baseDate,
   coverageNote,
+  foodBrief,
   children,
 }: {
   items: Item[];
   ticker: Tick[];
   baseDate: string;
   coverageNote: string;
+  foodBrief: FoodBrief;
   children: ReactNode;
 }) {
   // SSR は必ず "en" で描く（hydration mismatch を出さない）。
@@ -193,7 +207,38 @@ export default function Wire({
           </div>
         </section>
 
-        {/* food セクション・footer（ドメイン言語固定・切替対象外）は page.tsx から children で受ける */}
+        {/* 食品の観測記事（自動生成・観測のみ・予測なし）。JP/EN トグルに追従。 */}
+        <section className={styles.brief}>
+          <span className={`${styles.tag} ${styles.tagGold}`}>
+            FOOD OBSERVATION ／ 観測記事
+          </span>
+          <h2 className={`${styles.jinHead}${jaCls}`}>
+            {ja ? foodBrief.headline_ja : foodBrief.headline_en}
+          </h2>
+          <p className={`${styles.briefDek}${jaCls}`}>
+            {ja ? foodBrief.summary_ja : foodBrief.summary_en}
+          </p>
+          <span className={`${styles.byline} mono`}>
+            {ja ? foodBrief.window_label_ja : foodBrief.window_label_en} · as of {foodBrief.as_of}
+          </span>
+          <ul className={styles.moverList}>
+            {foodBrief.movers.map((m) => {
+              const up = m.pct > 0;
+              const cls = up ? styles.up : styles.down;
+              return (
+                <li key={m.label_en} className={styles.mover}>
+                  <span className={ja ? styles.jaText : undefined}>{ja ? m.label_ja : m.label_en}</span>
+                  <span className={`${cls} mono`}>
+                    {up ? "+" : ""}
+                    {m.pct.toFixed(0)}%{m.tag === "promo" ? (ja ? " ·特売" : " ·promo") : ""}
+                  </span>
+                </li>
+              );
+            })}
+          </ul>
+        </section>
+
+        {/* food パネル・footer（ドメイン言語固定・切替対象外）は page.tsx から children で受ける */}
         {children}
       </main>
     </div>

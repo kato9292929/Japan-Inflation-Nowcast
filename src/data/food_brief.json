@@ -1,0 +1,19 @@
+{
+  "as_of": "2026-08-18",
+  "base_date": "2026-06-04",
+  "window_label_ja": "基準 2026-06-04 比",
+  "window_label_en": "vs base 2026-06-04",
+  "headline_ja": "梅雨明けの野菜高と、新米が生んだ穀類の値下がり",
+  "headline_en": "A late-rainy-season vegetable spike against a new-crop rice markdown",
+  "summary_ja": "単一店舗（東京近郊・ライフ）の店頭で観測した8月18日の食品パネルは、葉物を中心に野菜が基準日より大きく上がった。キャベツ・きゅうり・にら・白菜がそろって上昇し、梅雨後半の出荷減がそのまま棚値に出ている。一方で穀類は新米の入荷とコメの日替わり特売で下がり、キウイやアボカドは広告の品として値引きされた。結果として、特売を除いた基調系列(excl)が特売込み(incl)を上回っており、値上がり圧力の一部を特売が吸収している構図が読める。これは観測であって予測ではなく、単一店舗のため全国を代表しない。",
+  "summary_en": "The August 18 food panel, observed at a single Tokyo-area store (Life), shows vegetables well above the base date, led by leaf crops. Cabbage, cucumber, garlic chives and Chinese cabbage all rose together, with the late-rainy-season drop in shipments passing straight through to shelf prices. Grains moved the other way as new-crop rice arrived and carried daily-deal markdowns, while kiwi and avocado were cut as advertised items. The upshot is that the promotion-excluded core series (excl) sits above the promotion-included one (incl), so discounts are absorbing part of the upward pressure. This is an observation, not a forecast, and a single store is not nationally representative.",
+  "movers": [
+    { "label_ja": "キャベツ 1玉", "label_en": "Cabbage, 1 head", "pct": 86.2, "tag": "none" },
+    { "label_ja": "きゅうり バラ 1本", "label_en": "Cucumber, each", "pct": 78.0, "tag": "none" },
+    { "label_ja": "にら 1束", "label_en": "Garlic chives, 1 bunch", "pct": 60.4, "tag": "none" },
+    { "label_ja": "白菜 1/4切", "label_en": "Chinese cabbage, quarter", "pct": 34.0, "tag": "none" },
+    { "label_ja": "あきたこまち 5kg", "label_en": "Akitakomachi rice, 5kg", "pct": -19.1, "tag": "none" },
+    { "label_ja": "こしいぶき 5kg", "label_en": "Koshiibuki rice, 5kg", "pct": -30.2, "tag": "promo" },
+    { "label_ja": "アボカド 1個", "label_en": "Avocado, each", "pct": -50.2, "tag": "promo" }
+  ]
+}

@@ -248,6 +248,38 @@
   line-height: 1.08;
 }
 
+/* 食品の観測記事（自動生成ブロック） */
+.brief {
+  margin: 48px 0 0;
+  padding-top: 18px;
+  border-top: 3px solid var(--rule);
+}
+.briefDek {
+  margin: 14px 0 10px;
+  max-width: 72ch;
+  font-family: "Fraunces", Georgia, serif;
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--dim);
+}
+.moverList {
+  list-style: none;
+  margin: 14px 0 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 26px;
+}
+.mover {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--ink);
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 4px;
+}
+
 /* 食品物価の観測（記事の下） */
 .jin {
   margin: 48px 0 0;
