@@ -1,4 +1,4 @@
-# CLAUDE.md — Japan Inflation Nowcast
+# CLAUDE.md — Japan Inflation Nowcall
 
 このファイルはリポジトリ直下に置く。Claude Code はこれをプロジェクトメモリとして読む。チャット履歴は無いので、ビルドに必要な設計判断はすべてこのファイルに自己完結で書いてある。
 

@@ -1,4 +1,5 @@
 import styles from "./page.module.css";
+import Wire from "./Wire";
 import { getJinLatest } from "@/lib/jin-data";
 import jin from "@/data/jin_public.json";
 import upstream from "@/data/upstream.json";
@@ -41,165 +42,61 @@ export default function Home() {
   const dExcl = delta(excl);
   const dIncl = delta(incl);
 
-  const hero = upstream.items[0];
-  const left = upstream.items.slice(1, 4);
-  const right = upstream.items.slice(4);
-
   return (
-    <div className={styles.shell}>
-      {/* マストヘッド */}
-      <header className={styles.masthead}>
-        <a className={styles.logo} href="#top" aria-label="Japan Inflation Nowcast">
-          JIN
-        </a>
-        <span className={styles.wordmark}>Japan Inflation Nowcast</span>
-        <nav className={styles.nav}>
-          <a href="#macro">MACRO WIRE</a>
-          <a href="#food">FOOD INDEX</a>
-          <a href="#api">API</a>
-        </nav>
-      </header>
-
-      {/* 市況ティッカー */}
-      <div className={`${styles.ticker} mono`} aria-label="market snapshot">
-        {upstream.ticker.map((t) => (
-          <span key={t.label} className={styles.tick}>
-            <span className={styles.tickLabel}>{t.label}</span>
-            <span className={styles.tickVal}>{t.value}</span>
-          </span>
-        ))}
-      </div>
-
-      <main id="top">
-        {/* 1. マクロ・ニュースのグリッド（WIRED 風） */}
-        <section id="macro" className={styles.grid}>
-          {/* 左レール */}
-          <div className={styles.colL}>
-            <span className={styles.tag}>TODAY&apos;S PICKS</span>
-            {left.map((it) => (
-              <article key={it.headline} className={styles.railItem}>
-                <span className={styles.kicker}>{it.category}</span>
-                <h3 className={styles.railHead}>{it.headline}</h3>
-                <p className={styles.railDek}>{it.summary}</p>
-                <span className={`${styles.byline} mono`}>{it.date}</span>
-              </article>
-            ))}
+    <Wire
+      items={upstream.items}
+      ticker={upstream.ticker}
+      baseDate={latest.base_date}
+      coverageNote={latest.coverage_note}
+    >
+      {/* 2. 食品物価の観測（記事の下）。ドメイン言語固定・言語切替の対象外。 */}
+      <section id="food" className={styles.jin}>
+        <span className={`${styles.tag} ${styles.tagGold}`}>
+          FOOD PRICE OBSERVATION ／ JP-INFL-FOOD
+        </span>
+        <div className={styles.jinGrid}>
+          <div className={styles.jinIntro}>
+            <h2 className={styles.jinHead}>Tokyo store-front food prices, observed daily</h2>
+            <p className={`${styles.jinMeta} mono`}>
+              base {latest.base_date} = 100 · as of {latest.as_of} · 単一店舗 · 固定基準 Jevons · 毎日 手で取得
+            </p>
           </div>
 
-          {/* 中央リード + API/NOTES を記事として */}
-          <div className={styles.colC}>
-            <article className={styles.lead}>
-              <span className={`${styles.kicker} ${styles.kickerC}`}>{hero.category}</span>
-              <h1 className={styles.heroHead}>{hero.headline}</h1>
-              <p className={styles.heroDek}>{hero.summary}</p>
-              <span className={`${styles.byline} mono`}>MACRO WIRE · {hero.date}</span>
-            </article>
-
-            <article id="api" className={styles.cArticle}>
-              <span className={styles.kicker}>API ENDPOINTS</span>
-              <ul className={styles.eps}>
-                <li className={styles.epRow}>
-                  <div className={styles.epTop}>
-                    <code className={`${styles.epPath} mono`}>GET /api/jin/latest</code>
-                    <span className={`${styles.badge} ${styles.badgeFree} mono`}>200 ✓ free</span>
-                  </div>
-                  <span className={styles.epDesc}>最新観測日の指数。観測値 + matched + 方法論。</span>
-                </li>
-                <li className={styles.epRow}>
-                  <div className={styles.epTop}>
-                    <code className={`${styles.epPath} mono`}>GET /api/jin/series</code>
-                    <span className={`${styles.badge} mono`}>HTTP/1.1 402 ✓ $0.01</span>
-                  </div>
-                  <span className={styles.epDesc}>指数の時系列。機械向け。</span>
-                </li>
-                <li className={styles.epRow}>
-                  <div className={styles.epTop}>
-                    <code className={`${styles.epPath} mono`}>GET /api/jin/movers</code>
-                    <span className={`${styles.badge} mono`}>HTTP/1.1 402 ✓ $0.02</span>
-                  </div>
-                  <span className={styles.epDesc}>その日動いた品目。特売タグ付き。機械向け。</span>
-                </li>
-              </ul>
-              <p className={styles.epNote}>
-                決済は Solana USDC。discovery は{" "}
-                <a className={`${styles.goldLink} mono`} href="/.well-known/x402.json">/.well-known/x402.json</a>。
-              </p>
-            </article>
-
-            <article className={styles.cArticle}>
-              <span className={styles.kicker}>METHOD / NOTES</span>
-              <ul className={styles.notes}>
-                <li>日次・固定基準（{latest.base_date} = 100）の Jevons 指数。マッチした同一 SKU の幾何平均。</li>
-                <li>{latest.coverage_note}</li>
-                <li>excl_promo は基準日・当日いずれかで特売タグの付いた SKU を除外した基調系列。</li>
-                <li>これは観測であって予測ではない。確率値や見通しは返さない。</li>
-              </ul>
-            </article>
-          </div>
-
-          {/* 右レール */}
-          <div className={styles.colR}>
-            <span className={styles.tag}>MARKETS</span>
-            {right.map((it) => (
-              <article key={it.headline} className={styles.railRItem}>
-                <span className={styles.kicker}>{it.category}</span>
-                <h3 className={styles.railRHead}>{it.headline}</h3>
-              </article>
-            ))}
-          </div>
-        </section>
-
-        {/* 2. 食品物価の観測（記事の下） */}
-        <section id="food" className={styles.jin}>
-          <span className={`${styles.tag} ${styles.tagGold}`}>
-            FOOD PRICE OBSERVATION ／ JP-INFL-FOOD
-          </span>
-          <div className={styles.jinGrid}>
-            <div className={styles.jinIntro}>
-              <h2 className={styles.jinHead}>
-                Tokyo store-front food prices, observed daily
-              </h2>
-              <p className={`${styles.jinMeta} mono`}>
-                base {latest.base_date} = 100 · as of {latest.as_of} · 単一店舗 · 固定基準 Jevons · 毎日 手で取得
-              </p>
-            </div>
-
-            <div className={styles.reads}>
-              <div className={styles.read}>
-                <div className={styles.readLabel}>excl_promo · 基調（特売除外）</div>
-                <div className={`${styles.readVal} mono`}>{excl.toFixed(2)}</div>
-                <div className={`${styles.readDelta} ${styles[dExcl.cls]} mono`}>
-                  {dExcl.label} · matched {latest.matched_sku.excl}
-                </div>
+          <div className={styles.reads}>
+            <div className={styles.read}>
+              <div className={styles.readLabel}>excl_promo · 基調（特売除外）</div>
+              <div className={`${styles.readVal} mono`}>{excl.toFixed(2)}</div>
+              <div className={`${styles.readDelta} ${styles[dExcl.cls]} mono`}>
+                {dExcl.label} · matched {latest.matched_sku.excl}
               </div>
-              <div className={styles.read}>
-                <div className={styles.readLabel}>incl_promo · 特売込</div>
-                <div className={`${styles.readVal} mono`}>{incl.toFixed(2)}</div>
-                <div className={`${styles.readDelta} ${styles[dIncl.cls]} mono`}>
-                  {dIncl.label} · matched {latest.matched_sku.incl}
-                </div>
+            </div>
+            <div className={styles.read}>
+              <div className={styles.readLabel}>incl_promo · 特売込</div>
+              <div className={`${styles.readVal} mono`}>{incl.toFixed(2)}</div>
+              <div className={`${styles.readDelta} ${styles[dIncl.cls]} mono`}>
+                {dIncl.label} · matched {latest.matched_sku.incl}
               </div>
             </div>
           </div>
+        </div>
 
-          <div className={styles.spark}>
-            <Sparkline data={trail} />
-            <div className={`${styles.sparkAxis} mono`}>
-              <span>{jin.series[0].date}</span>
-              <span>
-                excl_promo · baseline 100 ·{" "}
-                <span className={styles.up}>▲ 上昇</span> <span className={styles.down}>▼ 下降</span>
-              </span>
-              <span>{jin.series[jin.series.length - 1].date}</span>
-            </div>
+        <div className={styles.spark}>
+          <Sparkline data={trail} />
+          <div className={`${styles.sparkAxis} mono`}>
+            <span>{jin.series[0].date}</span>
+            <span>
+              excl_promo · baseline 100 ·{" "}
+              <span className={styles.up}>▲ 上昇</span> <span className={styles.down}>▼ 下降</span>
+            </span>
+            <span>{jin.series[jin.series.length - 1].date}</span>
           </div>
-        </section>
+        </div>
+      </section>
 
-        <footer className={styles.footer}>
-          <span>x402 Inc. — Tokyo</span>
-          <a href="https://note.com/x402inc">note.com/x402inc</a>
-        </footer>
-      </main>
-    </div>
+      <footer className={styles.footer}>
+        <span>x402 Inc. — Tokyo</span>
+        <a href="https://note.com/x402inc">note.com/x402inc</a>
+      </footer>
+    </Wire>
   );
 }

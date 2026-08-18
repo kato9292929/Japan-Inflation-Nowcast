@@ -47,6 +47,43 @@
   color: var(--gold-ink);
 }
 
+/* JP/EN トグル（.nav の直後・右端。margin-left:auto の .nav がまとめて右寄せ） */
+.langToggle {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  margin-left: 22px;
+  font-family: "Roboto Condensed", "Arial Narrow", sans-serif;
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.14em;
+}
+.langOn {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  color: var(--ink);
+  border-bottom: 2px solid var(--gold);
+  font: inherit;
+  letter-spacing: inherit;
+}
+.langOff {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  color: var(--faint);
+  font: inherit;
+  letter-spacing: inherit;
+}
+.langOff:hover {
+  color: var(--gold-ink);
+}
+.langSep {
+  color: var(--line);
+}
+
 /* 市況ティッカー */
 .ticker {
   display: flex;
@@ -406,4 +443,18 @@
   .nav {
     display: none;
   }
+}
+
+/* 日本語表示時の組版（Fraunces のセリフは日本語字形が無いためゴシックに切替）。
+   後段で宣言し、見出しクラスの font-family / font-size に勝たせる。 */
+.jaText {
+  font-family: "Hiragino Kaku Gothic ProN", "Yu Gothic", "Noto Sans JP",
+    "Roboto Condensed", sans-serif;
+  letter-spacing: 0.01em;
+  line-height: 1.5;
+}
+/* hero 見出しは英語だと非常に大きいので、日本語のとき 1〜2 段階小さくして 3 行超を防ぐ。 */
+.heroHeadJa {
+  font-size: clamp(24px, 3.2vw, 38px);
+  line-height: 1.35;
 }
