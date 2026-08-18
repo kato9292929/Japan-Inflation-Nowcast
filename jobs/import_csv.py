@@ -16,10 +16,14 @@ import argparse
 import logging
 from datetime import date
 
+import csv as _csv
+from pathlib import Path
+
 from etl import food as etl_food
 from etl import housing as etl_housing
 from scrapers.base import SourceConfig
 from scrapers.food.csv_import import CsvFoodImporter
+from scrapers.food.observation_csv import ObservationFoodImporter
 from scrapers.housing.csv_import import CsvHousingImporter
 from storage.db import init_db
 
@@ -54,16 +58,37 @@ HOUSING_COLUMN_MAP = {
 }
 
 
+def _is_observation_csv(path: str) -> bool:
+    """観測 CSV スキーマか（ヘッダに obs_date/taxincl_yen があるか）で判定する。"""
+    p = Path(path)
+    if not p.exists():
+        return False
+    with p.open(encoding="utf-8-sig", newline="") as fh:
+        header = next(_csv.reader(fh), [])
+    cols = {c.strip() for c in header}
+    return "obs_date" in cols and "taxincl_yen" in cols
+
+
 def import_csv(
     path: str, *, scrape_date: date, kind: str = "food", source_id: str = "csv_import"
 ) -> int:
     """CSV を指定日付で取り込み、clean まで再構築する。Returns: 取り込み行数。"""
     init_db()  # 新規 DB でもテーブルを保証（冪等）
     if kind == "food":
-        cfg = SourceConfig(
-            id=source_id, enabled=True, type="csv", path=path, column_map=FOOD_COLUMN_MAP
-        )
-        records = CsvFoodImporter(cfg).run()
+        if _is_observation_csv(path):
+            # 観測 CSV スキーマ（obs_date,section,product,unit,honbody_yen,taxincl_yen,...）
+            importer = ObservationFoodImporter(
+                SourceConfig(id=source_id, enabled=True, type="csv", path=path)
+            )
+            records = importer.run()
+            for w in importer.warnings:
+                logger.warning("observation import: %s", w)
+        else:
+            # life_basket スキーマ（商品ID,分類,品名,...）
+            cfg = SourceConfig(
+                id=source_id, enabled=True, type="csv", path=path, column_map=FOOD_COLUMN_MAP
+            )
+            records = CsvFoodImporter(cfg).run()
         n = etl_food.upsert_raw(records, scrape_date=scrape_date)
         etl_food.run(scrape_date=scrape_date)
     elif kind == "housing":
