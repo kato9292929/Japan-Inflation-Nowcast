@@ -1,4 +1,4 @@
-# Japan Inflation Nowcast
+# Japan Inflation Nowcall
 
 独立・日次・透明・エージェント可読な **日本のインフレ・ナウキャスト（速報）**。
 

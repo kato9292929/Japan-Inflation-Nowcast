@@ -1,5 +1,4 @@
 {
-  "note": "上流マクロの文脈。WIRED 風の編集フィード。事実の英文要約のみ（記事リンクなし）。第三者の予測・決定は事実として記す（JIN 自身の予測・確率ではない）。運用者が手で差し込む。",
   "ticker": [
     { "label": "NIKKEI 225", "value": "71,053.49" },
     { "label": "DOW", "value": "51,492.55" },
@@ -10,64 +9,76 @@
   ],
   "items": [
     {
-      "category": "CENTRAL BANKS",
-      "headline": "Europe's central banks tilt hawkish as energy costs bite",
-      "summary": "June rate decisions skewed toward tightening on Iran-driven energy prices. The ECB raised to 2.25% and the Bank of Japan to 1.00%; the Fed held at 3.5–3.75%, with the BOE (3.75%), SNB (0.00%) and Norges Bank (4.25%) on hold. The Czech National Bank hiked for the first time in four years.",
-      "date": "JUN 2026"
+      "category": "SOVEREIGN CREDIT",
+      "headline": "Two ledgers, one sovereign: the 77.6% at the centre of Japan's debt argument",
+      "headline_ja": "帳簿が二つある国 ― 日本の債務論争の中心にある77.6%",
+      "summary": "Robin Brooks argues Japan is already in a debt crisis; it simply does not resemble the G10 crises markets were trained to recognise, so almost nobody calls it one. Read the consolidated balance sheet and the picture inverts: assets of 192.4% of GDP against liabilities of 270.0%, leaving net liabilities at 77.6% — roughly the United Kingdom, and down from 118.4% in 2012 and 24.7% in 1997. The distance between the two readings is not ideology. It is a question of which assets a reader is willing to count, and a decade of yen weakness has quietly marked foreign reserves and pension holdings far above book while the BoJ absorbed 93.6% of the bond stock onto its own side of the ledger. Net interest paid on the same consolidated measure runs at 0.1 to 0.2% of GDP. Both numbers are published by the same statistical system, both are defensible, and the choice between them decides whether Japan is a fiscal emergency or an ordinary European sovereign with an unusual asset mix. Very little of the commentary makes that choice explicit.",
+      "summary_ja": "ロビン・ブルックスは「日本はすでに債務危機にある。ただ市場が見慣れたG10型の危機に似ていないから、誰もそう呼ばないだけだ」と言う。ところが統合政府のバランスシートを読むと絵は反転する。資産はGDP比192.4%、負債は270.0%、差し引いた純債務は77.6% ― イギリスとほぼ同水準で、2012年の118.4%、1997年の24.7%という推移の途中にある。二つの読み方を隔てているのは思想ではない。どの資産を数に入れるかであり、この十年の円安が外貨準備と年金資産を簿価よりはるかに上へ静かに押し上げ、その裏で日銀が国債残高の93.6%相当を自らの側へ吸い上げた。同じ統合ベースで見た純利払いはGDP比0.1〜0.2%にとどまる。どちらの数字も同じ統計体系から出ていて、どちらも擁護でき、そしてどちらを採るかで、日本が財政の非常事態なのか、資産構成が変わっているだけの普通の先進国なのかが決まる。その選択を明示している議論は、ほとんどない。",
+      "date": "AUG 2026"
     },
     {
-      "category": "RATES / CREDIT",
-      "headline": "Households pile into corporate bonds as yields climb",
-      "summary": "After the BOJ moved its policy rate to 1%, household interest income reached a record. Retail corporate-bond issuance rose 14% year on year to an all-time high, with heavy demand for SoftBank Group and Rakuten Group paper — even as younger borrowers face steeper mortgage and auto-loan costs.",
-      "date": "JUN 2026"
+      "category": "RATES / DEBT",
+      "headline": "Gross ¥55tn, net under ¥1tn: the arithmetic of the interest bill",
+      "headline_ja": "総額55兆円、純額1兆円未満 ― 利払い費の算術",
+      "summary": "The ¥55tn figure circulating online assumes a 5% JGB across the entire stock and quotes the gross interest bill, which flatters neither the arithmetic nor the balance sheet it sits on. The government holds more than ¥150tn of US Treasuries, and the coupons on that book return to the same consolidated entity that writes the interest cheques. Net the two and the payment runs under ¥1tn a year — 0.1 to 0.2% of GDP on the consolidated measure, a ratio that has been falling since the mid-2000s rather than climbing. The national accounts show the same shape going back to 1980: gross interest paid peaked in the early 1990s, interest received peaked alongside it, and the black net line has spent four decades well inside the red bars. None of which makes a rate shock costless. The stock reprices slowly, but it does reprice, and at the margin the flow shapes the fiscal path for a decade. It does mean the number driving most of the panic is the gross one, and the gross one is not what the state actually pays.",
+      "summary_ja": "ネット上を回っている55兆円という数字は、国債残高すべてに5%が乗ることを前提にした利払いの総額だ。算術としても、その下にあるバランスシートの実態としても、あまり親切な数字ではない。政府は米国債を150兆円超保有していて、その受取利息は、利払いを書き出しているのと同じ統合主体に戻ってくる。差し引いた純利払いは年1兆円未満、統合政府ベースでGDP比0.1〜0.2%。この比率は2000年代半ば以降、上がるどころか下がってきた。国民経済計算をたどっても形は同じで、支払利子は1990年代前半にピークを打ち、受取利子もほぼ同時にピークを打ち、純受取を示す黒い線は四十年にわたって赤い棒のかなり内側にいる。金利ショックが無料だという話ではない。残高の入れ替わりは遅いが確実に進み、フローは今後十年の財政経路を縁のところで形づくる。ただ、パニックを駆動している数字は総額のほうで、総額は国家が実際に払っている額ではない。",
+      "date": "AUG 2026"
     },
     {
-      "category": "FED / FX",
-      "headline": "A 'smaller central bank': the Warsh Fed gets going",
-      "summary": "Under new chair Kevin Warsh, the Fed leans toward balance-sheet runoff and simpler communication, and more FOMC participants now pencil in hikes. The yen briefly touched 161 to the dollar, a two-year low, on broad dollar strength.",
-      "date": "JUN 2026"
+      "category": "FX / CARRY",
+      "headline": "The world's cheapest funding currency",
+      "headline_ja": "世界で最も安い調達通貨",
+      "summary": "Currency-forward implied three-month yield puts the yen at 0.91%, under every major currency except the Swiss franc. That is not a curiosity; it is a job description. The trade is to borrow yen and hold something that pays — Brazilian real at 12.64%, Mexican peso at 6.78%, South African rand at 6.72%, Australian dollar at 4.42% — and over the past year that carry has returned more than 10% before any spot move at all. So yen weakness has stopped being purely a story about the US-Japan rate differential and become a story about the role the yen occupies on everyone else's balance sheet: the short leg, the funding leg, the thing sold in order to own something better. The uncomfortable part is that the role persists as long as the short-end gap does, and the gap is a policy choice made in Tokyo. Intervention can bruise the trade. It cannot reassign the job.",
+      "summary_ja": "為替フォワードから逆算した円の3ヶ月インプライド利回りは0.91%。スイスフランを除けば主要通貨で最も低い。これは珍しい数字というより、職務記述書に近い。円を借りて、利回りのつくものを持つ ― ブラジルレアル12.64%、メキシコペソ6.78%、南アフリカランド6.72%、豪ドル4.42% ― この一年、キャリーはスポットの動きを一切見込まなくても10%超のリターンを出した。だから円安はもう日米金利差だけの話ではなく、円が他人のバランスシートの上で占めている役割の話になっている。ショートの脚、資金調達の脚、もっと良いものを持つために売られる対象。厄介なのは、短期金利差が残るかぎりその役割も残り、そしてその金利差は東京で選ばれた政策だということだ。介入は取引を痛めることはできる。職務を配置換えすることはできない。",
+      "date": "AUG 2026"
     },
     {
-      "category": "MARKETS",
-      "headline": "Nikkei tops ¥70,000 as gains concentrate in a few names",
-      "summary": "Total market value is up ¥218tn year to date, more than half of it from a 'Japanese M7' — Kioxia, SoftBank, Advantest, Tokyo Electron, Murata, Shin-Etsu and Hitachi. Semiconductor names led (Kioxia ×9.3, Taiyo Yuden ×5.6) while domestic-demand stocks lagged (Aeon −46%, Nexon −42%, Nintendo −32%).",
-      "date": "JUN 2026"
+      "category": "GDP / DEMAND",
+      "headline": "Strong prices, weak demand: the BOJ's hardest quarter",
+      "headline_ja": "強い物価、弱い内需 ― 日銀にとって最も難しい四半期",
+      "summary": "Q2 real GDP rose 0.3% quarter on quarter, against a consensus above 2% annualised. The composition is worse than the headline. Domestic demand subtracted 0.2pt while external demand added 0.5pt, and most of that external contribution came from imports falling rather than exports rising. Household consumption was −0.1%, capital investment −1.2%, housing investment −0.5%: private domestic demand negative across the board. Consumption was +1.0% in nominal terms and −0.1% in real terms, which is the whole problem in two numbers. Real employee compensation improved year on year and spending still did not move, and the explanations available — a downward bias in the household survey, June's bad weather, or a wage-to-consumption loop that has never actually closed — point to very different policy conclusions. Meanwhile the GDP deflator held in the high 2s. Prices strong, demand weak: the pairing that makes a rate decision hardest to justify in either direction.",
+      "summary_ja": "4〜6月期の実質GDPは前期比+0.3%。年率2%超という市場予想を大きく下回った。中身は見出しよりさらに弱い。内需寄与は▲0.2pt、外需は+0.5ptだが、その外需の押し上げは輸出増ではなく輸入減が主因だ。家計消費▲0.1%、設備投資▲1.2%、住宅投資▲0.5%と、民間内需は軒並みマイナス。個人消費は名目+1.0%に対して実質▲0.1%で、問題のすべてがこの二つの数字に入っている。実質雇用者報酬は前年比で大きく改善したのに消費は動かなかった。理由として挙げられるもの ― 家計調査の下振れバイアス、6月の天候不順、そもそも「賃金上昇→実質所得改善→消費拡大」の循環が一度も閉じていないこと ― は、それぞれまったく違う政策的結論を指す。一方でGDPデフレータは2%台後半を維持した。物価は強く、内需は弱い。利上げも据え置きも、どちらの理由づけも難しくなる組み合わせだ。",
+      "date": "AUG 2026"
     },
     {
-      "category": "ASIA",
-      "headline": "Indonesia and the Philippines hike to slow currency slides",
-      "summary": "Oil-driven inflation and weak currencies prompted back-to-back rate increases across Southeast Asia, and Singapore tightened for the first time in three and a half years. Separately, BYD was reported as 2025's top global automaker, ahead of Toyota and Volkswagen.",
-      "date": "JUN 2026"
+      "category": "FX / POLICY",
+      "headline": "Coordinated intervention, uncoordinated intent",
+      "headline_ja": "協調介入、非協調の思惑",
+      "summary": "",
+      "summary_ja": "",
+      "date": "AUG 2026"
     },
     {
-      "category": "COMMODITIES",
-      "headline": "The 'bean-free coffee' race ignites over supply risk",
-      "summary": "Climate-driven supply concerns are pushing alternative coffee into the mainstream. Coca-Cola Japan's CAFÉ WATER (¥149 / 500ml) and Asahi's planned Mirai no BLACK (~¥227 / 430ml) follow US startup Atomo Coffee. Japan is the world's fourth-largest coffee consumer.",
-      "date": "JUN 2026"
+      "category": "JGB",
+      "headline": "A 5% JGB and the arithmetic behind the panic",
+      "headline_ja": "国債5%と、パニックの裏側にある算術",
+      "summary": "",
+      "summary_ja": "",
+      "date": "AUG 2026"
     },
     {
-      "category": "ENERGY / DIPLOMACY",
-      "headline": "US softens its Iran terms to secure a deal",
-      "summary": "A draft memorandum shows US concessions on enrichment (in-country dilution), the Strait of Hormuz (60 days of free passage) and oil sanctions, with final terms deferred — drawing discontent from parts of the governing party.",
-      "date": "JUN 2026"
+      "category": "HOUSEHOLDS",
+      "headline": "The broken link between real wages and spending",
+      "headline_ja": "実質賃金と消費のあいだで切れた鎖",
+      "summary": "",
+      "summary_ja": "",
+      "date": "AUG 2026"
     },
     {
-      "category": "ASSET MANAGEMENT",
-      "headline": "Big managers weigh bundled alternative-asset funds",
-      "summary": "Nomura, Nissay and peers are studying retail funds that bundle overseas infrastructure and private equity into a single diversified product, after the Investment Trusts Association revised its rules in June. Low liquidity and disclosure remain the open questions.",
-      "date": "JUN 2026"
+      "category": "STATISTICS",
+      "headline": "The household survey's bias problem",
+      "headline_ja": "家計調査というバイアス問題",
+      "summary": "",
+      "summary_ja": "",
+      "date": "AUG 2026"
     },
     {
-      "category": "CRYPTO",
-      "headline": "Institutional crypto gains a foothold in Japan",
-      "summary": "A corporate pension fund in Okayama plans to begin crypto investing within FY2026, citing near-zero correlation between bitcoin and the dollar as a diversifier. An EY-Parthenon survey found 73% of global institutions had invested by 2025.",
-      "date": "JUN 2026"
-    },
-    {
-      "category": "LABOR / AI",
-      "headline": "Forward-deployed engineers become tech's hottest hire",
-      "summary": "Salesforce, Google, Anthropic and OpenAI are scaling up hiring and training of forward-deployed engineers. Google is putting $750m into partner workforce development, Anthropic is forming a staffing venture with Blackstone, and OpenAI set up a new company with TPG and acquired UK-based Tomoro AI.",
-      "date": "JUN 2026"
+      "category": "FOOD INDEX",
+      "headline": "A late-rainy-season squeeze in vegetables",
+      "headline_ja": "梅雨後半、野菜という圧力",
+      "summary": "",
+      "summary_ja": "",
+      "date": "AUG 2026"
     }
   ]
 }
