@@ -1,5 +1,12 @@
 # Japan Inflation Nowcall
 
+**Live product:** https://jin.x402jp.com/
+
+**Repository status:** this codebase documents the reference methodology and
+the implementation plan. Claims made by a deployed product should identify the
+applicable methodology version, data coverage, and observation date; this
+README's build-status section is authoritative for this repository.
+
 独立・日次・透明・エージェント可読な **日本のインフレ・ナウキャスト（速報）**。
 
 > ## ⚠️ これは「公式 CPI」ではありません
@@ -106,4 +113,4 @@ BASE_DATE=2026-06-04 uv run jin-daily --date 2026-06-05
 Phase 0（雛形）完了。構成・依存・データモデル・config スキーマ・TODO シグネチャ・pytest
 スケルトンを用意。実装ロジックは未着手（§9 のフェーズ計画に従って 1 フェーズずつ進める）。
 
-ライセンス: MIT。
+ライセンスは未選定です。LICENSE ファイルを追加するまで、再利用は許諾されません。
