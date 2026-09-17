@@ -20,7 +20,12 @@ dist/
 *.db
 *.sqlite
 *.sqlite3
-/data/
+/data/*
+!/data/inflation/
+/data/inflation/*
+!/data/inflation/jp.json
+!/data/inflation/kr.json
+!/data/inflation/sg.json
 raw/
 
 # テスト・ツール

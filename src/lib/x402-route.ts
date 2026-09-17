@@ -4,15 +4,10 @@
 // + live feePayer を出す。
 import type { PaymentOption } from "@x402/core/http";
 import type { RouteConfig } from "@x402/core/server";
-import type { Network } from "@x402/core/types";
 import { withX402 } from "@x402/next";
 import { NextResponse, type NextRequest } from "next/server";
 import { x402Server } from "./x402-server";
-
-const SOLANA_NETWORK: Network = "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp"; // CAIP-2
-const PAY_TO = process.env.X402_RECIPIENT ?? "4s8XQC2WzRfgH8Xiep7ybnCW11VKRCMwxQF6jknx3VPf";
-// resource は絶対URL。本番ドメインを既定に（PUBLIC_BASE_URL で上書き可）。
-const PUBLIC_BASE_URL = process.env.PUBLIC_BASE_URL ?? "https://jin.x402jp.com";
+import { PAY_TO, PUBLIC_BASE_URL, SOLANA_NETWORK } from "./x402-config";
 
 export type PaywallOptions = { price: string; description: string; resourcePath: string };
 
@@ -40,7 +35,7 @@ export function corsHeaders(): Record<string, string> {
   return {
     "access-control-allow-origin": "*",
     "access-control-allow-methods": "GET, OPTIONS",
-    "access-control-allow-headers": "Content-Type, X-PAYMENT",
+    "access-control-allow-headers": "Content-Type, X-PAYMENT, PAYMENT-SIGNATURE",
     "access-control-expose-headers": "PAYMENT-REQUIRED, PAYMENT-RESPONSE, X-PAYMENT-RESPONSE",
   };
 }

@@ -1,0 +1,34 @@
+{
+  "country": "jp",
+  "source": "総務省 消費者物価指数",
+  "source_url": "https://www.stat.go.jp/data/cpi/",
+  "as_of": null,
+  "released_at": null,
+  "fetched_at": null,
+  "frequency": "monthly",
+  "cpi_yoy": null,
+  "cpi_index": {
+    "value": null,
+    "base_year": null,
+    "base_value": 100
+  },
+  "food_yoy": null,
+  "units": {
+    "cpi_yoy": "percent",
+    "cpi_index": "index",
+    "food_yoy": "percent"
+  },
+  "metric_status": {
+    "cpi_yoy": "not_fetched",
+    "cpi_index": "not_fetched",
+    "food_yoy": "not_fetched"
+  },
+  "yoy_method": "published",
+  "status": "not_fetched",
+  "stale": true,
+  "stale_reasons": [
+    "not_fetched"
+  ],
+  "last_attempt_at": null,
+  "last_error": null
+}
