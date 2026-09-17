@@ -13,6 +13,21 @@
   不変デプロイ環境では更新したJSONを含めて再デプロイする。永続ディスクの環境では
   配信プロセスが参照する同じディレクトリで更新する。
 
+## 課金の切替
+
+`INFLATION_X402_ENABLED=true` のときだけ、単一国のGETを既存の
+`withSolanaOnlyPaywall`（native withX402 v2、Solana mainnet、USDC）で保護する。
+未設定・falseは無料。`latest`、OPTIONS、非対応国の404はトグルによらず無料。
+無料時は決済ラッパーを生成せず、facilitatorを初期化しない。
+決済サービスの初期化失敗は503とし、無料応答へフォールバックしない。
+
+価格は1回 `$0.01`。宛先は既存の `X402_RECIPIENT`。
+`/.well-known/x402.json` の各国リソースに現在の `price` / `free` と
+`configured_price` を記載する。無料時の `price` はnull、設定価格は `$0.01`。
+有料時の402とdiscoveryは同じ宛先・価格・`PUBLIC_BASE_URL` を参照する。
+ブラウザのv2決済用 `PAYMENT-SIGNATURE` ヘッダもCORSで許可する。
+課金の有効化・本番デプロイは運用者の判断で行う。
+
 ## フィールド
 
 | フィールド | 意味 |
