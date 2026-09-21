@@ -43,7 +43,10 @@ LICENSE = "observation data; derived aggregates only; see repo"
 METHODOLOGY = (
     "Jevons elementary (matched-SKU geometric mean) + 10-category equal-weight upper "
     "aggregation; excl_promo removes SKUs flagged promo on base or current day; unit prices "
-    "canonicalized (¥/100g, ¥/100ml, ¥/unit); base_date fixed."
+    "canonicalized (¥/100g, ¥/100ml, ¥/unit); base_date fixed. "
+    "A category with no matched SKU on a given day is carried forward from its most recent "
+    "observed relative; a category never observed since base_date is mean-imputed (dropped and "
+    "reweighted). imputed_weight_share reports the basket weight not observed that day."
 )
 COVERAGE_NOTE = (
     "single store, Tokyo metro delivery area, mid-tier supermarket (Life). "
@@ -54,6 +57,25 @@ _MOVER_EPS = 0.05  # |pct| この値未満は据え置き扱いで mover に含�
 
 def _round(x: float | None, n: int = 2) -> float | None:
     return round(float(x), n) if x is not None and pd.notna(x) else None
+
+
+def _imputed_share(components: Any) -> float | None:
+    """components から「当日観測できていない中分類のウェイト割合」を復元する。
+
+    カテゴリ脱落の代入にどれだけ依存した値かを配信側でも見えるようにする（§0）。
+    weight を持たない旧バージョンの行では None を返す。
+    """
+    if not isinstance(components, list) or not components:
+        return None
+    total = imputed = 0.0
+    for c in components:
+        if not isinstance(c, dict) or "weight" not in c:
+            return None
+        w = max(float(c.get("weight") or 0.0), 0.0)
+        total += w
+        if c.get("imputed"):
+            imputed += w
+    return imputed / total if total > 0 else None
 
 
 def _series_and_latest(session: Any) -> tuple[list[dict[str, Any]], dict[str, Any] | None]:
@@ -70,9 +92,11 @@ def _series_and_latest(session: Any) -> tuple[list[dict[str, Any]], dict[str, An
         if r.series_type == "food_excl_promo":
             slot["excl"] = r.value
             slot["m_excl"] = r.n
+            slot["imputed_excl"] = _imputed_share(r.components)
         elif r.series_type == "food_incl_promo":
             slot["incl"] = r.value
             slot["m_incl"] = r.n
+            slot["imputed_incl"] = _imputed_share(r.components)
 
     series: list[dict[str, Any]] = []
     for d in sorted(by_date):
@@ -86,6 +110,9 @@ def _series_and_latest(session: Any) -> tuple[list[dict[str, Any]], dict[str, An
                 # base 日は matched 概念が自明（自分自身）なので null。
                 "m_excl": None if is_base else s.get("m_excl"),
                 "m_incl": None if is_base else s.get("m_incl"),
+                # 当日観測できていない中分類のウェイト割合（代入への依存度）。
+                "imputed_excl": None if is_base else _round(s.get("imputed_excl"), 4),
+                "imputed_incl": None if is_base else _round(s.get("imputed_incl"), 4),
             }
         )
     latest = None
@@ -96,6 +123,10 @@ def _series_and_latest(session: Any) -> tuple[list[dict[str, Any]], dict[str, An
             "as_of": last_d.isoformat(),
             "index": {"excl_promo": _round(s.get("excl")), "incl_promo": _round(s.get("incl"))},
             "matched_sku": {"excl": s.get("m_excl"), "incl": s.get("m_incl")},
+            "imputed_weight_share": {
+                "excl_promo": _round(s.get("imputed_excl"), 4),
+                "incl_promo": _round(s.get("imputed_incl"), 4),
+            },
         }
     return series, latest
 
@@ -237,6 +268,8 @@ def build_public_payload(session: Any, *, base_date: date | None = None) -> dict
             "base_date": base_date.isoformat(),
             "index": latest["index"],
             "matched_sku": latest["matched_sku"],
+            # 当日観測できていない中分類のウェイト割合（カテゴリ脱落の代入への依存度）。
+            "imputed_weight_share": latest["imputed_weight_share"],
             "upstream": _cgpi_upstream(),
             "methodology": METHODOLOGY,
             "coverage_note": COVERAGE_NOTE,
