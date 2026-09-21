@@ -19,6 +19,12 @@ composite_weights:
 # elementary（Jevons）→ 中分類 → これらウェイトでラスパイレス加重。
 food:
   default_promo_mode: excl_promo   # 基調は特売除外（§6-2）
+  # ある日に matched SKU が 1 件も無い中分類の扱い。
+  #   carry_forward: 直近で観測できた日の相対を持ち越す（既定）。観測→欠測の並びで
+  #                  価格が動いていないのに指数が跳ねるのを防ぐ。
+  #   mean:          欠測分類を落としてウェイトを再正規化する平均代入（旧挙動）。
+  # どちらでも、当日観測できていないウェイト割合は imputed_weight_share に出る。
+  category_imputation: carry_forward
   categories:
     # name はそのまま food_raw.category にマップする CPI 食料中分類。
     # weight は中分類間のラスパイレス加重（合計は内部で正規化）。

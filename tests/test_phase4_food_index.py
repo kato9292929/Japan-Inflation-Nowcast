@@ -141,3 +141,78 @@ def test_jevons_is_geometric_mean() -> None:
     )
     elementary = food.jevons_elementary(df, base_prices=base_prices)
     assert elementary["穀類"] == pytest.approx(1.0, rel=1e-12)
+
+
+# --------------------------------------------------------------------------- #
+# 6) カテゴリ脱落: 観測→欠測の並びで指数が跳ねないこと
+# --------------------------------------------------------------------------- #
+MID_DATE = date(2025, 2, 1)
+
+
+def _two_category_panel(fish_on_as_of: bool) -> pd.DataFrame:
+    """穀類は終始 1.00、魚介類は MID_DATE で 1.20。AS_OF に魚介類を出すか選べる。"""
+    rows = [
+        _row(BASE_DATE, "g1", 100.0, "穀類"),
+        _row(BASE_DATE, "f1", 100.0, "魚介類"),
+        _row(MID_DATE, "g1", 100.0, "穀類"),
+        _row(MID_DATE, "f1", 120.0, "魚介類"),
+        _row(AS_OF, "g1", 100.0, "穀類"),
+    ]
+    if fish_on_as_of:
+        rows.append(_row(AS_OF, "f1", 120.0, "魚介類"))
+    return pd.DataFrame(rows)
+
+
+def _compute(df: pd.DataFrame, on: date, imputation: str) -> dict:
+    return food.compute(
+        df, as_of=on, base_date=BASE_DATE, base_value=100.0, promo_mode="excl_promo",
+        methodology_version="v1", weights={"穀類": 1.0, "魚介類": 1.0}, imputation=imputation,
+    )
+
+
+def test_mean_imputation_jumps_when_category_drops_out() -> None:
+    """旧挙動の記録。魚介類が落ちるだけで価格が動いていないのに指数が 110 -> 100 へ跳ぶ。"""
+    observed = _compute(_two_category_panel(True), AS_OF, "mean")["value"]
+    dropped = _compute(_two_category_panel(False), AS_OF, "mean")["value"]
+    assert observed == pytest.approx(110.0)
+    assert dropped == pytest.approx(100.0)
+    assert observed - dropped == pytest.approx(10.0)
+
+
+def test_carry_forward_keeps_index_continuous_on_dropout() -> None:
+    """既定挙動。魚介類が当日欠測でも直近観測（MID_DATE の 1.20）を持ち越し、跳ねない。"""
+    observed = _compute(_two_category_panel(True), AS_OF, "carry_forward")
+    dropped = _compute(_two_category_panel(False), AS_OF, "carry_forward")
+    assert observed["value"] == pytest.approx(110.0)
+    assert dropped["value"] == pytest.approx(110.0)
+
+    # 持ち越したことは必ず出力に出る（§0 透明性）。観測 SKU 数には数えない。
+    assert dropped["imputed_categories"] == ["魚介類"]
+    assert dropped["imputed_weight_share"] == pytest.approx(0.5)
+    assert dropped["n_items"] == 1
+    fish = next(c for c in dropped["components"] if c["category"] == "魚介類")
+    assert fish["imputed"] is True
+    assert fish["imputed_from"] == MID_DATE.isoformat()
+    assert fish["value"] == pytest.approx(1.20)
+
+    # 当日観測できた日は代入扱いにしない。
+    assert observed["imputed_categories"] == []
+    assert observed["imputed_weight_share"] == pytest.approx(0.0)
+    assert all(c["imputed"] is False for c in observed["components"])
+
+
+def test_carry_forward_falls_back_to_mean_when_never_observed() -> None:
+    """基準日より後に一度も観測が無い中分類は持ち越さず、平均代入（=除外）に戻す。"""
+    df = pd.DataFrame([
+        _row(BASE_DATE, "g1", 100.0, "穀類"),
+        _row(BASE_DATE, "f1", 100.0, "魚介類"),
+        _row(AS_OF, "g1", 105.0, "穀類"),
+    ])
+    result = _compute(df, AS_OF, "carry_forward")
+    assert result["value"] == pytest.approx(105.0)
+    assert result["imputed_categories"] == ["魚介類"]
+    assert result["imputed_weight_share"] == pytest.approx(0.5)
+    fish = next(c for c in result["components"] if c["category"] == "魚介類")
+    assert fish["value"] is None
+    assert fish["imputed"] is True
+    assert fish["imputed_from"] is None
