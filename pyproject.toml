@@ -33,6 +33,15 @@ browser = ["playwright>=1.48"]
 postgres = ["psycopg[binary]>=3.2"]
 # オンチェーン publish（運用者環境のみ。テストは web3 注入で実送信なし）。
 oracle = ["web3>=7.0"]
+# x402 exact/lnbtc ファシリテータ（別サービス・単一ホスト）。
+# x402 本体の Python SDK は pypi 版を使い、未マージの mechanisms/lnbtc だけ vendoring する。
+lnbtc = [
+    "x402==2.24.0",
+    "bolt11>=2.2.0",
+    "bech32>=1.2.0",
+    "coincurve>=21.0.0",
+    "rfc8785>=0.1.2",
+]
 
 [dependency-groups]
 dev = [
@@ -63,6 +72,7 @@ packages = [
     "methodology",
     "dashboard",
     "oracle",
+    "facilitator",
 ]
 
 [tool.pytest.ini_options]
@@ -73,6 +83,8 @@ asyncio_mode = "auto"
 [tool.ruff]
 line-length = 100
 target-version = "py312"
+# vendoring 領域は上流（x402 PR #1873）との差分を保つため整形・lint しない。
+exclude = ["facilitator/vendor"]
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "W", "UP", "B"]

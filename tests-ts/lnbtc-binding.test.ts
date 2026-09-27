@@ -27,6 +27,7 @@ const HTTP_A_DESCRIPTION =
   '{"bodyHash":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",' +
   '"domain":"x402:exact:lnbtc:bolt11:http:1","headers":[],"method":"GET",' +
   '"url":"https://api.example.com/article/A"}';
+const ORIGIN = "https://api.example.com";
 const HTTP_A_HASH = "0d6623f775e025501fa7f0a30b54da25aad62b6ccfe35c85da38016711e6c018";
 const HTTP_B_HASH = "4a99860f75eed1ea8178a5db488e044173bc570c8a6210f2c8590cdf8622d509";
 
@@ -34,6 +35,7 @@ const httpArticle = (article: string) =>
   httpBinding({
     method: "GET",
     url: `https://api.example.com/article/${article}`,
+    publicOrigin: ORIGIN,
     boundHeaders: [],
   });
 
@@ -55,11 +57,13 @@ describe("http:1 プロファイル", () => {
     const post = httpBinding({
       method: "POST",
       url: "https://api.example.com/article/A",
+      publicOrigin: ORIGIN,
       boundHeaders: [],
     });
     const body = httpBinding({
       method: "GET",
       url: "https://api.example.com/article/A",
+      publicOrigin: ORIGIN,
       body: Buffer.of(0x78),
       boundHeaders: [],
     });
@@ -71,6 +75,7 @@ describe("http:1 プロファイル", () => {
     const withHeader = httpBinding({
       method: "GET",
       url: "https://api.example.com/article/A",
+      publicOrigin: ORIGIN,
       boundHeaders: ["accept"],
     });
     expect(requestHash(withHeader)).not.toBe(HTTP_A_HASH);
@@ -80,11 +85,13 @@ describe("http:1 プロファイル", () => {
     const absent = httpBinding({
       method: "GET",
       url: "https://api.example.com/article/A",
+      publicOrigin: ORIGIN,
       boundHeaders: ["accept"],
     });
     const empty = httpBinding({
       method: "GET",
       url: "https://api.example.com/article/A",
+      publicOrigin: ORIGIN,
       boundHeaders: ["accept"],
       headers: { accept: "" },
     });
@@ -98,15 +105,34 @@ describe("http:1 プロファイル", () => {
   });
 
   it("bound header 名の規則違反を拒否する", () => {
-    const base = { method: "GET", url: "https://api.example.com/article/A" };
+    const base = { method: "GET", url: "https://api.example.com/article/A", publicOrigin: ORIGIN };
     expect(() => httpBinding({ ...base, boundHeaders: ["Accept"] })).toThrow(LnbtcError);
     expect(() => httpBinding({ ...base, boundHeaders: ["range", "accept"] })).toThrow(LnbtcError);
     expect(() => httpBinding({ ...base, boundHeaders: ["accept", "accept"] })).toThrow(LnbtcError);
     expect(() => httpBinding({ ...base, boundHeaders: ["payment-signature"] })).toThrow(LnbtcError);
   });
 
+  it("publicOrigin と食い違うオリジンを拒否する（転送ヘッダ上書き対策）", () => {
+    expect(() =>
+      httpBinding({
+        method: "GET",
+        url: "https://evil.example.com/article/A",
+        publicOrigin: ORIGIN,
+        boundHeaders: [],
+      }),
+    ).toThrow(LnbtcError);
+    expect(() =>
+      httpBinding({
+        method: "GET",
+        url: "https://api.example.com/article/A",
+        publicOrigin: "https://api.example.com/base",
+        boundHeaders: [],
+      }),
+    ).toThrow(LnbtcError);
+  });
+
   it("fragment・userinfo・相対 URL を拒否する", () => {
-    const base = { method: "GET", boundHeaders: [] as string[] };
+    const base = { method: "GET", boundHeaders: [] as string[], publicOrigin: ORIGIN };
     expect(() => httpBinding({ ...base, url: "https://api.example.com/a#x" })).toThrow(LnbtcError);
     expect(() => httpBinding({ ...base, url: "https://u:p@api.example.com/a" })).toThrow(LnbtcError);
     expect(() => httpBinding({ ...base, url: "/article/A" })).toThrow(LnbtcError);

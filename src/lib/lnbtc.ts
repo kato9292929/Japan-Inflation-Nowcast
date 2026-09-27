@@ -90,6 +90,13 @@ export type HttpBindingInput = {
   method: string;
   /** RFC 9421 @target-uri。クエリを含む絶対 URL。fragment / userinfo は不可。 */
   url: string;
+  /**
+   * 設定値として固定した公開オリジン（scheme + host + port のみ）。
+   * バインディングは公開 URL をそのまま使うため、リバースプロキシの転送ヘッダで
+   * オリジンが上書きされると invoice の description hash と一致しなくなる。
+   * url のオリジンがこれと一致しないリクエストは拒否する。
+   */
+  publicOrigin: string;
   /** 転送デコード後・コンテンツデコード前の本文バイト列。JSON を再直列化してはならない。 */
   body?: Buffer | null;
   /** サーバ設定の bound header 名（小文字・ASCII 昇順・重複なし）。クライアントのエコーは使わない。 */
@@ -102,6 +109,14 @@ export type HttpBindingInput = {
 export function httpBinding(input: HttpBindingInput): Record<string, unknown> {
   if (!input.method) throw new LnbtcError("method が空です");
   assertBindingUrl(input.url, "url");
+  assertBindingUrl(input.publicOrigin, "publicOrigin");
+  const origin = new URL(input.publicOrigin);
+  if (origin.search || (origin.pathname !== "" && origin.pathname !== "/")) {
+    throw new LnbtcError("publicOrigin に path / query を含められません");
+  }
+  if (new URL(input.url).origin !== origin.origin) {
+    throw new LnbtcError("url のオリジンが設定された publicOrigin と一致しません");
+  }
   assertBoundHeaderNames(input.boundHeaders);
   return {
     domain: `${DOMAIN_PREFIX}http:1`,
