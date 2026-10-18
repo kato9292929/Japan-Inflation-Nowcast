@@ -8,6 +8,7 @@ import { withX402 } from "@x402/next";
 import { NextResponse, type NextRequest } from "next/server";
 import { x402Server } from "./x402-server";
 import { PAY_TO, PUBLIC_BASE_URL, SOLANA_NETWORK } from "./x402-config";
+import { priceToAtomic, recordSale, settledTx } from "./sales-log";
 
 export type PaywallOptions = { price: string; description: string; resourcePath: string };
 
@@ -64,6 +65,21 @@ export function withSolanaOnlyPaywall(
   return async (req: NextRequest): Promise<NextResponse> => {
     if (req.method === "OPTIONS") return corsPreflight();
     // 未払い→402(v2ヘッダ)・支払い済→verify/settle、両方 withX402 が担当。
-    return applyCors(await wrapped(req));
+    const res = await wrapped(req);
+    // settle に成功したら売り手ログに1件記録する（支払いの処理は変えない。記録に失敗しても応答は返す）
+    const tx = settledTx(res.headers.get("payment-response"));
+    if (tx) {
+      try {
+        await recordSale({
+          tx_signature: tx,
+          endpoint: `${PUBLIC_BASE_URL}${opts.resourcePath}`,
+          amount: priceToAtomic(opts.price),
+          time_utc: new Date().toISOString(),
+        });
+      } catch (e) {
+        console.error("[sales-log] 記録に失敗", tx, e);
+      }
+    }
+    return applyCors(res);
   };
 }
