@@ -15,22 +15,17 @@ vi.mock("@/lib/x402-server", async () => {
   return { x402Server };
 });
 
-// 合成 KV：RPUSH / EXPIRE / LRANGE / SET NX / GET だけ
+// 合成 KV：RPUSH / EXPIRE / LRANGE だけ
 const lists = new Map<string, string[]>();
-const strings = new Map<string, string>();
 const kvCalls: unknown[][] = [];
 const realFetch = globalThis.fetch;
 
-const jst = (d: Date) => new Date(d.getTime() + 9 * 3600 * 1000).toISOString().slice(0, 10);
-const shift = (date: string, days: number) =>
-  jst(new Date(Date.parse(`${date}T00:00:00+09:00`) + days * 24 * 3600 * 1000));
-const today = () => jst(new Date());
+const today = () => new Date(Date.now() + 9 * 3600 * 1000).toISOString().slice(0, 10);
 
 beforeEach(() => {
   vi.resetModules();
   vi.clearAllMocks();
   lists.clear();
-  strings.clear();
   kvCalls.length = 0;
   vi.stubEnv("X402_RECIPIENT", recipient);
   vi.stubEnv("PUBLIC_BASE_URL", "https://jin.test/");
@@ -51,12 +46,6 @@ beforeEach(() => {
       const k = String(key);
       if (op === "RPUSH") return { result: lists.set(k, [...(lists.get(k) ?? []), String(rest[0])]).get(k)!.length };
       if (op === "LRANGE") return { result: lists.get(k) ?? [] };
-      if (op === "SET") {
-        if (rest.includes("NX") && strings.has(k)) return { result: null };
-        strings.set(k, String(rest[0]));
-        return { result: "OK" };
-      }
-      if (op === "GET") return { result: strings.get(k) ?? null };
       return { result: 1 };
     });
     return new Response(JSON.stringify(out), { status: 200 });
@@ -155,66 +144,40 @@ it("KV が未設定なら記録せず、支払いの応答はそのまま返す"
   expect(kvCalls).toHaveLength(0);
 });
 
+// --- GET /sales/:date（パッチ由来を「記録が無い日は []」に直したもの） -------- //
+it("GET /sales/:date は Bearer が一致したときだけ、その日の記録を返す", async () => {
+  await payMovers();
+  const date = [...lists.keys()][0].slice("sales:".length);
+  expect((await sales(date, null)).status).toBe(401);
+  expect((await sales(date, "Bearer wrong")).status).toBe(401);
+  const ok = await sales(date);
+  expect(ok.status).toBe(200);
+  expect((await ok.json())[0].tx_signature).toBe("TXSIG1");
+  expect((await sales("bad")).status).toBe(400);
+  vi.stubEnv("SELLER_LOG_TOKEN", "short");
+  expect((await sales(date)).status).toBe(404); // 短いトークンでは口を開けない
+});
+
 // --- 追加：GET /sales/:date ---------------------------------------------- //
-it("トークン無し・不一致は 401。開始日を記録しない", async () => {
-  expect((await sales(today(), null)).status).toBe(401);
-  expect((await sales(today(), "Bearer wrong")).status).toBe(401);
-  expect((await sales(today(), `Basic ${TOKEN}`)).status).toBe(401);
-  expect(strings.has("sales:since")).toBe(false);
+it("トークン無し・不一致・Bearer 以外は 401（記録がある日でも中身を返さない）", async () => {
+  await payMovers();
+  for (const auth of [null, "Bearer wrong", `Bearer ${TOKEN}x`, `Basic ${TOKEN}`, TOKEN]) {
+    const res = await sales(today(), auth);
+    expect(res.status).toBe(401);
+    expect(await res.json()).toEqual({ error: "unauthorized" });
+  }
 });
 
 it("トークン一致・その日の記録が無ければ []", async () => {
-  strings.set("sales:since", shift(today(), -3));
-  const res = await sales(shift(today(), -1));
-  expect(res.status).toBe(200);
-  expect(await res.json()).toEqual([]);
-});
-
-it("トークン一致・その日の記録があれば配列で返す", async () => {
-  strings.set("sales:since", shift(today(), -1));
-  await payMovers();
-  const res = await sales(today());
-  expect(res.status).toBe(200);
-  const rows = await res.json();
-  expect(rows).toHaveLength(1);
-  expect(rows[0].tx_signature).toBe("TXSIG1");
-});
-
-it("記録を始める前の日と開始日当日は 404（実証2はその日の $0.01 を不明のまま残す）", async () => {
-  const since = shift(today(), -2);
-  strings.set("sales:since", since);
-  for (const date of [shift(since, -30), shift(since, -1), since]) {
+  await payMovers(); // 今日の記録はあるが、別の日には無い
+  for (const date of ["2000-01-01", "2099-12-31"]) {
     const res = await sales(date);
-    expect(res.status).toBe(404);
-    expect(await res.json()).toMatchObject({ error: "not_covered", covered_from: shift(since, 1) });
+    expect(res.status).toBe(200);
+    expect(await res.json()).toEqual([]);
   }
-  expect((await sales(shift(since, 1))).status).toBe(200);
 });
 
-it("最初の認証付き読み取りで開始日を今日にし、翌日から [] を返す", async () => {
-  const first = await sales(today());
-  expect(first.status).toBe(404); // 開始日当日は開始前の時間帯を含むのでログがある日に数えない
-  expect(strings.get("sales:since")).toBe(today());
-  // 2回目以降の読み取りでは開始日が動かない（SET NX）
-  await sales(today());
-  expect(strings.get("sales:since")).toBe(today());
-  const { readSales } = await import("@/lib/sales-log");
-  const tomorrow = new Date(Date.now() + 24 * 3600 * 1000);
-  expect(await readSales(jst(tomorrow), tomorrow)).toEqual({ status: "ok", rows: [] });
-});
-
-it("未来の日と保持期間外は 404", async () => {
-  strings.set("sales:since", "2000-01-01");
-  expect((await sales(shift(today(), 1))).status).toBe(404);
-  expect((await sales(shift(today(), -401))).status).toBe(404);
-  expect((await sales(shift(today(), -399))).status).toBe(200);
-});
-
-it("日付の形式不正は 400、トークン未設定・短すぎるときは口ごと 404、KV 障害は 502", async () => {
-  expect((await sales("bad")).status).toBe(400);
-  vi.stubEnv("SELLER_LOG_TOKEN", "short");
-  expect((await sales(today())).status).toBe(404);
-  vi.stubEnv("SELLER_LOG_TOKEN", TOKEN);
+it("KV 障害は 502（[] と取り違えない）", async () => {
   vi.stubEnv("SALES_LOG_KV_REST_URL", "https://kv-down.test");
   globalThis.fetch = (async () => new Response("", { status: 500 })) as typeof fetch;
   const err = vi.spyOn(console, "error").mockImplementation(() => {});
