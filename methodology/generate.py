@@ -20,7 +20,24 @@ BASKETS_PATH = CONFIG_DIR / "baskets.yaml"
 METHODOLOGY_PATH = Path(__file__).resolve().parent / "methodology.md"
 
 CPI_TOTAL_WEIGHT = 10000.0
-CURRENT_VERSION = "v1"
+# 方法論の版の履歴（version, effective_date, changelog）。effective_date が None の版は適用日未定。
+# 現行版は「適用日が決まっている最後の版」。版を上げても過去日の公開値は作り直さない
+# （生データが残っていないため。CLAUDE.md「運用の前提」）。
+VERSION_HISTORY: list[tuple[str, str | None, str]] = [
+    ("v1", "2026-06-04", "初版（食料 + 住居の部分カバー合成）。"),
+    (
+        "v2",
+        None,
+        "食料: 当日 matched SKU が 0 件の中分類を、直近の観測日の相対で持ち越す（carry_forward）。"
+        "基準日より後に観測の無い中分類は従来どおり平均代入。当日観測できていないウェイト割合と"
+        "代入した中分類を配信に載せる。持ち越しが実際に効く最初の観測日から適用する。"
+        "2026-10-19 は持ち越し元が無く v1 と同じ計算になるため v1。",
+    ),
+]
+_PENDING_LABEL = "適用日未定（jin-observations に履歴がそろった観測日から）"
+CURRENT_VERSION = [v for v, d, _ in VERSION_HISTORY if d is not None][-1]
+_CHANGELOG = {v: c for v, _, c in VERSION_HISTORY}
+_EFFECTIVE = {v: d for v, d, _ in VERSION_HISTORY if d is not None}
 
 
 def _load_config() -> dict[str, Any]:
@@ -50,6 +67,9 @@ def build_methodology_md(config: dict[str, Any] | None = None) -> str:
     weight_rows = "\n".join(
         f"| `{code}` | {float(w):.0f} | {float(w) / CPI_TOTAL_WEIGHT * 100:.2f}% |"
         for code, w in composite_weights.items()
+    )
+    version_rows = "\n".join(
+        f"| `{v}` | {d if d is not None else _PENDING_LABEL} | {c} |" for v, d, c in VERSION_HISTORY
     )
     cat_rows = "\n".join(
         f"| {c.get('name')} | {float(c.get('weight', 1)):.0f} |" for c in food_cats
@@ -159,7 +179,7 @@ coverage_pct = Σ(weights) / {CPI_TOTAL_WEIGHT:.0f} × 100 = {coverage:.2f}%
 
 | version | effective_date | changelog |
 |---------|----------------|-----------|
-| `{CURRENT_VERSION}` | {base_date} | 初版（食料 + 住居の部分カバー合成）。 |
+{version_rows}
 """
 
 
@@ -185,6 +205,8 @@ def record_version(
     from storage.models import MethodologyVersion
 
     cfg = _load_config()
+    if effective_date is None and version in _EFFECTIVE:
+        effective_date = date.fromisoformat(_EFFECTIVE[version])
     if effective_date is None:
         bd = cfg.get("base_date")
         effective_date = date.fromisoformat(bd) if isinstance(bd, str) else (bd or date.today())
@@ -201,7 +223,7 @@ def record_version(
                 effective_date=effective_date,
                 formula_notes=formula_notes or "hedonic + laspeyres + Jevons; composite_partial",
                 weights_source=weights_source,
-                changelog=changelog or "初版（食料 + 住居の部分カバー合成）。",
+                changelog=changelog or _CHANGELOG.get(version, ""),
             )
         )
     else:

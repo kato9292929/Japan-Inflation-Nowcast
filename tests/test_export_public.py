@@ -125,3 +125,25 @@ def test_imputed_weight_share_is_published(seeded_db) -> None:
     # 代入方法は公開 methodology に明記する（盛らない・隠さない）。
     assert "carried forward" in p["methodology"]
     assert "imputed_weight_share" in p["methodology"]
+
+
+def test_imputed_categories_are_published(seeded_db) -> None:
+    """代入した中分類の名前も配信に載せる。fixture の 2 日は全分類が観測されるので空。"""
+    p = _payload(seeded_db)
+    assert p["latest"]["imputed_categories"] == {"excl_promo": [], "incl_promo": []}
+    base_row, last_row = p["series"][0], p["series"][-1]
+    assert base_row["imputed_categories_excl"] is None
+    assert last_row["imputed_categories_excl"] == [] and last_row["imputed_categories_incl"] == []
+
+
+def test_imputed_categories_from_components() -> None:
+    from jobs.export_public import _imputed_categories
+
+    comps = [
+        {"category": "穀類", "imputed": False},
+        {"category": "魚介類", "imputed": True, "imputed_from": None},
+        {"category": "酒類", "imputed": True, "imputed_from": "2026-10-19"},
+    ]
+    assert _imputed_categories(comps) == ["酒類", "魚介類"]
+    # imputed を持たない旧バージョンの行は分からないので None。
+    assert _imputed_categories([{"category": "穀類", "value": 1.0}]) is None

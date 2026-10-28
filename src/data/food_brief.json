@@ -1,18 +1,48 @@
 {
-  "as_of": "2026-09-16",
+  "as_of": "2026-10-19",
   "base_date": "2026-06-04",
   "window_label_ja": "基準 2026-06-04 比",
   "window_label_en": "vs base 2026-06-04",
-  "headline_ja": "観測再開、新米の急落と高止まりの野菜",
-  "headline_en": "Observation resumed: a new-crop rice plunge against still-high vegetables",
-  "summary_ja": "約1か月ぶりの観測（前回は8月18日）。単一店舗（東京近郊・ライフ）の店頭で、基準日2026-06-04比の食品指数は基調(excl)101.17、特売込(incl)100.63だった。8月18日の106台からは下がったが、これは全体が値下がりしたというより構図の変化である。新米の入荷でコメが急落し（つや姫・石川こしひかりがいずれも基準比およそ−41%）、一方で野菜は依然として高い（きゅうり・キャベツ・にら）。両者が相殺して指数はほぼ基準水準に戻った。今回はマッチした品が33〜41と薄く、魚介・肉は当日のプレビューに基準日の定番が出ておらず0件（品揃えの入れ替わり／撮り漏れ）。穀類も非販促2品での観測にとどまる。これは観測であって予測ではなく、単一店舗のため全国を代表しない。",
-  "summary_en": "The first observation in about a month (prior: August 18). At a single Tokyo-area store (Life), the food index versus the 2026-06-04 base read 101.17 for the promotion-excluded core (excl) and 100.63 including promotions (incl). It is down from the ~106 level of August 18, but this reflects a change in composition rather than a broad decline. New-crop rice arrived and prices plunged (Tsuyahime and Ishikawa Koshihikari both roughly −41% vs base), while vegetables stayed high (cucumber, cabbage, garlic chives). The two roughly offset, leaving the index near the base level. Matched SKUs were thin this time (33–41); seafood and meat showed no base-date staples in the day's preview and matched zero (assortment turnover / capture gaps), and grains rested on just two non-promo items. This is an observation, not a forecast, and a single store is not nationally representative.",
+  "headline_ja": "葉物野菜が6月の1.5〜2倍、コメは4割安",
+  "headline_en": "Leafy vegetables at 1.5–2x June levels while rice sits 40% lower",
+  "summary_ja": "約1か月ぶりの観測（前回は9月16日）。単一店舗（東京近郊・ライフ）の店頭で、基準日2026-06-04比の食品指数は基調(excl)108.51、特売込(incl)109.66だった。押し上げたのは野菜で、にら・白菜・レタス・小松菜・きゅうりの5品が基準比+44〜+81%。豆腐・納豆も+10〜+21%と上がった。一方、コメ（つや姫5kg）は基準比−41%で、野菜の上昇の一部を打ち消している。果物・肉は基準日と同じ価格だった。マッチした品は33〜37。魚介類・酒類・飲料は当日に基準日と同じ商品を確認できず、この3分類は指数から外して残り7分類で平均している（当日観測できていないウェイトは基調で30%）。前回とは欠けた分類が異なるため、前回からの差には分類の違いも混ざる。これは観測であって予測ではなく、単一店舗のため全国を代表しない。",
+  "summary_en": "The first observation in about a month (prior: September 16). At a single Tokyo-area store (Life), the food index versus the 2026-06-04 base read 108.51 for the promotion-excluded core (excl) and 109.66 including promotions (incl). Vegetables drove the rise: garlic chives, Chinese cabbage, lettuce, komatsuna and cucumber were up 44–81% on the base. Tofu and natto rose 10–21%. Rice (Tsuyahime 5kg) was 41% below the base, offsetting part of the vegetable increase. Fruit and meat were unchanged from the base. 33–37 items matched. Seafood, alcohol and beverages had no item matching the base on the day, so those three categories are left out and the index averages the remaining seven (30% of the core basket weight was not observed). The missing categories differ from the prior observation, so the change since then also reflects which categories were observed. This is an observation, not a forecast, and a single store is not nationally representative.",
   "movers": [
-    { "label_ja": "きゅうり バラ 1本", "label_en": "Cucumber, each", "pct": 62.7, "tag": "none" },
-    { "label_ja": "キャベツ 1玉", "label_en": "Cabbage, 1 head", "pct": 47.1, "tag": "none" },
-    { "label_ja": "にら 1束", "label_en": "Garlic chives, 1 bunch", "pct": 30.2, "tag": "promo" },
-    { "label_ja": "つや姫 5kg", "label_en": "Tsuyahime rice, 5kg", "pct": -40.6, "tag": "none" },
-    { "label_ja": "無洗米こしひかり 5kg", "label_en": "Koshihikari (no-rinse), 5kg", "pct": -41.0, "tag": "promo" },
-    { "label_ja": "小松菜 1袋", "label_en": "Komatsuna, 1 bag", "pct": -23.2, "tag": "promo" }
+    {
+      "label_ja": "にら 1束",
+      "label_en": "Garlic chives, 1 bunch",
+      "pct": 81.1,
+      "tag": "none"
+    },
+    {
+      "label_ja": "白菜 1/4切",
+      "label_en": "Chinese cabbage, quarter",
+      "pct": 74.8,
+      "tag": "none"
+    },
+    {
+      "label_ja": "レタス 1玉",
+      "label_en": "Lettuce, 1 head",
+      "pct": 67.2,
+      "tag": "none"
+    },
+    {
+      "label_ja": "木綿とうふ 130g×3",
+      "label_en": "Firm tofu, 130g x3",
+      "pct": 20.8,
+      "tag": "none"
+    },
+    {
+      "label_ja": "つや姫 5kg",
+      "label_en": "Tsuyahime rice, 5kg",
+      "pct": -40.6,
+      "tag": "none"
+    },
+    {
+      "label_ja": "ネオバターロール 6個入",
+      "label_en": "Butter rolls, 6 pack",
+      "pct": -21.6,
+      "tag": "none"
+    }
   ]
 }
