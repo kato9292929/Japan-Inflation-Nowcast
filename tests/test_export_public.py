@@ -107,3 +107,21 @@ def test_write_public_json_roundtrip(seeded_db, tmp_path) -> None:
     loaded = json.loads(out.read_text(encoding="utf-8"))
     assert loaded["latest"]["as_of"] == "2026-06-05"
     assert loaded["movers_by_date"]
+
+
+def test_imputed_weight_share_is_published(seeded_db) -> None:
+    """カテゴリ脱落の代入にどれだけ依存した値かを配信ペイロードに必ず載せる（§0）。"""
+    p = _payload(seeded_db)
+    share = p["latest"]["imputed_weight_share"]
+    assert set(share) == {"excl_promo", "incl_promo"}
+    # fixture の 2 日は全 10 中分類が matched するので代入ゼロ。
+    assert share["excl_promo"] == 0.0 and share["incl_promo"] == 0.0
+
+    base_row, last_row = p["series"][0], p["series"][-1]
+    # base 日は matched 概念が自明なので matched 数と同様 null。
+    assert base_row["imputed_excl"] is None and base_row["imputed_incl"] is None
+    assert last_row["imputed_excl"] == 0.0 and last_row["imputed_incl"] == 0.0
+
+    # 代入方法は公開 methodology に明記する（盛らない・隠さない）。
+    assert "carried forward" in p["methodology"]
+    assert "imputed_weight_share" in p["methodology"]

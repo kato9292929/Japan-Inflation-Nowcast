@@ -45,6 +45,7 @@ def build_methodology_md(config: dict[str, Any] | None = None) -> str:
     rep_units = housing.get("representative_units") or []
     window = housing.get("rolling_window_days", 28)
     default_promo = food.get("default_promo_mode", "excl_promo")
+    imputation = food.get("category_imputation", "carry_forward")
 
     weight_rows = "\n".join(
         f"| `{code}` | {float(w):.0f} | {float(w) / CPI_TOTAL_WEIGHT * 100:.2f}% |"
@@ -103,6 +104,16 @@ ln(rent_total) ~ log_area + C(ward) + C(age_band) + C(walk_band)
 - **上位集計（ラスパイレス）**: 中分類を CPI 食料ウェイト（下表）で加重。
 - **特売**: `incl_promo` / `excl_promo` の 2 系列。基調は `{default_promo}`。
 - **SKU 入替**: 両期 matched-SKU のみで相対を取り、消失/新規はチェーンで連続化。
+- **中分類の脱落と代入**: ある日に matched SKU が 1 件も無い中分類が出ることがある
+  （魚介・肉は量り売り表記や銘柄入替で丸ごと落ちやすい）。その中分類を単に除いて
+  ウェイトを再正規化すると「欠測分類は観測分類の加重平均どおり動いた」と置く平均代入に
+  なり、前日は観測・当日は代入という並びで価格が動いていなくても指数が跳ねる。
+  そこで既定 `{imputation}` では**直近で観測できた日の相対を持ち越す**。基準日より後に
+  一度も観測されていない中分類だけ平均代入に戻す（「基準日から動いていない」という
+  強い仮定を置かないため）。どの中分類をどの日から持ち越したかは `components` の
+  `imputed` / `imputed_from` に、当日観測できていないウェイト割合は
+  `imputed_weight_share` に必ず出す。`config/baskets.yaml` の
+  `food.category_imputation` を `mean` にすると旧挙動（平均代入）に戻せる。
 
 ### 食料 中分類ウェイト
 
