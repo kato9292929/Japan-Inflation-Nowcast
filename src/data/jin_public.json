@@ -1,30 +1,34 @@
 {
   "source": "japan-inflation-nowcast",
   "base_date": "2026-06-04",
-  "generated_at": "2026-09-16T11:07:25.634857+00:00",
-  "methodology": "Jevons elementary (matched-SKU geometric mean) + 10-category equal-weight upper aggregation; excl_promo removes SKUs flagged promo on base or current day; unit prices canonicalized (¥/100g, ¥/100ml, ¥/unit); base_date fixed.",
+  "generated_at": "2026-10-28T15:06:43.528617+00:00",
+  "methodology": "Jevons elementary (matched-SKU geometric mean) + 10-category equal-weight upper aggregation; excl_promo removes SKUs flagged promo on base or current day; unit prices canonicalized (¥/100g, ¥/100ml, ¥/unit); base_date fixed. A category with no matched SKU on a given day is carried forward from its most recent observed relative; a category never observed since base_date is mean-imputed (dropped and reweighted). imputed_weight_share reports the basket weight not observed that day.",
   "coverage_note": "single store, Tokyo metro delivery area, mid-tier supermarket (Life). Not nationally representative.",
   "license": "observation data; derived aggregates only; see repo",
   "latest": {
     "source": "japan-inflation-nowcast",
-    "as_of": "2026-09-16",
+    "as_of": "2026-10-19",
     "base_date": "2026-06-04",
     "index": {
-      "excl_promo": 101.17,
-      "incl_promo": 100.63
+      "excl_promo": 108.51,
+      "incl_promo": 109.66
     },
     "matched_sku": {
       "excl": 33,
-      "incl": 41
+      "incl": 37
+    },
+    "imputed_weight_share": {
+      "excl_promo": 0.3,
+      "incl_promo": 0.2
     },
     "upstream": {
       "cgpi_yoy_pct": 7.1,
       "cgpi_as_of": "2026-06-01"
     },
-    "methodology": "Jevons elementary (matched-SKU geometric mean) + 10-category equal-weight upper aggregation; excl_promo removes SKUs flagged promo on base or current day; unit prices canonicalized (¥/100g, ¥/100ml, ¥/unit); base_date fixed.",
+    "methodology": "Jevons elementary (matched-SKU geometric mean) + 10-category equal-weight upper aggregation; excl_promo removes SKUs flagged promo on base or current day; unit prices canonicalized (¥/100g, ¥/100ml, ¥/unit); base_date fixed. A category with no matched SKU on a given day is carried forward from its most recent observed relative; a category never observed since base_date is mean-imputed (dropped and reweighted). imputed_weight_share reports the basket weight not observed that day.",
     "coverage_note": "single store, Tokyo metro delivery area, mid-tier supermarket (Life). Not nationally representative.",
     "license": "observation data; derived aggregates only; see repo",
-    "source_timestamp": "2026-06-29T12:22:28.527466+00:00"
+    "source_timestamp": "2026-10-28T15:06:43.528617+00:00"
   },
   "series": [
     {
@@ -117,6 +121,15 @@
       "incl": 100.63,
       "m_excl": 33,
       "m_incl": 41
+    },
+    {
+      "date": "2026-10-19",
+      "excl": 108.51,
+      "incl": 109.66,
+      "m_excl": 33,
+      "m_incl": 37,
+      "imputed_excl": 0.3,
+      "imputed_incl": 0.2
     }
   ],
   "movers_by_date": {
@@ -1059,6 +1072,162 @@
         "pct": -23.2,
         "promo_tag": true,
         "note": "vs base 2026-06-04"
+      }
+    ],
+    "2026-10-19": [
+      {
+        "category": "野菜・海藻",
+        "item": "国内産 キャベツ 1玉",
+        "pct": 171.7,
+        "promo_tag": false,
+        "note": "1 day(s) at this level"
+      },
+      {
+        "category": "野菜・海藻",
+        "item": "国内産 にら 1束",
+        "pct": 81.1,
+        "promo_tag": false,
+        "note": "1 day(s) at this level"
+      },
+      {
+        "category": "野菜・海藻",
+        "item": "国内産 白菜 1/4切 1パック",
+        "pct": 74.8,
+        "promo_tag": false,
+        "note": "1 day(s) at this level"
+      },
+      {
+        "category": "野菜・海藻",
+        "item": "国内産 レタス 1玉",
+        "pct": 67.2,
+        "promo_tag": false,
+        "note": "1 day(s) at this level"
+      },
+      {
+        "category": "野菜・海藻",
+        "item": "国内産 小松菜 1袋",
+        "pct": 54.3,
+        "promo_tag": false,
+        "note": "1 day(s) at this level"
+      },
+      {
+        "category": "野菜・海藻",
+        "item": "国内産 きゅうり バラ 1本",
+        "pct": 44.1,
+        "promo_tag": false,
+        "note": "1 day(s) at this level"
+      },
+      {
+        "category": "穀類",
+        "item": "山形県産 つや姫 5kg",
+        "pct": -40.6,
+        "promo_tag": false,
+        "note": "1 day(s) at this level"
+      },
+      {
+        "category": "乳卵類",
+        "item": "森永 おいしい牛乳 900ml",
+        "pct": 22.0,
+        "promo_tag": false,
+        "note": "1 day(s) at this level"
+      },
+      {
+        "category": "穀類",
+        "item": "フジパン ネオバターロール 6個入",
+        "pct": -21.6,
+        "promo_tag": false,
+        "note": "1 day(s) at this level"
+      },
+      {
+        "category": "大豆製品",
+        "item": "スマイルライフ 木綿とうふ 130g×3",
+        "pct": 20.8,
+        "promo_tag": false,
+        "note": "1 day(s) at this level"
+      },
+      {
+        "category": "大豆製品",
+        "item": "スマイルライフ 絹とうふ 150g×3",
+        "pct": 17.7,
+        "promo_tag": false,
+        "note": "1 day(s) at this level"
+      },
+      {
+        "category": "大豆製品",
+        "item": "スマイルライフ 北海道産大豆小粒納豆 40g×3",
+        "pct": 15.1,
+        "promo_tag": false,
+        "note": "1 day(s) at this level"
+      },
+      {
+        "category": "大豆製品",
+        "item": "ミツカン 金のつぶ たまご醤油たれ 40g×3",
+        "pct": -12.9,
+        "promo_tag": false,
+        "note": "1 day(s) at this level"
+      },
+      {
+        "category": "大豆製品",
+        "item": "スマイルライフ 極小粒納豆 45g×3",
+        "pct": 10.4,
+        "promo_tag": false,
+        "note": "1 day(s) at this level"
+      },
+      {
+        "category": "調理食品",
+        "item": "三角おにぎり ツナマヨ 1パック",
+        "pct": 7.4,
+        "promo_tag": false,
+        "note": "1 day(s) at this level"
+      },
+      {
+        "category": "調理食品",
+        "item": "三角おにぎり 日高昆布 1パック",
+        "pct": 7.4,
+        "promo_tag": false,
+        "note": "1 day(s) at this level"
+      },
+      {
+        "category": "調理食品",
+        "item": "三角おにぎり 紀州南高梅 1パック",
+        "pct": 7.4,
+        "promo_tag": false,
+        "note": "1 day(s) at this level"
+      },
+      {
+        "category": "穀類",
+        "item": "ヤマザキ ロイヤルブレッド 6枚",
+        "pct": 6.4,
+        "promo_tag": false,
+        "note": "1 day(s) at this level"
+      },
+      {
+        "category": "乳卵類",
+        "item": "全農 白たまご 10個入",
+        "pct": 2.9,
+        "promo_tag": false,
+        "note": "1 day(s) at this level"
+      },
+      {
+        "category": "穀類",
+        "item": "パスコ 超熟 6枚",
+        "pct": 2.5,
+        "promo_tag": false,
+        "note": "1 day(s) at this level"
+      },
+      {
+        "category": "調理食品",
+        "item": "鶏五目おこわ弁当 1パック",
+        "pct": -1.9,
+        "promo_tag": false,
+        "note": "1 day(s) at this level"
+      },
+      {
+        "category": "調理食品",
+        "item": "三角おにぎり 紅鮭 1パック",
+        "pct": 0.5,
+        "promo_tag": false,
+        "note": "1 day(s) at this level"
       }
     ]
   },
