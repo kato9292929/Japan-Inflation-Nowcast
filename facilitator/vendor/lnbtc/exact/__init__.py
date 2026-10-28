@@ -1,1 +1,0 @@
-"""Exact Lightning payment scheme."""
