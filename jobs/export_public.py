@@ -78,6 +78,19 @@ def _imputed_share(components: Any) -> float | None:
     return imputed / total if total > 0 else None
 
 
+def _imputed_categories(components: Any) -> list[str] | None:
+    """components から「当日観測できず代入した中分類」の名前を返す。
+
+    持ち越した分類（imputed_from あり）も、外して配り直した分類（imputed_from なし）も含む。
+    imputed を持たない旧バージョンの行では None を返す。
+    """
+    if not isinstance(components, list) or not components:
+        return None
+    if any(not isinstance(c, dict) or "imputed" not in c for c in components):
+        return None
+    return sorted(str(c["category"]) for c in components if c.get("imputed"))
+
+
 def _series_and_latest(session: Any) -> tuple[list[dict[str, Any]], dict[str, Any] | None]:
     """index_values から excl/incl の時系列と最新観測を組み立てる。"""
     rows = session.exec(
@@ -93,10 +106,12 @@ def _series_and_latest(session: Any) -> tuple[list[dict[str, Any]], dict[str, An
             slot["excl"] = r.value
             slot["m_excl"] = r.n
             slot["imputed_excl"] = _imputed_share(r.components)
+            slot["imputed_cat_excl"] = _imputed_categories(r.components)
         elif r.series_type == "food_incl_promo":
             slot["incl"] = r.value
             slot["m_incl"] = r.n
             slot["imputed_incl"] = _imputed_share(r.components)
+            slot["imputed_cat_incl"] = _imputed_categories(r.components)
 
     series: list[dict[str, Any]] = []
     for d in sorted(by_date):
@@ -113,6 +128,9 @@ def _series_and_latest(session: Any) -> tuple[list[dict[str, Any]], dict[str, An
                 # 当日観測できていない中分類のウェイト割合（代入への依存度）。
                 "imputed_excl": None if is_base else _round(s.get("imputed_excl"), 4),
                 "imputed_incl": None if is_base else _round(s.get("imputed_incl"), 4),
+                # 当日観測できず代入した中分類の名前（割合だけでは何が欠けたか分からない）。
+                "imputed_categories_excl": None if is_base else s.get("imputed_cat_excl"),
+                "imputed_categories_incl": None if is_base else s.get("imputed_cat_incl"),
             }
         )
     latest = None
@@ -126,6 +144,10 @@ def _series_and_latest(session: Any) -> tuple[list[dict[str, Any]], dict[str, An
             "imputed_weight_share": {
                 "excl_promo": _round(s.get("imputed_excl"), 4),
                 "incl_promo": _round(s.get("imputed_incl"), 4),
+            },
+            "imputed_categories": {
+                "excl_promo": s.get("imputed_cat_excl"),
+                "incl_promo": s.get("imputed_cat_incl"),
             },
         }
     return series, latest
@@ -270,6 +292,7 @@ def build_public_payload(session: Any, *, base_date: date | None = None) -> dict
             "matched_sku": latest["matched_sku"],
             # 当日観測できていない中分類のウェイト割合（カテゴリ脱落の代入への依存度）。
             "imputed_weight_share": latest["imputed_weight_share"],
+            "imputed_categories": latest["imputed_categories"],
             "upstream": _cgpi_upstream(),
             "methodology": METHODOLOGY,
             "coverage_note": COVERAGE_NOTE,

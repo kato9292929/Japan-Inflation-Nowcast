@@ -9,7 +9,7 @@
 - 生成元: `config/baskets.yaml`
 - 基準期 (base_date): `2026-06-04`
 - ウェイト出典 (weights_source): MIC CPI (placeholder weights — 運用者が基準年ウェイトに更新する)
-- methodology_version: `v2`
+- methodology_version: `v1`
 
 ## インデックスコード
 
@@ -116,4 +116,4 @@ coverage_pct = Σ(weights) / 10000 × 100 = 47.13%
 | version | effective_date | changelog |
 |---------|----------------|-----------|
 | `v1` | 2026-06-04 | 初版（食料 + 住居の部分カバー合成）。 |
-| `v2` | 2026-10-19 | 食料: 当日 matched SKU が 0 件の中分類を、直近の観測日の相対で持ち越す（carry_forward）。基準日より後に観測の無い中分類は従来どおり平均代入。当日観測できていないウェイト割合を imputed_weight_share として配信。2026-09-16 以前の公開値は v1 のまま。 |
+| `v2` | 適用日未定（jin-observations に履歴がそろった観測日から） | 食料: 当日 matched SKU が 0 件の中分類を、直近の観測日の相対で持ち越す（carry_forward）。基準日より後に観測の無い中分類は従来どおり平均代入。当日観測できていないウェイト割合と代入した中分類を配信に載せる。持ち越しが実際に効く最初の観測日から適用する。2026-10-19 は持ち越し元が無く v1 と同じ計算になるため v1。 |

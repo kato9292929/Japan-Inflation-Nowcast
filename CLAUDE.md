@@ -9,6 +9,7 @@
 * `jin-export-public` は DB の `index_values` から series を作り直す。DB に過去日が無い状態で実行すると、公開済みの過去日が `jin_public.json` から消える。新しい観測日を足すときは、既存の `jin_public.json` の過去日の行を残し、その日の行・movers・latest だけを差し替える。
 * 過去日が DB に無い日の carry_forward は、基準日以降に一度も観測されていない中分類を平均代入（外して配り直す）にする。この場合の値は、過去の公開値と同じ計算方式になる。`imputed_weight_share` と `imputed_categories` はそのまま配信に載せる。
 * carry_forward の持ち越し元に使う過去日は 2026-10-19 以降の観測日だけにする。`jin-observations` に 06-05 があっても取り込まない。06-06〜09-16 が欠けているので、06-05 から持ち越すと 4 か月半前の値を「直近の観測」として扱うことになり、公開済みの過去日とも計算方式がずれる。基準日 06-04 は常に取り込む。
+* methodology_version は v1 のまま運用する。v2（直近の観測値で埋める方式）に切り替えるのは、欠けた中分類を 2026-10-19 以降の観測日の値で実際に埋める日（components の `imputed_from` に日付が入る日）が初めて出たとき。その日を `methodology/generate.py` の `VERSION_HISTORY` の v2 の適用日に入れる。欠けた分類を外して配り直しただけの日は v1 と同じ計算なので v1 のままにする。
 * 観測の生データ（`life_basket_YYYYMMDD.csv` と名寄せ表）は、非公開リポジトリ `kato9292929/jin-observations` に観測日ごとにコミットする。このリポジトリは公開なので、生データをここにコミットしない（§8）。`jin-observations` がセッションに無いときは、取り込みの前に運用者へ 1 回だけ追加を依頼する。
 * 観測日を足すときの順序: `jin-observations` から基準日と過去の観測日の CSV を取り込む → その日の CSV を取り込み `jin-observations` にコミット → `jin-daily` → 過去日の行を残して `jin_public.json` を更新 → `src/data/food_brief.json` を更新 → PR。マージは運用者がする。
 

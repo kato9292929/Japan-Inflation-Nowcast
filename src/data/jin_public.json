@@ -21,6 +21,17 @@
       "excl_promo": 0.3,
       "incl_promo": 0.2
     },
+    "imputed_categories": {
+      "excl_promo": [
+        "酒類",
+        "飲料",
+        "魚介類"
+      ],
+      "incl_promo": [
+        "酒類",
+        "魚介類"
+      ]
+    },
     "upstream": {
       "cgpi_yoy_pct": 7.1,
       "cgpi_as_of": "2026-06-01"
@@ -28,7 +39,7 @@
     "methodology": "Jevons elementary (matched-SKU geometric mean) + 10-category equal-weight upper aggregation; excl_promo removes SKUs flagged promo on base or current day; unit prices canonicalized (¥/100g, ¥/100ml, ¥/unit); base_date fixed. A category with no matched SKU on a given day is carried forward from its most recent observed relative; a category never observed since base_date is mean-imputed (dropped and reweighted). imputed_weight_share reports the basket weight not observed that day.",
     "coverage_note": "single store, Tokyo metro delivery area, mid-tier supermarket (Life). Not nationally representative.",
     "license": "observation data; derived aggregates only; see repo",
-    "source_timestamp": "2026-10-28T15:06:43.528617+00:00"
+    "source_timestamp": "2026-10-28T15:10:57.338267+00:00"
   },
   "series": [
     {
@@ -129,7 +140,16 @@
       "m_excl": 33,
       "m_incl": 37,
       "imputed_excl": 0.3,
-      "imputed_incl": 0.2
+      "imputed_incl": 0.2,
+      "imputed_categories_excl": [
+        "酒類",
+        "飲料",
+        "魚介類"
+      ],
+      "imputed_categories_incl": [
+        "酒類",
+        "魚介類"
+      ]
     }
   ],
   "movers_by_date": {
