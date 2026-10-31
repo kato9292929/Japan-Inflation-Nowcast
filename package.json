@@ -12,12 +12,14 @@
   },
   "dependencies": {
     "@payai/facilitator": "^2.4.3",
+    "@solana/kit": "^5.5.1",
     "@x402/core": "^2.18.0",
     "@x402/next": "^2.18.0",
     "@x402/svm": "^2.18.0",
     "next": "^16.0.0",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "viem": "^2.55.1"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",
