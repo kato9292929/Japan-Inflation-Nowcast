@@ -5,6 +5,7 @@ import { corsHeaders } from "@/lib/x402-route";
 import { PAY_TO, PUBLIC_BASE_URL, SOLANA_NETWORK, USDC_ASSET } from "@/lib/x402-config";
 import { COUNTRIES } from "@/lib/inflation-data";
 import { inflationPaymentsEnabled, INFLATION_PRICE } from "@/lib/inflation-payment";
+import { LNBTC_PRICES_MSAT, lnbtcConfig } from "@/lib/lnbtc-config";
 import { NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
@@ -12,6 +13,7 @@ export const dynamic = "force-dynamic";
 export const GET = async (req: Request) => {
   const origin = new URL(req.url).origin;
   const inflationPaid = inflationPaymentsEnabled();
+  const lnbtc = lnbtcConfig();
   return NextResponse.json(
     {
       source: "japan-inflation-nowcast",
@@ -20,6 +22,17 @@ export const GET = async (req: Request) => {
       network: SOLANA_NETWORK,
       asset: USDC_ASSET,
       payTo: PAY_TO,
+      // Bitcoin Lightning（x402 exact/lnbtc）。有効なときだけ。invoice は各 endpoint の 402 に載る。
+      lnbtc: lnbtc
+        ? {
+            network: lnbtc.network,
+            asset: "BTC",
+            payTo: lnbtc.payTo,
+            prices_msat: Object.fromEntries(
+              Object.entries(LNBTC_PRICES_MSAT).map(([path, msat]) => [`${origin}${path}`, msat]),
+            ),
+          }
+        : null,
       endpoints: [
         { resource: `${origin}/api/jin/series`, price: "$0.01", free: false },
         { resource: `${origin}/api/jin/movers`, price: "$0.02", free: false },

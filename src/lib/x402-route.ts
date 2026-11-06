@@ -11,6 +11,7 @@ import { PAY_TO, PUBLIC_BASE_URL, SOLANA_NETWORK, USDC_ASSET } from "./x402-conf
 import { priceToAtomic, recordSale, settledTx } from "./sales-log";
 import { withDeliveryReceipts } from "./delivery-receipt";
 import { receiptSeller } from "./receipts";
+import { appendLnbtcOffer, handleLnbtcPayment } from "./lnbtc-paywall";
 
 export type PaywallOptions = { price: string; description: string; resourcePath: string };
 
@@ -79,10 +80,30 @@ export function withSolanaOnlyPaywall(
     resource,
     requirement: { network: SOLANA_NETWORK, payTo: PAY_TO, asset: USDC_ASSET, amount: priceToAtomic(opts.price) },
   }));
+  // lnbtc の選択肢を足した 402。支払いヘッダを外したリクエストで withX402 に作らせる。
+  const unpaid402 = async (req: NextRequest, error?: string): Promise<NextResponse> => {
+    const headers = new Headers(req.headers);
+    for (const name of ["payment-signature", "x-payment"]) headers.delete(name);
+    const bare = new NextRequest(req.url, { method: req.method, headers });
+    const res = toNext(await receipts()(bare));
+    return applyCors(await appendLnbtcOffer(res, bare, opts.resourcePath, PUBLIC_BASE_URL, error));
+  };
   return async (req: NextRequest): Promise<NextResponse> => {
     if (req.method === "OPTIONS") return corsPreflight();
+    // lnbtc の支払い付きの再送は withX402 に渡さない（upfront フローで /verify を呼ばないため）。
+    const lnbtc = await handleLnbtcPayment(req, {
+      resourcePath: opts.resourcePath,
+      publicBaseUrl: PUBLIC_BASE_URL,
+      handler,
+      fresh402: (error) => unpaid402(req, error),
+    });
+    if (lnbtc) return applyCors(lnbtc);
     // 未払い→402(v2ヘッダ)・支払い済→verify/settle、両方 withX402 が担当。
     const res = toNext(await receipts()(req));
+    // 未払いの 402 には lnbtc を足す（設定が無い・invoice が取れないときは Solana だけ）。
+    if (res.status === 402 && !req.headers.get("payment-signature") && !req.headers.get("x-payment")) {
+      return applyCors(await appendLnbtcOffer(res, req, opts.resourcePath, PUBLIC_BASE_URL));
+    }
     // settle に成功したら売り手ログに1件記録する（支払いの処理は変えない。記録に失敗しても応答は返す）
     const tx = settledTx(res.headers.get("payment-response"));
     if (tx) {
