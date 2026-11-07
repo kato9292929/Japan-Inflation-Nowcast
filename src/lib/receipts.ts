@@ -1,4 +1,4 @@
-// Delivery Receipt（kato9292929/delivery-receipt、src/lib/delivery-receipt に取り込み）の配線。
+// Delivery Receipt（npm の @x402jp/delivery-receipt-seller、kato9292929/delivery-receipt）の配線。
 // 有料の 200 に X-Delivery-Receipt（Ed25519 の署名付きレシート）を付け、X-Payment-Refetch 付きの
 // 再取得には決済を走らせずに保存済みの本文を返す。
 //
@@ -6,7 +6,7 @@
 // 保存先は売り手ログと同じ Upstash Redis（SALES_LOG_KV_REST_URL / _TOKEN、キーは receipt:*）。
 // 未設定、または RECEIPT_STORE=file ならファイル保存（RECEIPT_STORE_DIR、既定 /tmp/jin-receipts。
 // Vercel ではインスタンスごとに消えるので本番は Upstash を使う）。
-import { FileStore, UpstashStore, createReceiptSeller, type ReceiptSeller } from "./delivery-receipt";
+import { FileStore, UpstashStore, createReceiptSeller, type ReceiptSeller } from "@x402jp/delivery-receipt-seller";
 
 function store() {
   if (process.env.RECEIPT_STORE === "file") return new FileStore(process.env.RECEIPT_STORE_DIR ?? "/tmp/jin-receipts");

@@ -9,7 +9,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { x402Server } from "./x402-server";
 import { PAY_TO, PUBLIC_BASE_URL, SOLANA_NETWORK, USDC_ASSET } from "./x402-config";
 import { priceToAtomic, recordSale, settledTx } from "./sales-log";
-import { withDeliveryReceipts } from "./delivery-receipt";
+import { withDeliveryReceipts } from "@x402jp/delivery-receipt-seller";
 import { receiptSeller } from "./receipts";
 
 export type PaywallOptions = { price: string; description: string; resourcePath: string };

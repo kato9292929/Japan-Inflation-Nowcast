@@ -51,7 +51,7 @@ async function signedTx(): Promise<string> {
 it("有料の 200 にレシートが付き、検証が通る。再取得は決済なしで同じ本文を返す", async () => {
   const route = await import("@/app/api/jin/series/route");
   const wk = await import("@/app/.well-known/x402-receipt.json/route");
-  const { verifyReceipt, refetch, parseWellKnown } = await import("@/lib/delivery-receipt/verify");
+  const { verifyReceipt, refetch, parseWellKnown } = await import("@x402jp/delivery-receipt-verify");
   const url = "https://jin.test/api/jin/series";
 
   const challenge = await route.GET(new NextRequest(url));
