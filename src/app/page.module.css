@@ -465,14 +465,17 @@
   font-family: "Hiragino Kaku Gothic ProN", "Yu Gothic", "Noto Sans JP", sans-serif;
 }
 .trailsCat th {
-  position: sticky;
-  left: 0;
   padding-top: 14px;
   text-align: left;
   color: var(--gold-ink);
   font-weight: bold;
   letter-spacing: 0.06em;
   background: var(--bg);
+}
+/* 分類名の行は表と同じ幅なので、文字だけを左端に固定して横スクロールでも見えるようにする。 */
+.trailsCatLabel {
+  position: sticky;
+  left: 8px;
 }
 
 /* footer */
@@ -529,6 +532,18 @@
   }
   .nav {
     display: none;
+  }
+  /* 品目別の推移: 品目名の列（固定列）が画面を埋めないよう、折り返して幅を抑える。 */
+  .trailsTable th,
+  .trailsTable td {
+    padding: 5px 6px;
+  }
+  .trailsTable .trailsItem {
+    min-width: 8em;
+    max-width: 8em;
+    white-space: normal;
+    font-size: 11px;
+    line-height: 1.35;
   }
 }
 
