@@ -536,7 +536,7 @@
   /* 品目別の推移: 品目名の列（固定列）が画面を埋めないよう、折り返して幅を抑える。 */
   .trailsTable th,
   .trailsTable td {
-    padding: 5px 6px;
+    padding: 5px 5px;
   }
   .trailsTable .trailsItem {
     min-width: 8em;

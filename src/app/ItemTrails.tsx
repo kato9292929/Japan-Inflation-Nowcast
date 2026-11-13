@@ -19,9 +19,16 @@ type SeriesRow = {
 };
 type Missing = { excl: string[]; incl: string[]; shareExcl: number | null; shareIncl: number | null };
 
+// 6 月は観測日が多く表が横に長くなるので、この 2 日だけを載せる（運用者の指定）。7 月以降は全部載せる。
+const JUNE_SHOWN = ["2026-06-05", "2026-06-18"];
+const shown = (d: string) => !d.startsWith("2026-06") || JUNE_SHOWN.includes(d);
+
 function buildTrails() {
   const byDate = jin.movers_by_date as unknown as Record<string, Mover[]>;
-  const dates = Object.keys(byDate).sort();
+  const allDates = Object.keys(byDate).sort();
+  // 表に出さない日の動きは、品目の抽出にも注記の判定にも使わない（表と注記をそろえる）。
+  const dates = allDates.filter(shown);
+  const omitted = allDates.filter((d) => !shown(d));
   const categories: string[] = [];
   const items = new Map<string, { category: string; item: string; cells: Record<string, Cell> }>();
   for (const date of dates) {
@@ -44,7 +51,7 @@ function buildTrails() {
   for (const r of jin.series as unknown as SeriesRow[]) {
     const excl = r.imputed_categories_excl ?? [];
     const incl = r.imputed_categories_incl ?? [];
-    if (excl.length === 0 && incl.length === 0) continue;
+    if (!dates.includes(r.date) || (excl.length === 0 && incl.length === 0)) continue;
     missing[r.date] = { excl, incl, shareExcl: r.imputed_excl ?? null, shareIncl: r.imputed_incl ?? null };
   }
 
@@ -57,7 +64,7 @@ function buildTrails() {
     })
     .map((r) => r.item);
 
-  return { dates, groups, count: rows.length, missing, alwaysUp };
+  return { dates, omitted, groups, count: rows.length, missing, alwaysUp };
 }
 
 function fmt(c: Cell) {
@@ -87,7 +94,7 @@ function missingNote(date: string, m: Missing) {
 }
 
 export default function ItemTrails() {
-  const { dates, groups, count, missing, alwaysUp } = buildTrails();
+  const { dates, omitted, groups, count, missing, alwaysUp } = buildTrails();
   if (dates.length === 0) return null;
 
   return (
@@ -95,7 +102,7 @@ export default function ItemTrails() {
       <span className={`${styles.tag} ${styles.tagGold}`}>ITEM-LEVEL MOVES ／ 品目別の推移</span>
       <h2 className={styles.trailsHead}>何がいくら動いたか（基準日 {jin.base_date} 比 %）</h2>
       <p className={`${styles.jinMeta} mono`}>
-        基準日から動いたことのある {count} 品目 · {dates.length} 観測日 · 単一店舗 ·{" "}
+        表の観測日に基準日から動いた {count} 品目 · {dates.length} 観測日 · 単一店舗 ·{" "}
         <span className={styles.up}>+ 値上がり</span> <span className={styles.down}>− 値下がり</span> · * 特売 ·
         「·」変化なし、または未観測 · 「—」分類ごと未観測 · † 一部の分類を観測できなかった日
       </p>
@@ -151,6 +158,12 @@ export default function ItemTrails() {
         <li>
           値は同じ商品の基準日（{jin.base_date}）の価格に対する変化率。内容量の違う商品は別の商品として扱う。
         </li>
+        {omitted.length > 0 && (
+          <li>
+            載せている観測日は {dates.map((d) => d.slice(5)).join("・")}。ほかに{" "}
+            {omitted.map((d) => d.slice(5)).join("・")} にも観測しているが、表が横に長くなるので省いた。
+          </li>
+        )}
         <li>
           「·」の日は、その品が基準日と同じ価格だったか、その日の店頭で観測できなかったかのどちらか。公開データでは区別できない。
         </li>
