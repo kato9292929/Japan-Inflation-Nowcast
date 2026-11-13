@@ -420,6 +420,64 @@
   color: var(--dim);
 }
 
+/* 品目別の推移（基準日比 %）。横に長いので表だけ横スクロールにする。 */
+.trails {
+  margin: 44px 0 0;
+  padding-top: 18px;
+  border-top: 3px solid var(--rule);
+}
+.trailsHead {
+  margin: 14px 0 6px;
+  font-family: "Hiragino Kaku Gothic ProN", "Yu Gothic", "Noto Sans JP", sans-serif;
+  font-size: 20px;
+  line-height: 1.4;
+  color: var(--ink);
+}
+.trailsScroll {
+  margin: 16px 0 18px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.trailsTable {
+  border-collapse: collapse;
+  font-size: 12px;
+  white-space: nowrap;
+}
+.trailsTable th,
+.trailsTable td {
+  padding: 5px 8px;
+  border-bottom: 1px solid var(--line);
+  text-align: right;
+  font-weight: normal;
+}
+.trailsTable thead th {
+  color: var(--faint);
+  letter-spacing: 0.04em;
+  border-bottom: 1px solid var(--rule);
+}
+.trailsTable .trailsItem {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  text-align: left;
+  color: var(--ink);
+  background: var(--bg);
+  font-family: "Hiragino Kaku Gothic ProN", "Yu Gothic", "Noto Sans JP", sans-serif;
+}
+.trailsCat th {
+  padding-top: 14px;
+  text-align: left;
+  color: var(--gold-ink);
+  font-weight: bold;
+  letter-spacing: 0.06em;
+  background: var(--bg);
+}
+/* 分類名の行は表と同じ幅なので、文字だけを左端に固定して横スクロールでも見えるようにする。 */
+.trailsCatLabel {
+  position: sticky;
+  left: 8px;
+}
+
 /* footer */
 .footer {
   margin: 52px 0 0;
@@ -474,6 +532,18 @@
   }
   .nav {
     display: none;
+  }
+  /* 品目別の推移: 品目名の列（固定列）が画面を埋めないよう、折り返して幅を抑える。 */
+  .trailsTable th,
+  .trailsTable td {
+    padding: 5px 5px;
+  }
+  .trailsTable .trailsItem {
+    min-width: 8em;
+    max-width: 8em;
+    white-space: normal;
+    font-size: 11px;
+    line-height: 1.35;
   }
 }
 

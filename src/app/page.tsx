@@ -1,5 +1,6 @@
 import styles from "./page.module.css";
 import Wire from "./Wire";
+import ItemTrails from "./ItemTrails";
 import { getJinLatest } from "@/lib/jin-data";
 import jin from "@/data/jin_public.json";
 import upstream from "@/data/upstream.json";
@@ -94,6 +95,8 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      <ItemTrails />
 
       <footer className={styles.footer}>
         <span>x402 Inc. — Tokyo</span>

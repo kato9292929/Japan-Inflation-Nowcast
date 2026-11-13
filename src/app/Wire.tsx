@@ -2,8 +2,7 @@
 
 import { useEffect, useState, type ReactNode } from "react";
 import styles from "./page.module.css";
-
-type Lang = "en" | "ja";
+import { LangContext, type Lang } from "./lang";
 
 // upstream.json の item 形。_ja は optional（欠けても英語に落とす）。
 type Item = {
@@ -238,8 +237,9 @@ export default function Wire({
           </ul>
         </section>
 
-        {/* food パネル・footer（ドメイン言語固定・切替対象外）は page.tsx から children で受ける */}
-        {children}
+        {/* food パネル・footer（ドメイン言語固定・切替対象外）は page.tsx から children で受ける。
+            品目別の推移（ItemTrails）は useLang でトグルに追従する。 */}
+        <LangContext.Provider value={lang}>{children}</LangContext.Provider>
       </main>
     </div>
   );
