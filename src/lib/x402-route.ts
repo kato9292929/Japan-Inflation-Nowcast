@@ -85,6 +85,12 @@ export function withSolanaOnlyPaywall(
     const res = toNext(await receipts()(req));
     // settle に成功したら売り手ログに1件記録する（支払いの処理は変えない。記録に失敗しても応答は返す）
     const tx = settledTx(res.headers.get("payment-response"));
+    // @x402/next 2.29 以降は facilitator の初期化失敗などを例外にせず 500 / 502 で返す。
+    // 未決済のまま決済層が失敗した応答は、以前と同じ 503 payment_service_unavailable に揃える
+    // （無料で中身を返さない・settle しない）。各ハンドラ自身は 500 / 502 を返さない。
+    if (!tx && (res.status === 500 || res.status === 502)) {
+      return applyCors(NextResponse.json({ error: "payment_service_unavailable" }, { status: 503 }));
+    }
     if (tx) {
       try {
         await recordSale({
