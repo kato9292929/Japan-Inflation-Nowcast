@@ -128,3 +128,22 @@ it("facilitator障害は無料へフォールバックせず503", async () => {
     warn.mockRestore();
   }
 });
+
+it("facilitator障害のとき有料のJIN系列・moversも503で、中身もsettleも出さない", async () => {
+  facilitator.getSupported.mockRejectedValue(new Error("合成通信障害"));
+  const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+  const error = vi.spyOn(console, "error").mockImplementation(() => {});
+  try {
+    for (const path of ["series", "movers"]) {
+      const { GET } = await import(`@/app/api/jin/${path}/route`);
+      const response = await GET(new NextRequest(`https://inflation.test/api/jin/${path}`));
+      expect(response.status).toBe(503);
+      expect(await response.json()).toEqual({ error: "payment_service_unavailable" });
+      expect(response.headers.get("access-control-allow-origin")).toBe("*");
+    }
+    expect(facilitator.settle).not.toHaveBeenCalled();
+  } finally {
+    warn.mockRestore();
+    error.mockRestore();
+  }
+});
