@@ -171,6 +171,15 @@ export default function Wire({
                   </div>
                   <span className={styles.epDesc}>その日動いた品目。特売タグ付き。機械向け。</span>
                 </li>
+                <li className={styles.epRow}>
+                  <div className={styles.epTop}>
+                    <code className={`${styles.epPath} mono`}>MCP /mcp</code>
+                    <span className={`${styles.badge} ${styles.badgeFree} mono`}>200 ✓ free</span>
+                  </div>
+                  <span className={styles.epDesc}>
+                    MCP サーバ（読み取り専用）。Claude などのエージェントから指数・品目・公的 CPI を引ける。
+                  </span>
+                </li>
               </ul>
               <p className={styles.epNote}>
                 決済は Solana USDC。discovery は{" "}

@@ -26,6 +26,29 @@ README's build-status section is authoritative for this repository.
 2. x402 課金 JSON API（コンポーネント分解 / 中分類別 / 特売切替 / 全履歴 / bulk）。
 3. 任意のオンチェーンフィード（Pyth / Chainlink 互換、testnet 先行）。
 
+## MCP（エージェントから使う）
+
+`https://jin.x402jp.com/mcp` が MCP サーバ（Streamable HTTP・読み取り専用・無料・認証なし）。
+公開済みのデータ（`src/data/jin_public.json` と `data/inflation/`）だけを返す。どの応答にも
+「公式 CPI ではない・単一店舗・食料のみ・予測ではない」の注記（`notice`）が付く。
+
+| ツール | 返すもの |
+| --- | --- |
+| `get_nowcast_latest` | 最新観測日の指数（excl_promo / incl_promo）、matched SKU 数、観測できなかった分類と比重 |
+| `get_nowcast_series` | 観測日ごとの指数（`from` / `to` で絞り込み） |
+| `get_item_moves` | 指定日（既定は最新日）の品目別の基準日比 %。英語名付き |
+| `get_official_cpi` | 公的 CPI の最新保存値（`jp` / `kr` / `sg`）。日本は店頭指数を別枠で併記 |
+| `get_methodology` | 方法論・カバー範囲・基準日・観測日の一覧 |
+
+接続の例:
+
+```bash
+# Claude Code
+claude mcp add --transport http jin https://jin.x402jp.com/mcp
+```
+
+Claude（claude.ai / デスクトップ）では、設定のコネクタから「カスタムコネクタを追加」で上の URL を入れる。
+
 ## セットアップ
 
 ```bash
