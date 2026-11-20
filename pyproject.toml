@@ -25,6 +25,7 @@ dependencies = [
     "requests>=2.32",
     "pyarrow>=17",
     "lxml>=5.0",
+    "openpyxl>=3.1",
 ]
 
 [project.optional-dependencies]

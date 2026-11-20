@@ -1,0 +1,83 @@
+name: refresh-official-cpi
+
+# 公的CPI（日本・シンガポール。韓国はキーがあるとき）を毎日取り直し、
+# data/inflation/*.json に差分があれば main に直接コミットする（運用者の判断で PR を経由しない）。
+# 触るのは data/inflation/*.json だけ。push で Vercel が本番に反映する。
+# 取得から 7 日たつと API が stale を付ける設計なので、値が同じ日も取得日時を更新してコミットする。
+# cron: 毎日 00:47 UTC = 09:47 JST（日本の公表 8:30 JST の当日に拾う）。手動実行も可。
+
+on:
+  schedule:
+    - cron: "47 0 * * *"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: refresh-official-cpi
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install deps
+        run: pip install "httpx>=0.27,<1" "openpyxl>=3.1,<4"
+
+      # 日本: ESTAT_APP_ID があれば e-Stat API、無ければ公表ファイル（第1-1表）から取る。
+      # 韓国: KOSIS のキーと全国コードがそろったときだけ取る（無いまま走らせると取得失敗で上書きされる）。
+      # 取得に失敗した国は、古い値を残したまま status=refresh_failed・stale=true を書く（それもコミットする）。
+      - name: Refresh
+        id: refresh
+        env:
+          ESTAT_APP_ID: ${{ secrets.ESTAT_APP_ID }}
+          KOSIS_API_KEY: ${{ secrets.KOSIS_API_KEY }}
+          KOSIS_CPI_REGION_CODE: ${{ secrets.KOSIS_CPI_REGION_CODE }}
+        run: |
+          status=0
+          countries="jp sg"
+          if [ -n "$KOSIS_API_KEY" ] && [ -n "$KOSIS_CPI_REGION_CODE" ]; then countries="$countries kr"; fi
+          for c in $countries; do
+            python -m jobs.refresh_inflation --country "$c" || status=1
+          done
+          echo "status=$status" >> "$GITHUB_OUTPUT"
+
+      - name: Commit to main on diff
+        run: |
+          git add data/inflation/*.json
+          if git diff --cached --quiet; then
+            echo "差分なし"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          summary=$(python - <<'EOF'
+          import json
+          parts = []
+          for c in ("jp", "sg", "kr"):
+              d = json.load(open(f"data/inflation/{c}.json"))
+              parts.append(f"{c} {d['as_of'] or '-'} {d['status']}")
+          print(" / ".join(parts))
+          EOF
+          )
+          git commit -m "chore(cpi): 公的CPIを更新（自動）" -m "$summary"
+          for i in 1 2 3; do
+            git pull --rebase origin main && git push origin HEAD:main && exit 0
+            sleep $((i * 10))
+          done
+          exit 1
+
+      - name: Fail if any country failed
+        if: steps.refresh.outputs.status != '0'
+        run: |
+          echo "取得に失敗した国があります。data/inflation/*.json の status と、上の Refresh のログを確認してください。"
+          exit 1
