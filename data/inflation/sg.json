@@ -2,33 +2,31 @@
   "country": "sg",
   "source": "SingStat",
   "source_url": "https://tablebuilder.singstat.gov.sg/table/TS/M213751",
-  "as_of": null,
+  "as_of": "2026-09",
   "released_at": null,
-  "fetched_at": null,
+  "fetched_at": "2026-11-20T17:37:01.217538+00:00",
   "frequency": "monthly",
-  "cpi_yoy": null,
+  "cpi_yoy": 2.2,
   "cpi_index": {
-    "value": null,
-    "base_year": null,
+    "value": 103.551,
+    "base_year": 2024,
     "base_value": 100
   },
-  "food_yoy": null,
+  "food_yoy": 2.4,
   "units": {
     "cpi_yoy": "percent",
     "cpi_index": "index",
     "food_yoy": "percent"
   },
   "metric_status": {
-    "cpi_yoy": "not_fetched",
-    "cpi_index": "not_fetched",
-    "food_yoy": "not_fetched"
+    "cpi_index": "available",
+    "cpi_yoy": "available",
+    "food_yoy": "available"
   },
   "yoy_method": "published",
-  "status": "not_fetched",
-  "stale": true,
-  "stale_reasons": [
-    "not_fetched"
-  ],
-  "last_attempt_at": null,
+  "status": "ok",
+  "stale": false,
+  "stale_reasons": [],
+  "last_attempt_at": "2026-11-20T17:36:58.525764+00:00",
   "last_error": null
 }
