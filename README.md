@@ -49,6 +49,21 @@ claude mcp add --transport http jin https://jin.x402jp.com/mcp
 
 Claude（claude.ai / デスクトップ）では、設定のコネクタから「カスタムコネクタを追加」で上の URL を入れる。
 
+## 公的 CPI の更新（日本・韓国・シンガポール）
+
+`data/inflation/{jp,kr,sg}.json` は、GitHub Actions（`.github/workflows/refresh_official_cpi.yml`）が
+毎日 09:47 JST に取り直し、差分があれば main に直接コミットする（Vercel が本番に反映）。
+取得から 7 日たつと API が `stale` を付ける。取得に失敗した国は、古い値を残したまま
+`status: refresh_failed`・`stale: true` になる。
+
+| 国 | 取り方 | 要るもの |
+| --- | --- | --- |
+| 日本 | `ESTAT_APP_ID` があれば e-Stat API、無ければ総務省の全国速報 → e-Stat の第1-1表（中分類指数・全国・月次）の Excel | なし（appId は任意） |
+| シンガポール | SingStat Table Builder API | なし |
+| 韓国 | KOSIS API | リポジトリの Secrets に `KOSIS_API_KEY` と `KOSIS_CPI_REGION_CODE`（そろうまで取りに行かない） |
+
+手元で取り直すとき: `uv run python -m jobs.refresh_inflation --country jp`
+
 ## セットアップ
 
 ```bash

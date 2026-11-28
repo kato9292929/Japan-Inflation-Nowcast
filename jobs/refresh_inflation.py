@@ -12,10 +12,16 @@ from pathlib import Path
 
 import httpx
 
-from scrapers.inflation import jp, kr, sg
+from scrapers.inflation import jp, jp_file, kr, sg
 from scrapers.inflation.common import empty_record
 
-ADAPTERS = {"jp": jp.fetch, "kr": kr.fetch, "sg": sg.fetch}
+
+def fetch_jp(client: httpx.Client) -> dict:
+    """ESTAT_APP_ID があれば e-Stat API、無ければ公表ファイル（第1-1表）から取る。"""
+    return jp.fetch(client) if os.environ.get("ESTAT_APP_ID") else jp_file.fetch(client)
+
+
+ADAPTERS = {"jp": fetch_jp, "kr": kr.fetch, "sg": sg.fetch}
 
 
 def atomic_write(path: Path, data: dict):
